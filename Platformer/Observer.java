@@ -12,4 +12,8 @@ public abstract class Observer extends Actor
     Subject subject;
     
     public abstract void update();
+    
+    public void observe(Subject subject){
+        this.subject = subject;
+    }
 }

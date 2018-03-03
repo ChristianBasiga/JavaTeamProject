@@ -9,13 +9,18 @@ import greenfoot.*;  // (World, Actor, GreenfootImage, Greenfoot and MouseInfo)
 public class Level extends World
 {
 
-    void started(){
+    public void started(){
        
         //Todo, create all instances that start out in the world
         //DOn't really need to store instance variables, but can change as required
         //And add observers to subjects.
         
         GameManager gm = new GameManager();
+        Player player = new Player();
+        
+        
+        
+        
         
     }
     /**

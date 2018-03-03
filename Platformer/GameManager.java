@@ -13,12 +13,8 @@ public class GameManager extends Observer
      * the 'Act' or 'Run' button gets pressed in the environment.
      */
     
-    //Will replace subject with Player class later, but that will be created in different
-    //branch
-    public GameManager(Subject player){
-        
-        this.subject = player;
-    }
+  
+    
     
     public void act() 
     {
@@ -27,6 +23,7 @@ public class GameManager extends Observer
     
     public void update(){
         
-       //Check what needs to be checked for update,
+       //This will be called by subject anytime subject's state changes.
+       
     }
 }

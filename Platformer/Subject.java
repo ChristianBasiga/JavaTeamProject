@@ -5,9 +5,18 @@
  * @version (a version number or a date)
  */
 import greenfoot.Actor;
+import java.util.*;
 public class Subject extends Actor  
 {
-    Observer[] observers;
+    
+    List<Observer> observers;
+    
+    
+    public void addObserver(Observer observer){
+        
+        observers.add(observer);
+        
+    }
     
     //To be called anytime a state of subject has been changed
     protected void didUpdateState(){
@@ -18,4 +27,6 @@ public class Subject extends Actor
             observer.update();
         }
     }
+    
+    
 }
