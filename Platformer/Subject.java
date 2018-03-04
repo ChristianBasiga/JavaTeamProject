@@ -9,9 +9,15 @@ import java.util.*;
 public class Subject extends Actor  
 {
     
-    List<Observer> observers;
+    Queue<Observer> observers;
     //Private so that derived classes do not change directly and have to use changeState
     private State currentState;
+    
+    public Subject(){
+        
+        observers = new PriorityQueue<Observer>();
+        
+    }
     
     public void addObserver(Observer observer){
         
@@ -25,13 +31,19 @@ public class Subject extends Actor
     }
     
     //To be called anytime a state of subject has been changed
-    public void changeState(State state){
+    //2nd paramater is lame workaround to possible data race
+    //during transformation for changing player instance as well as
+    //changing player's image for animations. Transformation should go first,
+    //then animations start happening again. I'll work on way to prioritize
+    //characterController as main observer, will have to make priority attribute and then
+    //create priority queue.
+    public void changeState(State state, boolean reactionThread){
         
         this.currentState = state;
         //Notifies all the observers of the change.
         for (Observer observer : observers){
             
-            observer.react();
+            observer.react(reactionThread);
         }
     }
     

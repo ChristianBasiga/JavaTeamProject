@@ -13,6 +13,7 @@ public class PlayerController extends Observer
     public PlayerController(Player player){
         
         this.player = player;
+        priority = 100;
     }
 
     public void run() 

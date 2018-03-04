@@ -10,6 +10,7 @@ public class GameManager extends Observer
 {  	
 	public GameManager() {
 		threadName = "gm";
+		priority = 99;
 	}
 	
 	public void run() {
