@@ -16,7 +16,8 @@ public abstract class Observer extends Actor implements Runnable
     Subject subject;
     
 
-    void react() {
+    //Not meant to be overwridden, do not hcange anything here, this is fine as is.
+    final void react() {
 
         
         if (t == null) {

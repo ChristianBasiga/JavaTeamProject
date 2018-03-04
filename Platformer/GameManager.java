@@ -7,23 +7,19 @@ import greenfoot.*;  // (World, Actor, GreenfootImage, Greenfoot and MouseInfo)
  * @version (a version number or a date)
  */
 public class GameManager extends Observer
-{
-    /**
-     * Act - do whatever the GameManager wants to do. This method is called whenever
-     * the 'Act' or 'Run' button gets pressed in the environment.
-     */
-    
-  
-    
-    
-    public void act() 
-    {
-        // Add your action code here.
-    }    
-    
-    public void update(){
-        
-       //This will be called by subject anytime subject's state changes.
-       
-    }
+{  	
+	public GameManager() {
+		threadName = "gm";
+	}
+	
+	public void run() {
+		
+		if (subject != null) {
+			
+			System.out.println("GameManager checking state of player");;
+			System.out.println("GameManager done");
+		}
+		
+	}
+	
 }

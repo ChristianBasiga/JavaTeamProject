@@ -1,5 +1,5 @@
 #Greenfoot properties
-#Sat Mar 03 15:48:04 PST 2018
+#Sat Mar 03 17:03:14 PST 2018
 target4.type=ClassTarget
 <<<<<<<=HEAD
 dependency3.from=Level
@@ -9,6 +9,7 @@ readme.y=10
 dependency3.type=UsesDependency
 readme.x=10
 class.Player.superclass=Subject
+class.PlayerController.superclass=Observer
 target4.name=Level
 target4.typeParameters=
 readme.width=47
@@ -42,9 +43,10 @@ package.numTargets=5
 target1.type=ClassTarget
 target1.typeParameters=
 target2.height=50
-target5.y=0
 target4.height=50
+target5.y=0
 target5.x=0
+class.State.superclass=
 target1.name=Player
 target4.y=0
 target4.x=0
@@ -66,6 +68,7 @@ readme.height=58
 class.GameManager.superclass=Observer
 target2.name=GameManager
 readme.name=@README
+class.PlayerState.superclass=State
 package.numDependencies=5
 class.Level.superclass=greenfoot.World
 target3.type=AbstractTarget
@@ -74,10 +77,11 @@ dependency2.from=Observer
 dependency2.type=UsesDependency
 target5.typeParameters=
 world.lastInstantiated=Level
-mainWindow.height=600
 target2.showInterface=false
+mainWindow.height=600
 target3.name=Observer
-project.charset=UTF-8
+class.PlayerFactory.superclass=
 target3.width=80
-=\=\=\=\=\=\=
+project.charset=UTF-8
 target4.showInterface=false
+=\=\=\=\=\=\=

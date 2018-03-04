@@ -10,7 +10,8 @@ public class Subject extends Actor
 {
     
     List<Observer> observers;
-    State currentState;
+    //Private so that derived classes do not change directly and have to use changeState
+    private State currentState;
     
     public void addObserver(Observer observer){
         
@@ -18,8 +19,13 @@ public class Subject extends Actor
         
     }
     
+    public State GetCurrentState(){
+        
+        return currentState;
+    }
+    
     //To be called anytime a state of subject has been changed
-    protected void changeState(State state){
+    public void changeState(State state){
         
         this.currentState = state;
         //Notifies all the observers of the change.
