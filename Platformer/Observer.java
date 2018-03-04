@@ -17,6 +17,8 @@ public abstract class Observer extends Actor implements Runnable
     
 
     //Not meant to be overwridden, do not hcange anything here, this is fine as is.
+    //What will be overridden is the run method.
+    //All logic where Observer is reacting to a subject will be in run override
     final void react() {
 
         

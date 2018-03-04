@@ -35,6 +35,7 @@ public class State
     public void assignState(State other){
         
         id |= other.id;
+        
         if (name.equals("")){
             name = other.name;
         }

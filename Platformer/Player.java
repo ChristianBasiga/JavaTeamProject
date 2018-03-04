@@ -9,6 +9,7 @@ import greenfoot.*;  // (World, Actor, GreenfootImage, Greenfoot and MouseInfo)
 public class Player extends Subject
 {
     String currentTransformation;
+    int health;
   
     public void act() 
     {
