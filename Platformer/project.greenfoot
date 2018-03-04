@@ -1,5 +1,5 @@
 #Greenfoot properties
-#Sat Mar 03 17:03:14 PST 2018
+#Sat Mar 03 17:16:09 PST 2018
 target4.type=ClassTarget
 <<<<<<<=HEAD
 dependency3.from=Level
@@ -36,6 +36,7 @@ target2.typeParameters=
 dependency3.to=GameManager
 target3.showInterface=false
 dependency4.to=Player
+class.Reusable.superclass=greenfoot.Actor
 dependency5.to=Observer
 target1.showInterface=false
 target5.showInterface=false

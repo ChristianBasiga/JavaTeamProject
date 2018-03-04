@@ -16,8 +16,7 @@ public class GameManager extends Observer
 		
 		if (subject != null) {
 			
-			System.out.println("GameManager checking state of player");;
-			System.out.println("GameManager done");
+		    //
 		}
 		
 	}
