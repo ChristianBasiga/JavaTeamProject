@@ -10,7 +10,7 @@ public class Subject extends Actor
 {
     
     List<Observer> observers;
-    
+    State currentState;
     
     public void addObserver(Observer observer){
         
@@ -19,12 +19,13 @@ public class Subject extends Actor
     }
     
     //To be called anytime a state of subject has been changed
-    protected void didUpdateState(){
+    protected void changeState(State state){
         
+        this.currentState = state;
         //Notifies all the observers of the change.
         for (Observer observer : observers){
             
-            observer.update();
+            observer.react();
         }
     }
     

@@ -5,15 +5,40 @@
  * @version (a version number or a date)
  */
 import greenfoot.Actor;
-
-public abstract class Observer extends Actor 
+import java.util.*;
+public abstract class Observer extends Actor implements Runnable
 {
-    //Subject Observing
+    
+    //Separate thread for doing the reaction in.
+    Thread t;
+    String threadName;
+    //Subject observing
     Subject subject;
     
-    public abstract void update();
+
+    void react() {
+
+        
+        if (t == null) {
+            t = new Thread(this,threadName);
+        }
+        
+        if (t.isAlive()){
+           
+           try {
+			t.wait();
+		   } catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		   }
+        }
+        
+        t.start();
+       
+   }
     
-    public void observe(Subject subject){
+    public void observe(Subject subject) {
         this.subject = subject;
+        this.subject.addObserver(this);
     }
 }
