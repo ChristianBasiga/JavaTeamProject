@@ -6,7 +6,7 @@
  */
 import greenfoot.Actor;
 import java.util.*;
-public abstract class Observer extends Actor implements Runnable
+public abstract class Observer extends Actor implements Runnable, Comparable<Observer>
 {
     
     //Separate thread for doing the reaction in.
@@ -23,7 +23,7 @@ public abstract class Observer extends Actor implements Runnable
     //Not meant to be overwridden, do not change anything here, this is fine as is.
     //What will be overridden is the run method.
     //All logic where Observer is reacting to a subject will be in run override
-    final void react(boolean isConCurrentReaction) {
+    final public void react(boolean isConCurrentReaction) {
 
         if (isConCurrentReaction){
         
@@ -44,12 +44,8 @@ public abstract class Observer extends Actor implements Runnable
         this.subject.addObserver(this);
     }
     
-    
-    public static Comparator<Observer> observerComparator = new Comparator<Observer>(){
-        
-
-        public int compare(Observer o1, Observer o2){
-            return o1.getPriority() - o2.getPriority();
-        }
-    };
+    public int compareTo(Observer other){
+        return this.priority - other.getPriority();
+    }
+   
 }

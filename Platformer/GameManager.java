@@ -17,7 +17,7 @@ public class GameManager extends Observer
 		
 		if (subject != null) {
 			
-		    //
+		   
 		}
 		
 	}

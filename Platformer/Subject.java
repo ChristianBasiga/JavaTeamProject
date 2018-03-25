@@ -11,7 +11,7 @@ public class Subject extends Actor
     
     Queue<Observer> observers;
     //Private so that derived classes do not change directly and have to use changeState
-    private State currentState;
+    protected State currentState;
     
     public Subject(){
         
