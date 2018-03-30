@@ -66,7 +66,7 @@ public class Player extends Subject
         currentTransformation = transformation;
         
         //False cause I want all contents of player to be finished mutating and animating before overwriting.
-        changeState(PlayerState.TRANSFORMING,false);
+        changeState(PlayerState.TRANSFORMING,true);
      
         
     }

@@ -22,18 +22,20 @@ public class Animator extends Observer
     //etc. But that's up to you.
     Animation[] animations;
     
-    
+    int currentAnimPlaying = 0;
     public Animator(Subject animating){
         
         this.animating = animating;
         this.observe(animating);
         this.threadName = animating.toString() + "animator";    
         priority = 3;
+        animations = new Animation[5];
+        animations[0] = new Animation();    
     }
     
     public void run(){
         
-        System.out.println("Animating observing player");
+
                                     
         //Check state, run animation corresponding to the state.
         if (animating.getCurrentState() == PlayerState.TRANSFORMING){
@@ -43,9 +45,19 @@ public class Animator extends Observer
             animating = toAnime;
             
             //Then this should replace animations array with set of animations specific to anim. That or just replace the image within them, that's up to you.
+            
            
         }
         
+    }
+    
+    public void act(){
+        
+        if (animations[currentAnimPlaying].isDone()){
+            
+            //Update the state to now be in default mode, this should make it so player is takign in input again now too. Yup
+            animating.changeState(State.DEFAULT,false);
+        }
     }
     
 }

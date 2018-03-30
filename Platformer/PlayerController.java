@@ -11,6 +11,11 @@ public class PlayerController extends Observer
     Player player;
     boolean takingInput = true;
     
+    float absorbCD = 10.0f;
+    float timeTillAbsorb = 0;
+    float attackCD = 10.0f;
+    float timeTillAttack = 0;
+
     
     public PlayerController(Player player){
         
@@ -28,7 +33,7 @@ public class PlayerController extends Observer
             if (player.getCurrentState() == State.DAMAGED || 
                 player.getCurrentState() == PlayerState.TRANSFORMING){
                 
-                //Stop taking input for movement, attacking, etc.
+                //Stop taking input for movement, attacking, while transformation is happening, ie: animation still playing.
                 takingInput = false;
                 
                 if (player.getCurrentState() == PlayerState.TRANSFORMING){
@@ -43,12 +48,12 @@ public class PlayerController extends Observer
                     getWorld().removeObject(prevPlayer);
                     //then may need to reobserve but I'll test that.
                     System.out.println(player);
-                    //Problem here is that this is called from separate thread, and different thread i
-                    takingInput = true;
+
+
                 }
             }
             else{
-                System.out.println("Taking input again");
+
                 takingInput = true;
             }
             
@@ -78,9 +83,9 @@ public class PlayerController extends Observer
                 //Attack inputs
                 else if (Greenfoot.isKeyDown("e")){
             
-                    //Why is this twice, wtf.
-
-                    if (player.getCurrentState() != PlayerState.ABSORBING){
+                        
+                    
+                    if (player.getCurrentState() != PlayerState.ABSORBING && timeTillAbsorb <= 0){
              
                     //Cause already reacting to it, and for animation reaction
                     //It will continue looping through currently selected animation
@@ -90,20 +95,31 @@ public class PlayerController extends Observer
                     System.out.println("State is ABSORBING");
                     
                     getWorld().addObject(new AbsorptionAttack(player),player.getX(),player.getY());
+                    timeTillAbsorb = absorbCD;
                 
                     }
                 }   
-                else if (Greenfoot.isKeyDown("f")){
+                else if (Greenfoot.isKeyDown("f") && timeTillAttack <= 0){
                      player.attack();
+                     timeTillAttack = attackCD;
                 }
                 else if (player.getCurrentState() != PlayerState.DEFAULT){
                     player.changeState(PlayerState.DEFAULT,false);
+
                 }
+            }
+           
+            
+            if (timeTillAbsorb > 0){
+                timeTillAbsorb -= 0.1f;
+            }
+            
+            if (timeTillAttack > 0){
+                timeTillAttack -= 0.1f;
             }
     
     
     }
     
     
-   
 }
