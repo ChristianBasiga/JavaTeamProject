@@ -15,6 +15,7 @@ public class Level extends World
         //DOn't really need to store instance variables, but can change as required
         //And add observers to subjects.
         
+        //They all need to be re-observed since new instance of player, atleast I believe so
         GameManager gm = new GameManager();
       
         Player player = new Player();
@@ -28,17 +29,21 @@ public class Level extends World
         
         //Then each enemey will have it's on animator
         //There will be loop fir each enemy, constructing an Animator along with the enemy.
-        Enemy enemy = new Enemy();
+        Enemy enemy = new Enemy("fire");
         Animator enemyAnimator = new Animator(enemy);
 
         
         
         
+        addObject(player, getWidth() /2, getHeight() / 2);
+        addObject(playerAnimator,0,0);
+        
+        addObject(enemy,getWidth() /2, (getHeight() / 2) + 20 );
+        addObject(enemyAnimator,0,0);
         
         addObject(gm,0,0);
         addObject(pc,0,0);
-        addObject(player, getWidth() /2, getHeight() / 2);
-        addObject(enemy,getWidth() /2, (getHeight() / 2) + 20 );
+       
         
     }
     /**
@@ -49,5 +54,13 @@ public class Level extends World
     {    
         // Create a new world with 600x400 cells with a cell size of 1x1 pixels.
         super(600, 400, 1); 
+    }
+    
+    public void act(){
+        
+    }
+    
+    public void clearEnemies(){
+       
     }
 }

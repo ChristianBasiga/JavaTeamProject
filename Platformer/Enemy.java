@@ -15,11 +15,17 @@ public class Enemy extends Subject
     
     //How much damage this enemy does
     int damage;
+    String type;
     
-    public Enemy(){
+    public Enemy(String type){
         damage = 10;
+        this.type = type;
     }
     
+    
+    public String getType(){
+        return type;
+    }
     
     public int getDamage(){
         return damage;

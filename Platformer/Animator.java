@@ -27,16 +27,25 @@ public class Animator extends Observer
         
         this.animating = animating;
         this.observe(animating);
+        this.threadName = animating.toString() + "animator";    
+        priority = 3;
     }
     
     public void run(){
         
+        System.out.println("Animating observing player");
+                                    
         //Check state, run animation corresponding to the state.
+        if (animating.getCurrentState() == PlayerState.TRANSFORMING){
+            
+            //Only ever one player in world at time, and guaranteed to be atleast one.
+            Player toAnime = getWorld().getObjects(Player.class).get(0);
+            animating = toAnime;
+            
+            //Then this should replace animations array with set of animations specific to anim. That or just replace the image within them, that's up to you.
+           
+        }
         
     }
     
-    public void act() 
-    {
-        
-    }    
 }

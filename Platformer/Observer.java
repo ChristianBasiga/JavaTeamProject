@@ -11,7 +11,7 @@ public abstract class Observer extends Actor implements Runnable, Comparable<Obs
     
     //Separate thread for doing the reaction in.
     Thread t;
-    String threadName;
+    String threadName ="d";
     int priority;
     //Subject observing
     Subject subject;
@@ -45,7 +45,7 @@ public abstract class Observer extends Actor implements Runnable, Comparable<Obs
     }
     
     public int compareTo(Observer other){
-        return this.priority - other.getPriority();
+        return other.priority - this.getPriority();
     }
    
 }

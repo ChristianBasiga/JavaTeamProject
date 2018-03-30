@@ -8,6 +8,7 @@
 //There will be PlayerState, and EnemyState but base will contain the shared states
 public class State  
 {
+    public static final State DEFAULT = new State(0,"Default");
     public static final State DAMAGED = new State(1,"Damaged");
     public static final State DEAD = new State(2,"Dead");
     public static final State MOVING = new State(4,"Moving");

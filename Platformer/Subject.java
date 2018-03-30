@@ -25,7 +25,7 @@ public class Subject extends Actor
         
     }
     
-    public State GetCurrentState(){
+    public State getCurrentState(){
         
         return currentState;
     }
@@ -40,7 +40,7 @@ public class Subject extends Actor
     public void changeState(State state, boolean reactionThread){
         
         this.currentState = state;
-        //Notifies all the observers of the change.
+        //Notifies all the observers of the change. Prioritizing PlayerController, GameManager first to make sure  player done changing and game state still valid.
         for (Observer observer : observers){
             
             observer.react(reactionThread);

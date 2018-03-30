@@ -7,19 +7,28 @@ import greenfoot.*;  // (World, Actor, GreenfootImage, Greenfoot and MouseInfo)
  * @version (a version number or a date)
  */
 public class GameManager extends Observer
-{  	
-	public GameManager() {
-		threadName = "gm";
-		priority = 99;
-	}
-	
-	public void run() {
-		
-		if (subject != null) {
-			
-		   
-		}
-		
-	}
-	
+{   
+    public GameManager() {
+        //threadName = "gm";
+        priority = 2;
+    }
+    
+    public void run() {
+        
+        if (subject != null) {
+                
+           
+        }
+        
+    }
+    
+    
+    public void act(){
+        
+        if (Greenfoot.isKeyDown("t")){
+            //Yeah, figured. It's still pointing to same one
+            System.out.println(subject);
+        }
+    }
+    
 }
