@@ -84,7 +84,7 @@ public class PlayerController extends Observer
                 //reacts instead but fuck it for, otherwise this is just inside player jump
                 //method, exact same code, putting in player will just add extra overhead
                
-                if (player.getCurrentState() != State.JUMPING){
+                if (player.getCurrentState() != State.JUMPING && player.getCurrentState() != State.FALLING){
                     
                     if (Greenfoot.isKeyDown("space")){
                         player.jump();
@@ -100,6 +100,7 @@ public class PlayerController extends Observer
                     }                   
                     else if (Greenfoot.isKeyDown("r")){
                         player.revert();
+                        getWorld().addObject(new Enemy("sd"),player.getX(),player.getY());
                     }              
                     //Attacking
                     else if (Greenfoot.isKeyDown("f") && player.canAttack()){

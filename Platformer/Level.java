@@ -44,12 +44,16 @@ public class Level extends World
         addObject(gm,0,0);
         addObject(pc,0,0);
        
-        //Set up ground
+        //Set up ground 
         
-        for (int i = 0; i < 5; ++i){
-            addObject(new Ground(), (getWidth() / 2) + (i * 50), (getHeight() / 2) + 100);
+        addObject(new Ground(), getWidth() / 2, (getHeight() / 2) + 300);
+        
+       /* for (int i = -5; i < 0; ++i){
+            addObject(new Ground(), (getWidth() / 2) + (i * 50), (getHeight() / 2) - 100);
         }
-        
+       for (int i = 0; i < 5; ++i){
+            addObject(new Ground(), (getWidth() / 2) + (i * 50), (getHeight() / 2) + 100);
+        }*/
     }
     /**
      * Constructor for objects of class Level.

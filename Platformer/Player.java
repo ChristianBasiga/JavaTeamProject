@@ -1,5 +1,5 @@
 import greenfoot.*;  // (World, Actor, GreenfootImage, Greenfoot and MouseInfo)
-
+import java.util.*;
 /**
  * Write a description of class Player here.
  * 
@@ -37,7 +37,7 @@ public class Player extends Subject
         currentTransformation = "default";
         
         weight = 10;
-        jumpHeight = 50;
+        jumpHeight = 100;
         changeState(State.DEFAULT,false);
 
         onGround = false;
@@ -101,13 +101,19 @@ public class Player extends Subject
         } 
         
                   
+        managePlayerYPosition();
+                
+    }    
+    
+    private void managePlayerYPosition(){
         
-        if (getCurrentState().equals(State.JUMPING)){
-          
-            setLocation(getX(),getY() - 1);
-            System.out.printf("Jumping: Current Y: %d, jumpheight: %d, groundY: %d\n", getY(), jumpHeight, groundY);
 
-            if (getY() <= groundY - jumpHeight || isAtEdge()){
+        if (getCurrentState().equals(State.JUMPING)){
+
+            setLocation(getX(),getY() - 1);
+
+
+            if ((getY() <= groundY - jumpHeight) || isAtEdge()){
 
                 changeState(State.FALLING,false);
             }
@@ -115,22 +121,79 @@ public class Player extends Subject
         //This works perfectly
         else if (!isTouching(Ground.class)){
             
-            //This is threaded too but greenfoot handle this one.
-        //                System.out.printf(" Falling: Current Y: %d,, groundY: %d\n", getY(), groundY);
-            setLocation(getX(),getY() + 1);
+            if (!getCurrentState().equals(State.FALLING)){
+             changeState(State.FALLING, false);
+            }
+        }
+ 
+       //If touching ground and falling
+         if (isTouching(Ground.class) ){
+
+                            
+                List<Ground> grounds = getIntersectingObjects(Ground.class);
+           
+                for (Ground ground : grounds){
+                    
+                    //Need to check if within X and width  of ground.
+                    if (getX() >= ground.getX() || getX() + getImage().getWidth() <= ground.getX() + ground.getImage().getWidth()){
+                    //For landing on ground
+                        if (getCurrentState().equals(State.FALLING)){
+                        
+
+                      
+                            //I was adding instead of subtracting, but thought adding would be right, as I want the feet of player so down, and top of ground so up.
+                            //I feel like it's coincidence. Nope works in all cases, which doesn't make sense to me, well slightly off with differing images but that'll be fixed with our correct images.
+                            //But this code should be exact regardless, ass
+                        
+                            if (getY() - getImage().getHeight()   == ground.getY() - ground.getImage().getHeight()){
+                            
+                                System.out.println("hit ground");
+                                changeState(State.DEFAULT,false);
+                                break;
+                            }
+                        }
+                        //For being blocked by cieling / sides.
+                        else if (getCurrentState().equals(State.JUMPING)){
+                            //Start falling early if hit cieling//need to also make sure they are touching xs as well otherwise it will do on ground far away.
+                        
+                            if (getY() - 1 == ground.getY()){
+                            
+                                System.out.println("hit cieling");
+                                setLocation(getX(),getY() + 1);
+                                changeState(State.FALLING,false);
+                                break;
+                            }
+                        }
+                    }
+                    else{
+                        
+                        //Makes sure doesn't go through sides of grounds.
+
+                        //Need to specify rectangle if greater than
+                        if (getX() + (getImage().getWidth()) + speed == ground.getX()){
+                            setLocation(getX() - speed, getY());
+                                                    System.out.println("checking if touching walls");
+                                                    break;
+                        }
+                        else if (getX() - (getImage().getWidth() / 2) - speed == ground.getX() + (ground.getImage().getWidth() / 2)){
+                            setLocation(getX() + speed, getY());                        System.out.println("checking if touching walls");
+                                                    break;
+                        }
+
+                    }
+                    
+                }
+                
         }
         
-        else if (isTouching(Ground.class)){
-            
-           //Cause this may change as touch other platforms.
-           groundY = getY();
-           
-           //And no longer following so back to default state
-           changeState(State.DEFAULT,false);
+        if (getCurrentState().equals(State.FALLING)){
+                        setLocation(getX(),getY() + 1);
+                    }
+    }
+    
+     
+        
 
-        }
-                
-    }    
     
     public void move(int direction){
         
@@ -167,6 +230,7 @@ public class Player extends Subject
     public void jump(){
         
         if (isTouching(Ground.class)){
+            groundY= getY();
             changeState(State.JUMPING,false);
         }
     }
