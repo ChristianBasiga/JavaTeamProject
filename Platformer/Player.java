@@ -21,7 +21,7 @@ public class Player extends Subject
     int absorptionDistance = 20;
     
     //Basically fall speed.
-    double weight;
+    int weight;
     int jumpHeight;
     int groundY;
     
@@ -33,12 +33,14 @@ public class Player extends Subject
     
     boolean onGround;
     
+    //Blending states between movement and Jumping not working
+    
     Player(){   
         health = 15;
     //    changeState(State.DEFAULT,false);
         currentTransformation = "default";
         
-        weight = 10;
+        weight = 1;
         jumpHeight = 100;
         changeState(State.DEFAULT,false);
         
@@ -73,11 +75,11 @@ public class Player extends Subject
         return currentTransformation;
     }
     
-    public void setWeight(double weight){
+    public void setWeight(int weight){
         this.weight = weight;
     }
     
-    public double getWeight(){
+    public int getWeight(){
         return weight;
     }
     
@@ -147,88 +149,68 @@ public class Player extends Subject
                             
                 List<Ground> grounds = collider.getCollidingObjects(Ground.class);
                 if (grounds.size() == 0){
-                    
-                    //Then this means on edge of world, which I might won't happen often so prob wasting time since player always atleast on ground lol.
-                     changeState(State.DEFAULT,false);
-
+                    changeState(State.DEFAULT,false);
                 }
                 
                 for (Ground ground : grounds){
                     
                     
-                    if (collider.getX() >= ground.getX() ||collider.getX() + (collider.getWidth() + (collider.getWidth() / 2)) <= ground.getX() + ground.getImage().getWidth()){
-                    //For landing on ground
+                    //Making sure within bounds of a ground.
+                    if (collider.getX() >= ground.getX() || collider.getX() + (collider.getWidth() + (collider.getWidth() / 2)) <= ground.getX() + ground.getImage().getWidth()){
+                        
+                        //For if falls onto ground
                         if (getCurrentState().equals(State.FALLING)){
-                        
-
-                      
-                            //I was adding instead of subtracting, but thought adding would be right, as I want the feet of player so down, and top of ground so up.
-                            //I feel like it's coincidence. Nope works in all cases, which doesn't make sense to me, well slightly off with differing images but that'll be fixed with our correct images.
-                            //But this code should be exact regardless, ass
-                        
-                            if (collider.getY() + collider.getHeight()  + collider.getHeight() / 2 == ground.getY()){
                             
-                                System.out.println("hit ground");
+                            if (collider.getY() + collider.getHeight() + collider.getHeight() / 2 == ground.getY()){
+                                
                                 changeState(State.DEFAULT,false);
-                                break;
                             }
+                            
+                           
                         }
-                        //For being blocked by cieling / sides.
+                        
+                        //For if jumps into bottom edge of ground
                         else if (getCurrentState().equals(State.JUMPING)){
-
-                  
-                            if (collider.getY() == ground.getY() + ground.getImage().getHeight() / 2){
-             
-                                System.out.println("hit cieling");
-                                setLocation(getX(),getY() + 1);
-                                changeState(State.FALLING,false);
-                                break;
-                            }
+                                
+                                if (collider.getY() == ground.getY() + ground.getImage().getHeight() / 2){
+                                    setLocation(getX(),getY() + 1);
+                                    changeState(State.FALLING,false);
+                                }
+                                
                         }
-                         
                         
-                             //Makes sure doesn't go through sides of grounds.
-
+                    }
+                   
+                    //Checking if at either edge(left /right) of ground / wall
+                    if (collider.getX() - collider.getWidth() / 2 == ground.getX() + ground.getImage().getWidth() / 2){
+                        setLocation(getX() + speed, getY());
+                    }
+                    else if (collider.getX() + collider.getWidth() + collider.getWidth() / 2 == ground.getX()){
                         
-                        }
-                  
-                    //wait.. so origin of these objects are center though orgin of world is top left? that's what it seems like
-                       if (collider.getX() - collider.getWidth() / 2 == ground.getX()  + (ground.getImage().getWidth() / 2) ){
-                           setLocation(getX() + speed, getY());
-                           System.out.println("checking if touching walls1");
-                           break;
-                       }
-                       else if (collider.getX() + (collider.getWidth() + (collider.getWidth() / 2))  == ground.getX()){
-                           setLocation(getX() - speed, getY());                        
-                           System.out.println("checking if touching walls2");
-                           break;
-                       }
+                        setLocation(getX() - speed, getY());
+                    }
                 }
-                
-                
-        }
-        
-        if (getCurrentState().equals(State.FALLING)){
-                        setLocation(getX(),getY() + 1);
-        }
+            }
+              
+            if (getCurrentState().equals(State.FALLING)){
+                   setLocation(getX(),getY() + weight);
+            }
+    
     }
     
-     
-        
-
-    
-    public void move(int direction){
+   public void move(int direction){
         
         
         //Cause otherwise don't want animation to play for moving left or right if falling.
-        if (getCurrentState() == State.FALLING || getCurrentState() == State.JUMPING){
+        if (getCurrentState().equals(State.FALLING) || getCurrentState().equals(State.JUMPING)){
             
+            //Instead of blending state and always moving, I want to leave momentum of movement, I could create a smoothmover and these all also inherit but hmm.
             switch (direction){
                 case -1:
-                    getCurrentState().blendState(State.MOVINGLEFT);
+                  //  getCurrentState().blendState(State.MOVINGLEFT);
                     break;
                 case 1:
-                    getCurrentState().blendState(State.MOVINGRIGHT);
+                    //getCurrentState().blendState(State.MOVINGRIGHT);
                     break;
             }
             
@@ -243,10 +225,12 @@ public class Player extends Subject
                     changeState(State.MOVINGRIGHT,false);
                     break;
             }
+            
+           
         }
         
-        changeDirection(direction);
-        super.move(direction * speed);
+       changeDirection(direction);
+            super.move(direction * speed);
     }
     
     public void jump(){
@@ -276,14 +260,9 @@ public class Player extends Subject
     
     public void transform(String transformation){
         
-
-
         if (getCurrentState() == PlayerState.TRANSFORMING || currentTransformation == transformation){
             return;
-        }
-        
-
-        
+        } 
     
         currentTransformation = transformation;
         
@@ -298,7 +277,6 @@ public class Player extends Subject
     public void revert(){
       transform("default");
     }
-    
     
   
     //By default just rgular attack all transformations will override this attack method
@@ -321,9 +299,6 @@ public class Player extends Subject
     }
     
     public boolean canAttack(){
-      
-        
-      
         return timeTillAttack <= 0;
     }
 }

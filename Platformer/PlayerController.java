@@ -75,10 +75,12 @@ public class PlayerController extends Observer
                 if (Greenfoot.isKeyDown("a")){
                     
                     player.move(-1);
+                                            System.out.println("Curent state is " + player.getCurrentState());
                 }
                 else if (Greenfoot.isKeyDown("d")){
                     
                     player.move(1);
+                                        System.out.println("Curent state is " + player.getCurrentState());
                 }
                 //This is off one, where i chnage state of player and the subject
                 //reacts instead but fuck it for, otherwise this is just inside player jump
@@ -100,7 +102,7 @@ public class PlayerController extends Observer
                     }                   
                     else if (Greenfoot.isKeyDown("r")){
                         player.revert();
-                        System.out.println("Curent state is " + player.getCurrentState());
+
                     }              
                     //Attacking
                     else if (Greenfoot.isKeyDown("f") && player.canAttack()){
