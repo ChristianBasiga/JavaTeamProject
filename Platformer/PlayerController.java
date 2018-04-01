@@ -100,7 +100,7 @@ public class PlayerController extends Observer
                     }                   
                     else if (Greenfoot.isKeyDown("r")){
                         player.revert();
-                        getWorld().addObject(new Enemy("sd"),player.getX(),player.getY());
+                        System.out.println("Curent state is " + player.getCurrentState());
                     }              
                     //Attacking
                     else if (Greenfoot.isKeyDown("f") && player.canAttack()){

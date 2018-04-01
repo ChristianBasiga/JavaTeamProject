@@ -25,9 +25,11 @@ public class Player extends Subject
     int jumpHeight;
     int groundY;
     
+    Collider collider;
+    
     float attackCD = 10.0f;
     float timeTillAttack = 0;
-    int speed = 2;
+    int speed = 1;
     
     boolean onGround;
     
@@ -39,10 +41,22 @@ public class Player extends Subject
         weight = 10;
         jumpHeight = 100;
         changeState(State.DEFAULT,false);
-
+        
+        collider = new Collider(this);
         onGround = false;
     }
     
+    protected void addedToWorld(World world){
+        
+        if (collider.getWorld() == null)
+        {
+            getWorld().addObject(collider,getX(),getY());
+        
+        //These 2 lines are for testing, as box will be invisible later.
+        getWorld().removeObject(this);
+        collider.getWorld().addObject(this,collider.getX(),collider.getY());
+    }
+    }
    
     
     
@@ -76,7 +90,7 @@ public class Player extends Subject
         
         //Then being damaged
         //Bit more overhead, but enforces use of not using currentState directly.
-        if (isTouching(Enemy.class) && getCurrentState() != State.ATTACKING && getCurrentState() != PlayerState.TRANSFORMING
+        if (collider.isTouchingObject(Enemy.class) && getCurrentState() != State.ATTACKING && getCurrentState() != PlayerState.TRANSFORMING
         && getCurrentState() != PlayerState.ABSORBING && getCurrentState() != State.DAMAGED){
             
             changeState(State.DAMAGED,false);
@@ -106,36 +120,43 @@ public class Player extends Subject
     }    
     
     private void managePlayerYPosition(){
-        
-
+      
         if (getCurrentState().equals(State.JUMPING)){
 
             setLocation(getX(),getY() - 1);
 
 
-            if ((getY() <= groundY - jumpHeight) || isAtEdge()){
+            if ((collider.getY() <= groundY - jumpHeight) || collider.getY() == 0){
 
                 changeState(State.FALLING,false);
             }
         }
         //This works perfectly
-        else if (!isTouching(Ground.class)){
-            
+       
+        else if (!collider.isTouchingObject(Ground.class) && collider.getY() + 1 != getWorld().getHeight()){
+
             if (!getCurrentState().equals(State.FALLING)){
-             changeState(State.FALLING, false);
+
+                changeState(State.FALLING, false);
             }
         }
  
        //If touching ground and falling
-         if (isTouching(Ground.class) ){
+         if (collider.isTouchingObject(Ground.class) || collider.getY() + 1 == getWorld().getHeight() ){
 
                             
-                List<Ground> grounds = getIntersectingObjects(Ground.class);
-           
+                List<Ground> grounds = collider.getCollidingObjects(Ground.class);
+                if (grounds.size() == 0){
+                    
+                    //Then this means on edge of world, which I might won't happen often so prob wasting time since player always atleast on ground lol.
+                     changeState(State.DEFAULT,false);
+
+                }
+                
                 for (Ground ground : grounds){
                     
-                    //Need to check if within X and width  of ground.
-                    if (getX() >= ground.getX() || getX() + getImage().getWidth() <= ground.getX() + ground.getImage().getWidth()){
+                    
+                    if (collider.getX() >= ground.getX() ||collider.getX() + (collider.getWidth() + (collider.getWidth() / 2)) <= ground.getX() + ground.getImage().getWidth()){
                     //For landing on ground
                         if (getCurrentState().equals(State.FALLING)){
                         
@@ -145,7 +166,7 @@ public class Player extends Subject
                             //I feel like it's coincidence. Nope works in all cases, which doesn't make sense to me, well slightly off with differing images but that'll be fixed with our correct images.
                             //But this code should be exact regardless, ass
                         
-                            if (getY() - getImage().getHeight()   == ground.getY() - ground.getImage().getHeight()){
+                            if (collider.getY() + collider.getHeight()  + collider.getHeight() / 2 == ground.getY()){
                             
                                 System.out.println("hit ground");
                                 changeState(State.DEFAULT,false);
@@ -154,41 +175,42 @@ public class Player extends Subject
                         }
                         //For being blocked by cieling / sides.
                         else if (getCurrentState().equals(State.JUMPING)){
-                            //Start falling early if hit cieling//need to also make sure they are touching xs as well otherwise it will do on ground far away.
-                        
-                            if (getY() - 1 == ground.getY()){
-                            
+
+                  
+                            if (collider.getY() == ground.getY() + ground.getImage().getHeight() / 2){
+             
                                 System.out.println("hit cieling");
                                 setLocation(getX(),getY() + 1);
                                 changeState(State.FALLING,false);
                                 break;
                             }
                         }
-                    }
-                    else{
+                         
                         
-                        //Makes sure doesn't go through sides of grounds.
+                             //Makes sure doesn't go through sides of grounds.
 
-                        //Need to specify rectangle if greater than
-                        if (getX() + (getImage().getWidth()) + speed == ground.getX()){
-                            setLocation(getX() - speed, getY());
-                                                    System.out.println("checking if touching walls");
-                                                    break;
+                        
                         }
-                        else if (getX() - (getImage().getWidth() / 2) - speed == ground.getX() + (ground.getImage().getWidth() / 2)){
-                            setLocation(getX() + speed, getY());                        System.out.println("checking if touching walls");
-                                                    break;
-                        }
-
-                    }
-                    
+                  
+                    //wait.. so origin of these objects are center though orgin of world is top left? that's what it seems like
+                       if (collider.getX() - collider.getWidth() / 2 == ground.getX()  + (ground.getImage().getWidth() / 2) ){
+                           setLocation(getX() + speed, getY());
+                           System.out.println("checking if touching walls1");
+                           break;
+                       }
+                       else if (collider.getX() + (collider.getWidth() + (collider.getWidth() / 2))  == ground.getX()){
+                           setLocation(getX() - speed, getY());                        
+                           System.out.println("checking if touching walls2");
+                           break;
+                       }
                 }
+                
                 
         }
         
         if (getCurrentState().equals(State.FALLING)){
                         setLocation(getX(),getY() + 1);
-                    }
+        }
     }
     
      
@@ -229,7 +251,7 @@ public class Player extends Subject
     
     public void jump(){
         
-        if (isTouching(Ground.class)){
+        if (collider.isTouchingObject(Ground.class) || collider.getY() + 1 == getWorld().getHeight()){
             groundY= getY();
             changeState(State.JUMPING,false);
         }
