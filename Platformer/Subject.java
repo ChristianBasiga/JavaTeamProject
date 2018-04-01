@@ -45,17 +45,25 @@ public class Subject extends Actor
     //then animations start happening again. I'll work on way to prioritize
     //characterController as main observer, will have to make priority attribute and then
     //create priority queue.
-    public void changeState(State state, boolean reactionThread){
+    public void changeState(State state, boolean blend){
         
-        this.currentState = state;
+
+        if (blend){
+            currentState.blendState(state);
+        }
+        else{
+            currentState = state;
+        }
       
     //    System.out.printf("I have %d observers\n", observers.size());
         //Notifies all the observers of the change. Prioritizing PlayerController, GameManager first to make sure  player done changing and game state still valid.
         for (Observer observer : observers){
             
-            observer.react(reactionThread);
+            observer.react(false);
         }
     }
+    
+
     
     
 }

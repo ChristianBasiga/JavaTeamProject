@@ -8,7 +8,7 @@
 //There will be PlayerState, and EnemyState but base will contain the shared states
 public class State  
 {
-    public static final State DEFAULT = new State(0,"Default");
+    public static final State DEFAULT = new State(512,"Default");
     public static final State DAMAGED = new State(1,"Damaged");
     public static final State DEAD = new State(2,"Dead");
     public static final State ATTACKING = new State(4,"Attacking");
@@ -35,6 +35,13 @@ public class State
         this.id = id;
     }
     
+    public void turnOffState(State other){
+        
+      if ((id & other.id) > 0){
+        id =  id & ~other.id;
+      
+      }
+    }
     //might just say fuck it on bitwise, just move while jumping but don't set the state.
     public void blendState(State other){
         

@@ -31,6 +31,10 @@ public class Player extends Subject
     float timeTillAttack = 0;
     int speed = 1;
     
+    
+    int xMovement = 0;
+    int yMovement = 0;
+    
     boolean onGround;
     
     //Blending states between movement and Jumping not working
@@ -87,9 +91,10 @@ public class Player extends Subject
         return speed;
     }
    
+    //What I need to do is have one set location happening, and just have movement so it's more synchronous
     public void act() 
     {
-        
+        System.out.println("current state is " + getCurrentState());
         //Then being damaged
         //Bit more overhead, but enforces use of not using currentState directly.
         if (collider.isTouchingObject(Enemy.class) && getCurrentState() != State.ATTACKING && getCurrentState() != PlayerState.TRANSFORMING
@@ -116,6 +121,10 @@ public class Player extends Subject
                 timeTillAttack -= 0.1f;
         } 
         
+        if (!getCurrentState().equals(State.MOVINGRIGHT) && !getCurrentState().equals(State.MOVINGLEFT)){
+            //if no longer moving, then no x movement
+            xMovement = 0;
+        }
                   
         managePlayerYPosition();
                 
@@ -123,10 +132,14 @@ public class Player extends Subject
     
     private void managePlayerYPosition(){
       
+
         if (getCurrentState().equals(State.JUMPING)){
 
-            setLocation(getX(),getY() - 1);
 
+            yMovement = -weight;
+
+
+            //So the state is jumping, but not falling down.
 
             if ((collider.getY() <= groundY - jumpHeight) || collider.getY() == 0){
 
@@ -154,15 +167,26 @@ public class Player extends Subject
                 
                 for (Ground ground : grounds){
                     
-                    
+                  
+
+                    if (getCurrentState().equals(State.MOVINGLEFT) && (collider.getX() - collider.getWidth() / 2) == ground.getX() + ground.getImage().getWidth() / 2){
+                        setLocation(getX() + speed , getY());
+                    }
+                    //So this one works now, but above does not.
+                    else if (getCurrentState().equals(State.MOVINGRIGHT) && (collider.getX() + collider.getWidth() + collider.getWidth() / 2)  == ground.getX()){
+                        
+                        setLocation(getX() - speed , getY());
+                    }
                     //Making sure within bounds of a ground.
                     if (collider.getX() >= ground.getX() || collider.getX() + (collider.getWidth() + (collider.getWidth() / 2)) <= ground.getX() + ground.getImage().getWidth()){
                         
                         //For if falls onto ground
                         if (getCurrentState().equals(State.FALLING)){
                             
-                            if (collider.getY() + collider.getHeight() + collider.getHeight() / 2 == ground.getY()){
+                            if (collider.getY() + collider.getHeight() + collider.getHeight() / 2 >= ground.getY()){
                                 
+                                //What I need to do, is move changing these values when state is updated in PlayerController, and then set location through PlayerController
+                                yMovement = 0;
                                 changeState(State.DEFAULT,false);
                             }
                             
@@ -181,56 +205,42 @@ public class Player extends Subject
                         
                     }
                    
-                    //Checking if at either edge(left /right) of ground / wall
-                    if (collider.getX() - collider.getWidth() / 2 == ground.getX() + ground.getImage().getWidth() / 2){
-                        setLocation(getX() + speed, getY());
-                    }
-                    else if (collider.getX() + collider.getWidth() + collider.getWidth() / 2 == ground.getX()){
-                        
-                        setLocation(getX() - speed, getY());
-                    }
+                  
+               // }
+                 
                 }
             }
               
             if (getCurrentState().equals(State.FALLING)){
-                   setLocation(getX(),getY() + weight);
+                  yMovement = weight;
             }
+            
+            setLocation(getX() + xMovement, getY() + yMovement);
     
     }
     
    public void move(int direction){
         
-        
+        boolean blendMovement = false;
         //Cause otherwise don't want animation to play for moving left or right if falling.
-        if (getCurrentState().equals(State.FALLING) || getCurrentState().equals(State.JUMPING)){
+        blendMovement = (getCurrentState().equals(State.FALLING) || getCurrentState().equals(State.JUMPING));
+          
             
-            //Instead of blending state and always moving, I want to leave momentum of movement, I could create a smoothmover and these all also inherit but hmm.
-            switch (direction){
-                case -1:
-                  //  getCurrentState().blendState(State.MOVINGLEFT);
-                    break;
-                case 1:
-                    //getCurrentState().blendState(State.MOVINGRIGHT);
-                    break;
-            }
-            
+        switch (direction){
+               case -1:
+                   changeState(State.MOVINGLEFT,blendMovement);
+                   break;
+               case 1:
+                   changeState(State.MOVINGRIGHT,blendMovement);
+                   break;
         }
-        else{
-            
-            switch (direction){
-                case -1:
-                    changeState(State.MOVINGLEFT,false);
-                    break;
-                case 1:
-                    changeState(State.MOVINGRIGHT,false);
-                    break;
-            }
             
            
-        }
+        
         
        changeDirection(direction);
-            super.move(direction * speed);
+       xMovement = direction;
+     //  super.move(direction * speed);
     }
     
     public void jump(){

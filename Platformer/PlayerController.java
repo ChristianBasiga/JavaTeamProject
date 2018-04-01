@@ -69,24 +69,29 @@ public class PlayerController extends Observer
 
  
         
+        
             if (takingInput){
 
 
                 if (Greenfoot.isKeyDown("a")){
                     
                     player.move(-1);
-                                            System.out.println("Curent state is " + player.getCurrentState());
+
                 }
                 else if (Greenfoot.isKeyDown("d")){
                     
                     player.move(1);
-                                        System.out.println("Curent state is " + player.getCurrentState());
+
+                }
+                else{
+                    player.getCurrentState().turnOffState(State.MOVINGLEFT);
+                    player.getCurrentState().turnOffState(State.MOVINGRIGHT);
                 }
                 //This is off one, where i chnage state of player and the subject
                 //reacts instead but fuck it for, otherwise this is just inside player jump
                 //method, exact same code, putting in player will just add extra overhead
                
-                if (player.getCurrentState() != State.JUMPING && player.getCurrentState() != State.FALLING){
+                if (!player.getCurrentState().equals(State.JUMPING) && !player.getCurrentState().equals(State.FALLING)){
                     
                     if (Greenfoot.isKeyDown("space")){
                         player.jump();
@@ -117,7 +122,7 @@ public class PlayerController extends Observer
                         }
                     
                     //Otherwise if it's not default, then set to default.
-                    player.changeState(PlayerState.DEFAULT,false);
+                 //   player.changeState(PlayerState.DEFAULT,false);
 
                    }
                 }
