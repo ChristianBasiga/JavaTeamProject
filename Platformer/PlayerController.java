@@ -33,7 +33,7 @@ public class PlayerController extends Observer
     {
 
         //Reaction code to changes in state to subject go here
-        //Fucked up here.
+
             if (subject.getCurrentState() == State.DAMAGED || 
                 subject.getCurrentState() == PlayerState.TRANSFORMING){
                 
@@ -53,24 +53,16 @@ public class PlayerController extends Observer
                    
                     prevPlayer.copyObservers(newPlayer);   
                     
-                    getWorld().addObject(newPlayer,prevPlayer.getX(), prevPlayer.getY());
-                 
+                    getWorld().addObject(newPlayer,prevPlayer.getX(), prevPlayer.getY());                 
                     getWorld().removeObject(prevPlayer);                    
                     
-                    //So on true
-                    
-                    //then may need to reobserve but I'll test that.
                     System.out.println(player);
-                    
-                    //So after fire transformation, I take in input again.
                 }
             }
             else{
                 takingInput = true;
             }
             
-            
-           
     }    
     
     public void act(){
@@ -81,28 +73,29 @@ public class PlayerController extends Observer
 
 
                 if (Greenfoot.isKeyDown("a")){
-                    //This so animator reacts and flips sprite accordingly, I could instead just leave it at MOVING, and then just check direction too, and pro better but fuck it.
-                    playerMove(-1);
-                    if (subject.getCurrentState() != State.MOVINGLEFT){
-                        subject.changeState(State.MOVINGLEFT, false);
+                    
+                    if (player.getCurrentState() != State.MOVINGLEFT && player.getCurrentState() != PlayerState.FALLING){
+                        player.changeState(State.MOVINGLEFT, false);
                     }
 
                 }
                 else if (Greenfoot.isKeyDown("d")){
                     
-                    playerMove(1);
-                    if (subject.getCurrentState() != State.MOVINGRIGHT){
-                        subject.changeState(State.MOVINGRIGHT, false);
+                    
+                    if (player.getCurrentState() != State.MOVINGRIGHT && player.getCurrentState() != PlayerState.FALLING){
+                        player.changeState(State.MOVINGRIGHT, false);
                     }
                 }
+                //Because can jump and move at same time.
                 if (Greenfoot.isKeyDown("space")){
-                    subject.changeState(State.JUMPING,true);
+                    player.changeState(State.JUMPING,true);
                 }
+                
                 //Transformations.
-                if (Greenfoot.isKeyDown("e")){            
+                else if (Greenfoot.isKeyDown("e")){            
                     
-                    //Oh I see problem. Absorb cooldown needs to start ticking only after let go.
-                    if (subject.getCurrentState() != PlayerState.ABSORBING && subject.getCurrentState() != PlayerState.TRANSFORMING && timeTillAbsorb <= 0){
+
+                    if (player.getCurrentState() != PlayerState.ABSORBING && player.getCurrentState() != PlayerState.TRANSFORMING && timeTillAbsorb <= 0){
              
                            absorb();    
                     }
@@ -141,11 +134,7 @@ public class PlayerController extends Observer
           player.changeState(PlayerState.ABSORBING,false);          
           getWorld().addObject(new AbsorptionAttack(player), player.getX() + (80 * player.currentDirection()),player.getY());
     }
-    void playerMove(int direction){
-        player.changeDirection(direction);
-        player.move(direction * player.getSpeed());
-        
-    }
+   
 
     
 }

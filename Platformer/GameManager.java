@@ -8,6 +8,8 @@ import greenfoot.*;  // (World, Actor, GreenfootImage, Greenfoot and MouseInfo)
  */
 public class GameManager extends Observer
 {   
+    static final double GRAVITY = 9.81;
+    
     public GameManager() {
         //threadName = "gm";
         priority = 2;

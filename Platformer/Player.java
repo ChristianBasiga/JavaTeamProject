@@ -20,20 +20,54 @@ public class Player extends Subject
     int attackDistance = 5;
     int absorptionDistance = 20;
     
-   
+    //Basically fall speed.
+    double weight;
+    int jumpHeight;
+    int groundY;
+    
     float attackCD = 10.0f;
     float timeTillAttack = 0;
     int speed = 4;
+    
+    boolean onGround;
     
     Player(){   
         health = 15;
     //    changeState(State.DEFAULT,false);
         currentTransformation = "default";
+        
+        weight = 10;
+        jumpHeight = 200;
+        
+
+        onGround = false;
+    }
+    
+    protected void addedToWorld(World world){
+         
+        groundY = getY();
+    }
+    
+    
+    public boolean isOnGround(){
+        return onGround;
+    }
+    
+    public void setOnGround(boolean value){
+        onGround = value;
     }
     
     
     public String getCurrentTransformation(){
         return currentTransformation;
+    }
+    
+    public void setWeight(double weight){
+        this.weight = weight;
+    }
+    
+    public double getWeight(){
+        return weight;
     }
     
     public int getSpeed(){
@@ -64,12 +98,48 @@ public class Player extends Subject
             //K sthis isn't problem
             changeState(State.DEFAULT,false);
         }
-        
-      
             
         if (timeTillAttack > 0){
                 timeTillAttack -= 0.1f;
         } 
+        
+        
+        if (getCurrentState() == State.JUMPING){
+            
+            
+            setLocation(getX(),getY() - 1);
+            if (getY() == groundY + jumpHeight){
+                changeState(State.FALLING,true);
+            }
+        }
+        else if (isTouching(Ground.class)){
+            
+           onGround = true;
+           //Cause this may change as touch other platforms.
+           groundY = getY();
+           
+           //And no longer following so back to default state
+           changeState(State.DEFAULT,false);
+           System.out.println("on ground");
+        }
+        else if (!isTouching(Ground.class)){
+            
+            onGround = false;
+            
+            //This is threaded too but greenfoot handle this one.
+            setLocation(getX(),getY() + 1);
+           
+        }
+        
+        if (getCurrentState() == State.MOVINGLEFT){
+            move(-1);
+            changeDirection(-1);
+        }
+        else if (getCurrentState() == State.MOVINGRIGHT){
+            
+            move(1);
+            changeDirection(1);
+        }   
         
     }    
     

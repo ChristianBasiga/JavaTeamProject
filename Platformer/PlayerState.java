@@ -11,6 +11,7 @@ public class PlayerState extends State
    public static final PlayerState TRANSFORMING = new PlayerState(128,"Transforming");
    public static final PlayerState ABSORBING = new PlayerState(254,"Absorbing");
 
+
    
    public PlayerState(int id, String name){
        super(id,name);

@@ -15,6 +15,7 @@ public class State
     public static final State MOVINGLEFT = new State(8,"Moving");
     public static final State MOVINGRIGHT = new State(16,"Moving");
     public static final State JUMPING = new State(32,"Jumping");
+    public static final State FALLING = new State(64,"Falling");
     //Cannot be final since then cannot do bitwise.
     private int id;
     private String name;
@@ -34,6 +35,7 @@ public class State
         this.id = id;
     }
     
+    //might just say fuck it on bitwise, just move while jumping but don't set the state.
     public void assignState(State other){
         
         id |= other.id;
