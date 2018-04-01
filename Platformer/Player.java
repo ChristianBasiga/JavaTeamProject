@@ -27,7 +27,7 @@ public class Player extends Subject
     
     float attackCD = 10.0f;
     float timeTillAttack = 0;
-    int speed = 4;
+    int speed = 2;
     
     boolean onGround;
     
@@ -37,16 +37,13 @@ public class Player extends Subject
         currentTransformation = "default";
         
         weight = 10;
-        jumpHeight = 200;
-        
+        jumpHeight = 50;
+        changeState(State.DEFAULT,false);
 
         onGround = false;
     }
     
-    protected void addedToWorld(World world){
-         
-        groundY = getY();
-    }
+   
     
     
     public boolean isOnGround(){
@@ -103,45 +100,76 @@ public class Player extends Subject
                 timeTillAttack -= 0.1f;
         } 
         
+                  
         
-        if (getCurrentState() == State.JUMPING){
-            
-            
+        if (getCurrentState().equals(State.JUMPING)){
+          
             setLocation(getX(),getY() - 1);
-            if (getY() == groundY + jumpHeight){
-                changeState(State.FALLING,true);
+            System.out.printf("Jumping: Current Y: %d, jumpheight: %d, groundY: %d\n", getY(), jumpHeight, groundY);
+
+            if (getY() <= groundY - jumpHeight || isAtEdge()){
+
+                changeState(State.FALLING,false);
             }
         }
+        //This works perfectly
+        else if (!isTouching(Ground.class)){
+            
+            //This is threaded too but greenfoot handle this one.
+        //                System.out.printf(" Falling: Current Y: %d,, groundY: %d\n", getY(), groundY);
+            setLocation(getX(),getY() + 1);
+        }
+        
         else if (isTouching(Ground.class)){
             
-           onGround = true;
            //Cause this may change as touch other platforms.
            groundY = getY();
            
            //And no longer following so back to default state
            changeState(State.DEFAULT,false);
-           System.out.println("on ground");
+
         }
-        else if (!isTouching(Ground.class)){
-            
-            onGround = false;
-            
-            //This is threaded too but greenfoot handle this one.
-            setLocation(getX(),getY() + 1);
-           
-        }
-        
-        if (getCurrentState() == State.MOVINGLEFT){
-            move(-1);
-            changeDirection(-1);
-        }
-        else if (getCurrentState() == State.MOVINGRIGHT){
-            
-            move(1);
-            changeDirection(1);
-        }   
-        
+                
     }    
+    
+    public void move(int direction){
+        
+        
+        //Cause otherwise don't want animation to play for moving left or right if falling.
+        if (getCurrentState() == State.FALLING || getCurrentState() == State.JUMPING){
+            
+            switch (direction){
+                case -1:
+                    getCurrentState().blendState(State.MOVINGLEFT);
+                    break;
+                case 1:
+                    getCurrentState().blendState(State.MOVINGRIGHT);
+                    break;
+            }
+            
+        }
+        else{
+            
+            switch (direction){
+                case -1:
+                    changeState(State.MOVINGLEFT,false);
+                    break;
+                case 1:
+                    changeState(State.MOVINGRIGHT,false);
+                    break;
+            }
+        }
+        
+        changeDirection(direction);
+        super.move(direction * speed);
+    }
+    
+    public void jump(){
+        
+        if (isTouching(Ground.class)){
+            changeState(State.JUMPING,false);
+        }
+    }
     
     public int currentDirection(){
         return directionFacing;
@@ -176,7 +204,7 @@ public class Player extends Subject
         //Okay so transforming is where messed up.
         
         //Can no longer take in input.
-        changeState(PlayerState.TRANSFORMING, true);
+        changeState(PlayerState.TRANSFORMING, false);
                      System.out.println("Current State is" + getCurrentState());    
         
     }
@@ -199,6 +227,11 @@ public class Player extends Subject
         timeTillAttack = attackCD;
         //Instead of changing state, it will blendstate so blending so that it's state can be both attacking and running, but for now just changeState is fine.
         changeState(State.ATTACKING,false);
+    }
+    
+    public void absorb(){
+          changeState(PlayerState.ABSORBING,false);          
+          getWorld().addObject(new AbsorptionAttack(this), getX() + (80 * directionFacing),getY());
     }
     
     public boolean canAttack(){

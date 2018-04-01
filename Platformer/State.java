@@ -36,8 +36,9 @@ public class State
     }
     
     //might just say fuck it on bitwise, just move while jumping but don't set the state.
-    public void assignState(State other){
+    public void blendState(State other){
         
+        if (other.equals(this)) return;
         id |= other.id;
         
         if (name.equals("")){

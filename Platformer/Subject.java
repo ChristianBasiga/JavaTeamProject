@@ -48,6 +48,8 @@ public class Subject extends Actor
     public void changeState(State state, boolean reactionThread){
         
         this.currentState = state;
+        if (state != State.DEFAULT)
+            System.out.println("Current state: " + state);
     //    System.out.printf("I have %d observers\n", observers.size());
         //Notifies all the observers of the change. Prioritizing PlayerController, GameManager first to make sure  player done changing and game state still valid.
         for (Observer observer : observers){

@@ -74,51 +74,49 @@ public class PlayerController extends Observer
 
                 if (Greenfoot.isKeyDown("a")){
                     
-                    if (player.getCurrentState() != State.MOVINGLEFT && player.getCurrentState() != PlayerState.FALLING){
-                        player.changeState(State.MOVINGLEFT, false);
-                    }
-
+                    player.move(-1);
                 }
                 else if (Greenfoot.isKeyDown("d")){
                     
-                    
-                    if (player.getCurrentState() != State.MOVINGRIGHT && player.getCurrentState() != PlayerState.FALLING){
-                        player.changeState(State.MOVINGRIGHT, false);
-                    }
+                    player.move(1);
                 }
-                //Because can jump and move at same time.
-                if (Greenfoot.isKeyDown("space")){
-                    player.changeState(State.JUMPING,true);
-                }
-                
-                //Transformations.
-                else if (Greenfoot.isKeyDown("e")){            
+                //This is off one, where i chnage state of player and the subject
+                //reacts instead but fuck it for, otherwise this is just inside player jump
+                //method, exact same code, putting in player will just add extra overhead
+               
+                if (player.getCurrentState() != State.JUMPING){
                     
-
-                    if (player.getCurrentState() != PlayerState.ABSORBING && player.getCurrentState() != PlayerState.TRANSFORMING && timeTillAbsorb <= 0){
-             
-                           absorb();    
-                    }
+                    if (Greenfoot.isKeyDown("space")){
+                        player.jump();
+                    }               
+                    //Transformations.
+                    else if (Greenfoot.isKeyDown("e")){            
                    
-                }                   
-                else if (Greenfoot.isKeyDown("r")){
-                    player.revert();
-                }              
-                //Attacking
-                else if (Greenfoot.isKeyDown("f") && player.canAttack()){
-                     player.attack();             
-                }
-                
-                else if (player.getCurrentState() != PlayerState.DEFAULT){
-                    
-                    //If it was absorbing, then start ticking the cooldown
-                    if (player.getCurrentState() == PlayerState.ABSORBING){
-                        timeTillAbsorb = absorbCD;      
+                        if (player.getCurrentState() != PlayerState.ABSORBING && player.getCurrentState() != PlayerState.TRANSFORMING && timeTillAbsorb <= 0){
+             
+                            player.absorb();    
+                        }
+                   
+                    }                   
+                    else if (Greenfoot.isKeyDown("r")){
+                        player.revert();
+                    }              
+                    //Attacking
+                    else if (Greenfoot.isKeyDown("f") && player.canAttack()){
+                        player.attack();             
                     }
+                
+                    else if (player.getCurrentState() != PlayerState.DEFAULT){
+                    
+                        //If it was absorbing, then start ticking the cooldown
+                        if (player.getCurrentState() == PlayerState.ABSORBING){
+                            timeTillAbsorb = absorbCD;      
+                        }
                     
                     //Otherwise if it's not default, then set to default.
                     player.changeState(PlayerState.DEFAULT,false);
 
+                   }
                 }
             }
             
@@ -129,12 +127,6 @@ public class PlayerController extends Observer
         }
     }
     
-    public void absorb(){
-        
-          player.changeState(PlayerState.ABSORBING,false);          
-          getWorld().addObject(new AbsorptionAttack(player), player.getX() + (80 * player.currentDirection()),player.getY());
-    }
-   
 
     
 }
