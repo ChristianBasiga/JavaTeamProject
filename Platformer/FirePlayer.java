@@ -14,7 +14,8 @@ public class FirePlayer extends Player
      */
     
     public FirePlayer(){
-        changeState(State.DEFAULT,false);
+       // changeState(State.DEFAULT,false);
+        currentTransformation = "fire";
     }
     
     public void act() 

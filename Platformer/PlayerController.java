@@ -8,52 +8,64 @@ import greenfoot.*;  // (World, Actor, GreenfootImage, Greenfoot and MouseInfo)
  */
 public class PlayerController extends Observer
 {
-    Player player;
+
     boolean takingInput = true;
-    
     float absorbCD = 10.0f;
     float timeTillAbsorb = 0;
-    float attackCD = 10.0f;
-    float timeTillAttack = 0;
-
+    Player player;
     
-    public PlayerController(Player player){
+    public PlayerController(Player subject){
         
         threadName = "pc";
-        this.player = player;
-        this.observe(player);
+       
+        this.observe(subject);
         priority = 1;
 
+    }
+    
+    public void observe(Subject subject){
+        
+        super.observe(subject);
+        player = (Player)subject;
     }
 
     public void run() 
     {
 
-        //Reaction code to changes in state to player go here
-            if (player.getCurrentState() == State.DAMAGED || 
-                player.getCurrentState() == PlayerState.TRANSFORMING){
+        //Reaction code to changes in state to subject go here
+        //Fucked up here.
+            if (subject.getCurrentState() == State.DAMAGED || 
+                subject.getCurrentState() == PlayerState.TRANSFORMING){
                 
                 //Stop taking input for movement, attacking, while transformation is happening, ie: animation still playing.
                 takingInput = false;
-                
-                if (player.getCurrentState() == PlayerState.TRANSFORMING){
+              
+                if (subject.getCurrentState() == PlayerState.TRANSFORMING){
                     
                     
-                    //Changes player to Player
+                    System.out.println("Transforming");
+                    //Changes subject to Player
                     //I may need to reset what others are observing
                     Player prevPlayer = player;
-                    player = PlayerFactory.produce(player.getCurrentTransformation());
-                    player.setHealth(prevPlayer.getHealth());
-                    getWorld().addObject(player,prevPlayer.getX(), prevPlayer.getY());
-                    getWorld().removeObject(prevPlayer);
+                    Player newPlayer = PlayerFactory.produce(prevPlayer.getCurrentTransformation());
+                    
+                    newPlayer.setHealth(prevPlayer.getHealth());
+                   
+                    prevPlayer.copyObservers(newPlayer);   
+                    
+                    getWorld().addObject(newPlayer,prevPlayer.getX(), prevPlayer.getY());
+                 
+                    getWorld().removeObject(prevPlayer);                    
+                    
+                    //So on true
+                    
                     //then may need to reobserve but I'll test that.
                     System.out.println(player);
-
-
+                    
+                    //So after fire transformation, I take in input again.
                 }
             }
             else{
-
                 takingInput = true;
             }
             
@@ -67,59 +79,73 @@ public class PlayerController extends Observer
         
             if (takingInput){
 
+
                 if (Greenfoot.isKeyDown("a")){
-                    System.out.println("Current ealth: " + player.getHealth()); 
-                }
-                else if (Greenfoot.isKeyDown("w")){
-                    
-                }
-                else if (Greenfoot.isKeyDown("s")){
-                    
+                    //This so animator reacts and flips sprite accordingly, I could instead just leave it at MOVING, and then just check direction too, and pro better but fuck it.
+                    playerMove(-1);
+                    if (subject.getCurrentState() != State.MOVINGLEFT){
+                        subject.changeState(State.MOVINGLEFT, false);
+                    }
+
                 }
                 else if (Greenfoot.isKeyDown("d")){
                     
-                }
-                
-                //Attack inputs
-                else if (Greenfoot.isKeyDown("e")){
-            
-                        
-                    
-                    if (player.getCurrentState() != PlayerState.ABSORBING && timeTillAbsorb <= 0){
-             
-                    //Cause already reacting to it, and for animation reaction
-                    //It will continue looping through currently selected animation
-                    //So no resaon toset it again
-                    player.changeState(PlayerState.ABSORBING,false);//This makes sense to be in separate thread, but problem still lies that spawning the absorption attack twice
-                    //but this did fix the input probl
-                    System.out.println("State is ABSORBING");
-                    
-                    getWorld().addObject(new AbsorptionAttack(player),player.getX(),player.getY());
-                    timeTillAbsorb = absorbCD;
-                
+                    playerMove(1);
+                    if (subject.getCurrentState() != State.MOVINGRIGHT){
+                        subject.changeState(State.MOVINGRIGHT, false);
                     }
-                }   
-                else if (Greenfoot.isKeyDown("f") && timeTillAttack <= 0){
-                     player.attack();
-                     timeTillAttack = attackCD;
                 }
+                if (Greenfoot.isKeyDown("space")){
+                    subject.changeState(State.JUMPING,true);
+                }
+                //Transformations.
+                if (Greenfoot.isKeyDown("e")){            
+                    
+                    //Oh I see problem. Absorb cooldown needs to start ticking only after let go.
+                    if (subject.getCurrentState() != PlayerState.ABSORBING && subject.getCurrentState() != PlayerState.TRANSFORMING && timeTillAbsorb <= 0){
+             
+                           absorb();    
+                    }
+                   
+                }                   
+                else if (Greenfoot.isKeyDown("r")){
+                    player.revert();
+                }              
+                //Attacking
+                else if (Greenfoot.isKeyDown("f") && player.canAttack()){
+                     player.attack();             
+                }
+                
                 else if (player.getCurrentState() != PlayerState.DEFAULT){
+                    
+                    //If it was absorbing, then start ticking the cooldown
+                    if (player.getCurrentState() == PlayerState.ABSORBING){
+                        timeTillAbsorb = absorbCD;      
+                    }
+                    
+                    //Otherwise if it's not default, then set to default.
                     player.changeState(PlayerState.DEFAULT,false);
 
                 }
             }
-           
             
-            if (timeTillAbsorb > 0){
+        
+
+        if (timeTillAbsorb > 0){
                 timeTillAbsorb -= 0.1f;
-            }
-            
-            if (timeTillAttack > 0){
-                timeTillAttack -= 0.1f;
-            }
-    
-    
+        }
     }
     
+    public void absorb(){
+        
+          player.changeState(PlayerState.ABSORBING,false);          
+          getWorld().addObject(new AbsorptionAttack(player), player.getX() + (80 * player.currentDirection()),player.getY());
+    }
+    void playerMove(int direction){
+        player.changeDirection(direction);
+        player.move(direction * player.getSpeed());
+        
+    }
+
     
 }

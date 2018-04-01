@@ -38,7 +38,7 @@ public class Level extends World
         addObject(player, getWidth() /2, getHeight() / 2);
         addObject(playerAnimator,0,0);
         
-        addObject(enemy,getWidth() /2, (getHeight() / 2) + 20 );
+        addObject(enemy, (getWidth() /2) + 300, (getHeight() / 2) );
         addObject(enemyAnimator,0,0);
         
         addObject(gm,0,0);

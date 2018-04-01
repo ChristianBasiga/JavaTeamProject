@@ -11,12 +11,20 @@ public class Subject extends Actor
     
     Queue<Observer> observers;
     //Private so that derived classes do not change directly and have to use changeState
-    protected State currentState;
+    private State currentState;
     
     public Subject(){
         
         observers = new PriorityQueue<Observer>();
         
+    }
+    
+    public void copyObservers(Subject subject){
+        
+        for (Observer observer : observers){
+            
+            observer.observe(subject);
+        }
     }
     
     public void addObserver(Observer observer){
@@ -40,6 +48,7 @@ public class Subject extends Actor
     public void changeState(State state, boolean reactionThread){
         
         this.currentState = state;
+    //    System.out.printf("I have %d observers\n", observers.size());
         //Notifies all the observers of the change. Prioritizing PlayerController, GameManager first to make sure  player done changing and game state still valid.
         for (Observer observer : observers){
             

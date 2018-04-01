@@ -33,6 +33,14 @@ public class Animator extends Observer
         animations[0] = new Animation();    
     }
     
+    //Will just override observe to call base and also re-assign animating
+    
+    public void observe(Subject subject){
+        
+        super.observe(subject);
+        animating = subject;
+    }
+    
     public void run(){
         
 
@@ -55,8 +63,10 @@ public class Animator extends Observer
         
         if (animations[currentAnimPlaying].isDone()){
             
-            //Update the state to now be in default mode, this should make it so player is takign in input again now too. Yup
-            animating.changeState(State.DEFAULT,false);
+
+            if (animating.getCurrentState() != State.DEFAULT){
+                animating.changeState(State.DEFAULT,false);
+            }
         }
     }
     

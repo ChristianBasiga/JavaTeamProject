@@ -11,9 +11,10 @@ public class State
     public static final State DEFAULT = new State(0,"Default");
     public static final State DAMAGED = new State(1,"Damaged");
     public static final State DEAD = new State(2,"Dead");
-    public static final State MOVING = new State(4,"Moving");
-    public static final State ATTACKING = new State(8,"Attacking");
-    
+    public static final State ATTACKING = new State(4,"Attacking");
+    public static final State MOVINGLEFT = new State(8,"Moving");
+    public static final State MOVINGRIGHT = new State(16,"Moving");
+    public static final State JUMPING = new State(32,"Jumping");
     //Cannot be final since then cannot do bitwise.
     private int id;
     private String name;
@@ -49,6 +50,10 @@ public class State
         
         //If matches flag then this state is also in that state.
         return (id & other.id) > 0? true : false;
+    }
+    
+    public String toString(){
+        return name;
     }
     
 }

@@ -32,11 +32,13 @@ public class AbsorptionAttack extends Actor
           //Change type name later on as needed
           if (enemyAbsorbing.getType() == "fire"){
               System.out.println("Absorbing fire enemy");
+              //Okay so this happens.
               emitter.transform("fire");
           }
         
       }
       else if (emitter.getCurrentState() != PlayerState.ABSORBING){
+          
           //Then garbage colection get rid of this cause only world has pointer to it right now.
           getWorld().removeObject(this);
           
