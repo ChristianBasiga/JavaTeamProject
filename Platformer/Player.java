@@ -43,6 +43,8 @@ public class Player extends Subject
     //Blending states between movement and Jumping not working
     
     public Player(){   
+        
+        
         health = 15;
     //    changeState(State.DEFAULT,false);
         currentTransformation = "default";
