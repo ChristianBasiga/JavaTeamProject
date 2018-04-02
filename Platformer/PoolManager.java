@@ -36,10 +36,7 @@ public class PoolManager
             return obj;
         }
         
-        //Makes sure the reusable object will be put back into the pool for reuse later.
-        obj.setOnDeath(() -> {
-            pools.get(id).add(obj);}
-            );
+       
             
         pools.get(id).remove();
         

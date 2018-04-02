@@ -10,24 +10,14 @@ import greenfoot.*;  // (World, Actor, GreenfootImage, Greenfoot and MouseInfo)
 import java.util.*;
 import java.lang.Exception.*;
 
-public class Reusable extends Actor implements Cloneable
+public class Reusable extends Actor
 {
-    Runnable onDeath;
-    //Pool will assign to onDeath lambda to go back into pool
-   public void setOnDeath(Runnable toRun){
-       this.onDeath = toRun;
-   }
+    //It's okay if public, can only add to it so no risk of losing added events.
+    public EventNotifier doneUsing;
    
-   public void die(){
-       onDeath.run();
-   }
-    
-    //Need to actually override every place that derves reusable.
-    //So enemy needs to implement clone to return new Enemy(), etc.
-    public Object clone() throws CloneNotSupportedException{
-        
-        return new Reusable();
+
+    public Reusable(){
+        doneUsing = new EventNotifier();
     }
-    
-    
+   
 }
