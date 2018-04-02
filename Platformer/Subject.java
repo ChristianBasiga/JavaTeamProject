@@ -47,6 +47,10 @@ public class Subject extends Actor
     //create priority queue.
     public void changeState(State state, boolean blend){
         
+        if (currentState != null && currentState.equals(state)) {
+         //   System.out.println("Already in this state");
+            return;
+        }
 
         if (blend){
             currentState.blendState(state);
@@ -60,10 +64,7 @@ public class Subject extends Actor
         for (Observer observer : observers){
             
             observer.react(false);
+            
         }
     }
-    
-
-    
-    
 }

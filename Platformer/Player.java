@@ -19,9 +19,11 @@ public class Player extends Subject
     //Since melee not much.
     int attackDistance = 5;
     int absorptionDistance = 20;
+  
     
     //Basically fall speed.
-    int weight;
+    int verticalVelocity;
+    int acceleration = 1;
     int jumpHeight;
     int groundY;
     
@@ -29,29 +31,37 @@ public class Player extends Subject
     
     float attackCD = 10.0f;
     float timeTillAttack = 0;
-    int speed = 1;
+    
+    int maxSpeed = 5;
+    int speed = 0;
     
     
-    int xMovement = 0;
-    int yMovement = 0;
+    
+
     
     boolean onGround;
     
     //Blending states between movement and Jumping not working
     
-    Player(){   
+    public Player(){   
+        
+        
         health = 15;
     //    changeState(State.DEFAULT,false);
         currentTransformation = "default";
         
-        weight = 1;
-        jumpHeight = 100;
+      
+
+        jumpHeight = 15;
+        verticalVelocity = jumpHeight;
         changeState(State.DEFAULT,false);
         
         collider = new Collider(this);
         onGround = false;
     }
-    
+    public void setSpeed(int speed){
+        this.speed = speed;
+    }
     protected void addedToWorld(World world){
         
         if (collider.getWorld() == null)
@@ -61,42 +71,27 @@ public class Player extends Subject
         //These 2 lines are for testing, as box will be invisible later.
         getWorld().removeObject(this);
         collider.getWorld().addObject(this,collider.getX(),collider.getY());
-    }
+        
+                changeState(State.FALLING, false);
+        
+       }
+
+    
     }
    
-    
-    
-    public boolean isOnGround(){
-        return onGround;
-    }
-    
-    public void setOnGround(boolean value){
-        onGround = value;
-    }
+  
     
     
     public String getCurrentTransformation(){
         return currentTransformation;
     }
     
-    public void setWeight(int weight){
-        this.weight = weight;
-    }
-    
-    public int getWeight(){
-        return weight;
-    }
-    
-    public int getSpeed(){
-        return speed;
-    }
+  
    
     //What I need to do is have one set location happening, and just have movement so it's more synchronous
     public void act() 
     {
-        System.out.println("current state is " + getCurrentState());
-        //Then being damaged
-        //Bit more overhead, but enforces use of not using currentState directly.
+       
         if (collider.isTouchingObject(Enemy.class) && getCurrentState() != State.ATTACKING && getCurrentState() != PlayerState.TRANSFORMING
         && getCurrentState() != PlayerState.ABSORBING && getCurrentState() != State.DAMAGED){
             
@@ -121,103 +116,46 @@ public class Player extends Subject
                 timeTillAttack -= 0.1f;
         } 
         
-        if (!getCurrentState().equals(State.MOVINGRIGHT) && !getCurrentState().equals(State.MOVINGLEFT)){
-            //if no longer moving, then no x movement
-            xMovement = 0;
-        }
-                  
+       
+     
+        
         managePlayerYPosition();
                 
     }    
     
     private void managePlayerYPosition(){
       
+        
 
-        if (getCurrentState().equals(State.JUMPING)){
-
-
-            yMovement = -weight;
-
-
-            //So the state is jumping, but not falling down.
-
-            if ((collider.getY() <= groundY - jumpHeight) || collider.getY() == 0){
-
-                changeState(State.FALLING,false);
-            }
-        }
-        //This works perfectly
-       
-        else if (!collider.isTouchingObject(Ground.class) && collider.getY() + 1 != getWorld().getHeight()){
-
-            if (!getCurrentState().equals(State.FALLING)){
-
-                changeState(State.FALLING, false);
-            }
-        }
- 
-       //If touching ground and falling
-         if (collider.isTouchingObject(Ground.class) || collider.getY() + 1 == getWorld().getHeight() ){
-
-                            
-                List<Ground> grounds = collider.getCollidingObjects(Ground.class);
-                if (grounds.size() == 0){
-                    changeState(State.DEFAULT,false);
-                }
-                
-                for (Ground ground : grounds){
-                    
-                  
-
-                    if (getCurrentState().equals(State.MOVINGLEFT) && (collider.getX() - collider.getWidth() / 2) == ground.getX() + ground.getImage().getWidth() / 2){
-                        setLocation(getX() + speed , getY());
-                    }
-                    //So this one works now, but above does not.
-                    else if (getCurrentState().equals(State.MOVINGRIGHT) && (collider.getX() + collider.getWidth() + collider.getWidth() / 2)  == ground.getX()){
-                        
-                        setLocation(getX() - speed , getY());
-                    }
-                    //Making sure within bounds of a ground.
-                    if (collider.getX() >= ground.getX() || collider.getX() + (collider.getWidth() + (collider.getWidth() / 2)) <= ground.getX() + ground.getImage().getWidth()){
-                        
-                        //For if falls onto ground
-                        if (getCurrentState().equals(State.FALLING)){
-                            
-                            if (collider.getY() + collider.getHeight() + collider.getHeight() / 2 >= ground.getY()){
-                                
-                                //What I need to do, is move changing these values when state is updated in PlayerController, and then set location through PlayerController
-                                yMovement = 0;
-                                changeState(State.DEFAULT,false);
-                            }
-                            
-                           
-                        }
-                        
-                        //For if jumps into bottom edge of ground
-                        else if (getCurrentState().equals(State.JUMPING)){
-                                
-                                if (collider.getY() == ground.getY() + ground.getImage().getHeight() / 2){
-                                    setLocation(getX(),getY() + 1);
-                                    changeState(State.FALLING,false);
-                                }
-                                
-                        }
-                        
-                    }
-                   
-                  
-               // }
-                 
-                }
-            }
-              
-            if (getCurrentState().equals(State.FALLING)){
-                  yMovement = weight;
-            }
+        setLocation(getX()/* + (speed * directionFacing)*/, getY() + verticalVelocity);           
+        
+        
+        //Either when done jumping, aka when verticalVelocity is jumpHeight again.
+        //Otherwise when done falling, aka hit ground, and then this will change
+        if ((getCurrentState().equals(State.JUMPING) || getCurrentState().equals(State.FALLING)) && verticalVelocity <= jumpHeight){
             
-            setLocation(getX() + xMovement, getY() + yMovement);
-    
-    }
+           verticalVelocity += acceleration;
+           
+           //Then this is critical point and switches directions
+           if (verticalVelocity == 0){
+               changeState(State.FALLING,false);
+           }
+        }
+        else if (!getCurrentState().equals(State.JUMPING) && !collider.isTouchingObject(Ground.class)){
+            
+            //then go bakc to falling.
+            verticalVelocity = 0;
+            changeState(State.FALLING,false);
+        }
+        
+        checkWalls(); 
+                        
+        checkFloorAndCieling();
+            
+            
+   
+        }
+   
     
    public void move(int direction){
         
@@ -239,15 +177,96 @@ public class Player extends Subject
         
         
        changeDirection(direction);
-       xMovement = direction;
+       speed = 1;
+       setLocation(getX() + direction * speed, getY());
      //  super.move(direction * speed);
+    }
+    
+    public void checkFloorAndCieling(){
+        
+
+         if (collider.isTouchingObject(Ground.class) || collider.getY() + 1 == getWorld().getHeight() ){
+
+                        
+             
+                List<Ground> grounds = collider.getCollidingObjects(Ground.class);
+                if (grounds.size() == 0){
+                    
+                    speed = 0;
+                    
+                    //no longer on ground, so need to keep falling
+                    changeState(State.DEFAULT,false);
+                }
+                
+                for (Ground ground : grounds){      
+
+                    
+                    
+                    //Making sure within bounds of the ground touching
+                    if (collider.getX() >= ground.getX() || collider.getX() + (collider.getWidth() + (collider.getWidth() / 2)) <= ground.getX() + ground.getImage().getWidth()){
+                        
+                        
+                        //For if falls onto ground
+                        if (getCurrentState().equals(State.FALLING)){
+                            
+                            if (collider.getY() + collider.getHeight() + collider.getHeight() / 2 >= ground.getY()){
+                           // if (getOneObjectAtOffset(collider.getWidth() / 2,collider.getHeight(),Ground.class) != null){                
+                                verticalVelocity = 0;
+                                changeState(State.DEFAULT,false);
+                                                                                                        System.out.println("I happen too");
+
+                            }
+                            
+                           
+                        }    
+                        //For if jumps into bottom edge of ground or cieling.
+                          if (getCurrentState().equals(State.JUMPING)){
+                                
+                              System.out.println(collider.getY() - collider.getHeight() / 2);
+                              System.out.println(ground.getY() + ground.getImage().getHeight() / 2);
+                              
+
+                                if (collider.getY() - collider.getHeight() / 2 <= ground.getY() + ground.getImage().getHeight() ){
+                                    setLocation(getX(),getY() + 2);
+                                    verticalVelocity = 10;
+                                    changeState(State.DEFAULT,false);
+                                }
+                                
+                               
+                        }
+                        
+                    }
+   
+                }
+            }
+    }
+    
+    public void checkWalls(){
+        
+        //Left side of platform.
+                    //if (getCurrentState().equals(State.MOVINGLEFT) && (collider.getX() - collider.getWidth() / 2) <= ground.getX() + ground.getImage().getWidth() / 2){
+        if (getOneObjectAtOffset(-collider.getWidth() * 2,0,Ground.class) != null){
+            System.out.println("why am i no longer working yo");
+            setLocation(getX() + 1 , getY());
+
+        }
+                    //Right side of platform
+        else if (getOneObjectAtOffset(collider.getWidth() * 2,0,Ground.class) != null){
+            System.out.println("why am i no longer working yo");
+            setLocation(getX() - 1 , getY());
+
+        }
+ 
     }
     
     public void jump(){
         
         if (collider.isTouchingObject(Ground.class) || collider.getY() + 1 == getWorld().getHeight()){
+            
             groundY= getY();
             changeState(State.JUMPING,false);
+            verticalVelocity = -jumpHeight;
+            
         }
     }
     
@@ -256,7 +275,7 @@ public class Player extends Subject
     }
     
     public void changeDirection(int direction){
-        directionFacing *= -1;
+        directionFacing = direction;
         
     }
     
@@ -288,6 +307,7 @@ public class Player extends Subject
       transform("default");
     }
     
+    //If moving while dropping I don't get stopped
   
     //By default just rgular attack all transformations will override this attack method
     public void attack(){
@@ -310,5 +330,18 @@ public class Player extends Subject
     
     public boolean canAttack(){
         return timeTillAttack <= 0;
+    }
+    
+    public void findItem(){
+      
+       //For deciing if looking left or right.
+       int whereToLook = collider.getWidth() * directionFacing;
+        
+       Item item = (Item)getOneObjectAtOffset(whereToLook,0,Item.class);
+       
+       if (item != null){
+           //Picks up items, which will trigger events for item to take effect.
+           item.pickUp();
+       }
     }
 }

@@ -68,7 +68,7 @@ public class Animator extends Observer
             //yeah I need to rethink when the state is changed
             //or just add an extra here.
             //This temporary, if jumping or falling, then just repeating animation
-            if (animating.getCurrentState() != null){
+            if (animating != null && animating.getCurrentState() != null){
             if (animating.getCurrentState().equals(State.FALLING)  || animating.getCurrentState().equals(State.JUMPING)){
                 //Restart the current animation.
                 return;

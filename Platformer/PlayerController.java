@@ -9,10 +9,13 @@ import greenfoot.*;  // (World, Actor, GreenfootImage, Greenfoot and MouseInfo)
 public class PlayerController extends Observer
 {
 
-    boolean takingInput = true;
+    boolean takingInput = false;
     float absorbCD = 10.0f;
     float timeTillAbsorb = 0;
     Player player;
+    
+    int xMovement = 0;
+    int yMovement = 0;
     
     public PlayerController(Player subject){
         
@@ -27,6 +30,7 @@ public class PlayerController extends Observer
         
         super.observe(subject);
         player = (Player)subject;
+        takingInput = true;
     }
 
     public void run() 
@@ -62,38 +66,55 @@ public class PlayerController extends Observer
             else{
                 takingInput = true;
             }
-            
+          
     }    
     
     public void act(){
 
- 
-        
-        
             if (takingInput){
 
 
-                if (Greenfoot.isKeyDown("a")){
+                checkMovement();
+                checkActions();
+                
+            }
+          
+        //determiningPlayerMovement();
+        //player.setLocation(player.getX() + xMovement, player.getY() + yMovement);
+
+        if (timeTillAbsorb > 0){
+                timeTillAbsorb -= 0.1f;
+        }
+    }
+    
+    private void checkMovement(){
+        
+           if (Greenfoot.isKeyDown("a")){
                     
                     player.move(-1);
+                 //s   System.out.println("Y movement is : " + yMovement);
 
                 }
-                else if (Greenfoot.isKeyDown("d")){
+                if (Greenfoot.isKeyDown("d")){
                     
                     player.move(1);
+                                     //   System.out.println("Y movement is : " + yMovement);
 
                 }
                 else{
+                    //It seems it must wait for frame until these states are turned off, to register falling to floor.
                     player.getCurrentState().turnOffState(State.MOVINGLEFT);
                     player.getCurrentState().turnOffState(State.MOVINGRIGHT);
+                    player.setSpeed(0);
                 }
-                //This is off one, where i chnage state of player and the subject
-                //reacts instead but fuck it for, otherwise this is just inside player jump
-                //method, exact same code, putting in player will just add extra overhead
-               
-                if (!player.getCurrentState().equals(State.JUMPING) && !player.getCurrentState().equals(State.FALLING)){
+    }
+   
+    private void checkActions(){
+        
+        if (!player.getCurrentState().equals(State.JUMPING) && !player.getCurrentState().equals(State.FALLING)){
                     
-                    if (Greenfoot.isKeyDown("space")){
+                    if (Greenfoot.isKeyDown("w")){
+                     
                         player.jump();
                     }               
                     //Transformations.
@@ -113,6 +134,11 @@ public class PlayerController extends Observer
                     else if (Greenfoot.isKeyDown("f") && player.canAttack()){
                         player.attack();             
                     }
+                    
+                    //Picking up items
+                    else if (Greenfoot.isKeyDown("q")){
+                        player.findItem();
+                    }
                 
                     else if (player.getCurrentState() != PlayerState.DEFAULT){
                     
@@ -122,19 +148,12 @@ public class PlayerController extends Observer
                         }
                     
                     //Otherwise if it's not default, then set to default.
-                 //   player.changeState(PlayerState.DEFAULT,false);
+                    player.changeState(PlayerState.DEFAULT,false);
 
                    }
                 }
-            }
-            
         
-
-        if (timeTillAbsorb > 0){
-                timeTillAbsorb -= 0.1f;
-        }
     }
-    
 
     
 }
