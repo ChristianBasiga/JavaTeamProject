@@ -142,13 +142,46 @@ public class Player extends Subject
             
             //then go bakc to falling.
             verticalVelocity = 0;
-                           changeState(State.FALLING,false);
+            changeState(State.FALLING,false);
         }
         
         checkWalls(); 
-         //For if jumps into bottom edge of ground or cieling.
                         
-       //This is how I did it originally, not using built in greenfoot method, but just made checks directly myself using my collider.
+        checkFloorAndCieling();
+            
+            
+   
+        }
+   
+    
+   public void move(int direction){
+        
+        boolean blendMovement = false;
+        //Cause otherwise don't want animation to play for moving left or right if falling.
+        blendMovement = (getCurrentState().equals(State.FALLING) || getCurrentState().equals(State.JUMPING));
+          
+            
+        switch (direction){
+               case -1:
+                   changeState(State.MOVINGLEFT,blendMovement);
+                   break;
+               case 1:
+                   changeState(State.MOVINGRIGHT,blendMovement);
+                   break;
+        }
+            
+           
+        
+        
+       changeDirection(direction);
+       speed = 1;
+       setLocation(getX() + direction * speed, getY());
+     //  super.move(direction * speed);
+    }
+    
+    public void checkFloorAndCieling(){
+        
+
          if (collider.isTouchingObject(Ground.class) || collider.getY() + 1 == getWorld().getHeight() ){
 
                         
@@ -192,7 +225,7 @@ public class Player extends Subject
 
                                 if (collider.getY() - collider.getHeight() / 2 <= ground.getY() + ground.getImage().getHeight() ){
                                     setLocation(getX(),getY() + 2);
-                                    verticalVelocity = 5;
+                                    verticalVelocity = 10;
                                     changeState(State.DEFAULT,false);
                                 }
                                 
@@ -203,35 +236,6 @@ public class Player extends Subject
    
                 }
             }
-            
-            
-    
-        }
-   
-    
-   public void move(int direction){
-        
-        boolean blendMovement = false;
-        //Cause otherwise don't want animation to play for moving left or right if falling.
-        blendMovement = (getCurrentState().equals(State.FALLING) || getCurrentState().equals(State.JUMPING));
-          
-            
-        switch (direction){
-               case -1:
-                   changeState(State.MOVINGLEFT,blendMovement);
-                   break;
-               case 1:
-                   changeState(State.MOVINGRIGHT,blendMovement);
-                   break;
-        }
-            
-           
-        
-        
-       changeDirection(direction);
-       speed = 1;
-       setLocation(getX() + direction * speed, getY());
-     //  super.move(direction * speed);
     }
     
     public void checkWalls(){
