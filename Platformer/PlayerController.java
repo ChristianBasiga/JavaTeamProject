@@ -66,48 +66,7 @@ public class PlayerController extends Observer
             else{
                 takingInput = true;
             }
-            
-            /*
-              if (player.getCurrentState().equals(State.MOVINGLEFT)){
-         
-
-                xMovement = -player.getSpeed();
-                
-              }
-            
-            else if (player.getCurrentState().equals(State.MOVINGRIGHT)){
-                
-
-                xMovement = player.getSpeed();
-
-            }
-            else{
-                xMovement = 0;
-            }
-           
-            
-            //Why is me moving, right and left also changing the y direction????????
-            
-            if (player.getCurrentState().equals(State.JUMPING)){
-                yMovement = -player.getWeight();
-            }
-            else if (player.getCurrentState().equals(State.FALLING)){
-                //Interesting so it's entered falling state, clearly, yet not entered here.
-                System.out.println("now falling");
-                yMovement = player.getWeight();
-            }
-            else
-            {
-                yMovement = 0;
-            }
-            
-            
-            System.out.println("STate is " + subject.getCurrentState());
-            //For changing movement based on state
-            */
-            
-
-            
+          
     }    
     
     public void act(){
@@ -115,7 +74,22 @@ public class PlayerController extends Observer
             if (takingInput){
 
 
-                if (Greenfoot.isKeyDown("a")){
+                checkMovement();
+                checkActions();
+                
+            }
+          
+        //determiningPlayerMovement();
+        //player.setLocation(player.getX() + xMovement, player.getY() + yMovement);
+
+        if (timeTillAbsorb > 0){
+                timeTillAbsorb -= 0.1f;
+        }
+    }
+    
+    private void checkMovement(){
+        
+           if (Greenfoot.isKeyDown("a")){
                     
                     player.move(-1);
                  //s   System.out.println("Y movement is : " + yMovement);
@@ -133,8 +107,11 @@ public class PlayerController extends Observer
                     player.getCurrentState().turnOffState(State.MOVINGRIGHT);
                     player.setSpeed(0);
                 }
-              
-                if (!player.getCurrentState().equals(State.JUMPING) && !player.getCurrentState().equals(State.FALLING)){
+    }
+   
+    private void checkActions(){
+        
+        if (!player.getCurrentState().equals(State.JUMPING) && !player.getCurrentState().equals(State.FALLING)){
                     
                     if (Greenfoot.isKeyDown("w")){
                      
@@ -157,6 +134,11 @@ public class PlayerController extends Observer
                     else if (Greenfoot.isKeyDown("f") && player.canAttack()){
                         player.attack();             
                     }
+                    
+                    //Picking up items
+                    else if (Greenfoot.isKeyDown("q")){
+                        player.findItem();
+                    }
                 
                     else if (player.getCurrentState() != PlayerState.DEFAULT){
                     
@@ -170,16 +152,8 @@ public class PlayerController extends Observer
 
                    }
                 }
-            }
-          
-        //determiningPlayerMovement();
-        //player.setLocation(player.getX() + xMovement, player.getY() + yMovement);
-
-        if (timeTillAbsorb > 0){
-                timeTillAbsorb -= 0.1f;
-        }
+        
     }
-   
 
     
 }

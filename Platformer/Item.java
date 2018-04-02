@@ -13,7 +13,7 @@ public class Item extends Reusable
     public EventNotifier pickUpNotification;
     
     //I could just switch this on player, or can just trigger event hm
-    void pickUp(Player player){
+    void pickUp(){
         
         //Effect the player with correct effect.
         pickUpNotification();

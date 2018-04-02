@@ -19,6 +19,7 @@ public class Player extends Subject
     //Since melee not much.
     int attackDistance = 5;
     int absorptionDistance = 20;
+  
     
     //Basically fall speed.
     int verticalVelocity;
@@ -329,5 +330,18 @@ public class Player extends Subject
     
     public boolean canAttack(){
         return timeTillAttack <= 0;
+    }
+    
+    public void findItem(){
+      
+       //For deciing if looking left or right.
+       int whereToLook = collider.getWidth() * directionFacing;
+        
+       Item item = (Item)getOneObjectAtOffset(whereToLook,0,Item.class);
+       
+       if (item != null){
+           //Picks up items, which will trigger events for item to take effect.
+           item.pickUp();
+       }
     }
 }
