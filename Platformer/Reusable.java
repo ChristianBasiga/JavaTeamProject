@@ -21,7 +21,7 @@ public abstract class Reusable extends Actor implements Cloneable
     }
     
     //This will be called by concrete classes when they're done being used
-    protected void DoneUsing(){
+    protected void doneUsing(){
         doneUsing.notify();
     }
    

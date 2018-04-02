@@ -10,9 +10,18 @@ public class GameManager extends Observer
 {   
     static final double GRAVITY = 9.81;
     
+    
     public GameManager() {
         //threadName = "gm";
         priority = 2;
+        
+        //Set image to be of player attack or enemy, etc.
+        StraightShot playerShot = new StraightShot();
+        
+        StraightShot enemyShot = new StraightShot();
+        
+        PoolManager.addPool("PlayerStraightShot",playerShot,20);
+        PoolManager.addPool("EnemyStraightShot",enemyShot,20);
     }
     
     public void run() {
@@ -26,11 +35,7 @@ public class GameManager extends Observer
     
     
     public void act(){
-        
-        if (Greenfoot.isKeyDown("t")){
-            //Yeah, figured. It's still pointing to same one
-            System.out.println(subject);
-        }
+  
     }
     
 }

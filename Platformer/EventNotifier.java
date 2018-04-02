@@ -18,6 +18,13 @@ public class EventNotifier
         
     }
     
+    public void attachEvents(EventNotifier toAttach){
+        
+        for (IEvent event : events){
+            toAttach.addEvent(event);
+        }
+    }
+    
     public void addEvent(IEvent event){
         
         events.add(event);

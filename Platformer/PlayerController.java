@@ -14,15 +14,14 @@ public class PlayerController extends Observer
     float timeTillAbsorb = 0;
     Player player;
     
-    int xMovement = 0;
-    int yMovement = 0;
-    
     public PlayerController(Player subject){
         
         threadName = "pc";
        
         this.observe(subject);
         priority = 1;
+        
+        
 
     }
     
@@ -79,8 +78,6 @@ public class PlayerController extends Observer
                 
             }
           
-        //determiningPlayerMovement();
-        //player.setLocation(player.getX() + xMovement, player.getY() + yMovement);
 
         if (timeTillAbsorb > 0){
                 timeTillAbsorb -= 0.1f;
@@ -89,16 +86,15 @@ public class PlayerController extends Observer
     
     private void checkMovement(){
         
-           if (Greenfoot.isKeyDown("a")){
+                 if (Greenfoot.isKeyDown("a")){
                     
                     player.move(-1);
-                 //s   System.out.println("Y movement is : " + yMovement);
+
 
                 }
                 if (Greenfoot.isKeyDown("d")){
                     
                     player.move(1);
-                                     //   System.out.println("Y movement is : " + yMovement);
 
                 }
                 else{

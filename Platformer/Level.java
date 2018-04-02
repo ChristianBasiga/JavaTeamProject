@@ -8,39 +8,31 @@ import greenfoot.*;  // (World, Actor, GreenfootImage, Greenfoot and MouseInfo)
  */
 public class Level extends World
 {
+    //No need for player variable as that instance is constatnly being switched out.
+    GameManager gm;
+    PlayerController pc;
+    Animator playerAnimator;
+    ItemManager im;
+
+    int[] playerSpawn;
+    
 
     public void started(){
        
-        //Todo, create all instances that start out in the world
-        //DOn't really need to store instance variables, but can change as required
-        //And add observers to subjects.
-        
-        //They all need to be re-observed since new instance of player, atleast I believe so
-        GameManager gm = new GameManager();
+        im = new ItemManager();
+        gm = new GameManager();
       
         Player player = new Player();
         
         gm.observe(player);
         
         //Constructur of these handles observing the player.
-        PlayerController pc = new PlayerController(player);
+        pc = new PlayerController(player);
         
-        Animator playerAnimator = new Animator(player);
-        
-        //Then each enemey will have it's on animator
-        //There will be loop fir each enemy, constructing an Animator along with the enemy.
-        Enemy enemy = new Enemy("fire");
-        Animator enemyAnimator = new Animator(enemy);
-
-        
-        
-        
-        addObject(player, getWidth() /2, getHeight() / 2);
+        playerAnimator = new Animator(player);     
+       
+        addObject(player,playerSpawn[0],playerSpawn[1]);
         addObject(playerAnimator,0,0);
-        
-        addObject(enemy, (getWidth() /2) + 300, (getHeight() / 2) );
-        addObject(enemyAnimator,0,0);
-        
         addObject(gm,0,0);
         addObject(pc,0,0);
        
@@ -72,4 +64,19 @@ public class Level extends World
     public void clearEnemies(){
        
     }
+    
+    private void setUpEnemies(){
+        
+        //Create pools of enemies
+        //Spawn enemies in their correct spots
+        //Again may end up doing this manually.
+        
+    }
+    
+    //Might just end up being set manually.
+    private void setUpGround(){
+    }
+    
+
+   
 }
