@@ -1,4 +1,4 @@
-/**
+ /**
  * Write a description of class State here.
  * 
  * @author (your name) 
@@ -37,9 +37,18 @@ public class State
     
     public void turnOffState(State other){
         
+      //Only if it's on can I turn off, otherwise will switch it on
       if ((id & other.id) > 0){
         id =  id & ~other.id;
-      
+        String[] activeStates = name.split("[, ]");
+        String newName = "";
+        for (String state : activeStates){
+            //If equal then don't re-add it
+            if (state != other.name){
+                newName = newName +", " + state;
+            }
+        }
+        this.name = newName;
       }
     }
     //might just say fuck it on bitwise, just move while jumping but don't set the state.
@@ -52,7 +61,10 @@ public class State
             name = other.name;
         }
         else{
-          name += ", " + other.name;
+            
+         
+          if (!name.contains(other.name))
+            name += ", " + other.name;
         }
     }
     
