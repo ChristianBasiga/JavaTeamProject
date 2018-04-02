@@ -49,7 +49,7 @@ public class Player extends Subject
         
       
 
-        jumpHeight = 10;
+        jumpHeight = 15;
         verticalVelocity = jumpHeight;
         changeState(State.DEFAULT,false);
         
@@ -138,17 +138,21 @@ public class Player extends Subject
                changeState(State.FALLING,false);
            }
         }
-        else if (!collider.isTouchingObject(Ground.class)){
+        else if (!getCurrentState().equals(State.JUMPING) && !collider.isTouchingObject(Ground.class)){
             
             //then go bakc to falling.
             verticalVelocity = 0;
                            changeState(State.FALLING,false);
         }
- 
+        
+        checkWalls(); 
+         //For if jumps into bottom edge of ground or cieling.
+                        
        //This is how I did it originally, not using built in greenfoot method, but just made checks directly myself using my collider.
          if (collider.isTouchingObject(Ground.class) || collider.getY() + 1 == getWorld().getHeight() ){
 
-                            
+                        
+             
                 List<Ground> grounds = collider.getCollidingObjects(Ground.class);
                 if (grounds.size() == 0){
                     
@@ -161,48 +165,39 @@ public class Player extends Subject
                 for (Ground ground : grounds){      
 
                     
-                    //I changed nothing about these, but they no longer work now.
-                    //Great.
                     
-                    //Left side of platform.
-                    //if (getCurrentState().equals(State.MOVINGLEFT) && (collider.getX() - collider.getWidth() / 2) <= ground.getX() + ground.getImage().getWidth() / 2){
-                    if (getOneObjectAtOffset(-collider.getWidth() * 2,0,Ground.class) != null){
-                        System.out.println("why am i no longer working yo");
-                        setLocation(getX() + 1 , getY());
-
-                    }
-                    //Right side of platform
-                    else if (getOneObjectAtOffset(collider.getWidth() * 2,0,Ground.class) != null){
-                                                System.out.println("why am i no longer working yo");
-                        setLocation(getX() - 1 , getY());
-
-                    }
-                    
-                    //Right side of block
                     //Making sure within bounds of the ground touching
-                    if (collider.getX() >= ground.getX() && collider.getX() + (collider.getWidth() + (collider.getWidth() / 2)) <= ground.getX() + ground.getImage().getWidth()){
+                    if (collider.getX() >= ground.getX() || collider.getX() + (collider.getWidth() + (collider.getWidth() / 2)) <= ground.getX() + ground.getImage().getWidth()){
+                        
                         
                         //For if falls onto ground
                         if (getCurrentState().equals(State.FALLING)){
                             
                             if (collider.getY() + collider.getHeight() + collider.getHeight() / 2 >= ground.getY()){
-                                            
+                           // if (getOneObjectAtOffset(collider.getWidth() / 2,collider.getHeight(),Ground.class) != null){                
                                 verticalVelocity = 0;
                                 changeState(State.DEFAULT,false);
-                                break;
+                                                                                                        System.out.println("I happen too");
+
                             }
                             
                            
-                        }    /*
-                        //For if jumps into bottom edge of ground
-                        else if (getCurrentState().equals(State.JUMPING)){
+                        }    
+                        //For if jumps into bottom edge of ground or cieling.
+                          if (getCurrentState().equals(State.JUMPING)){
                                 
-                                if (collider.getY() == ground.getY() + ground.getImage().getHeight() / 2){
-                                 //   setLocation(getX(),getY() + 1);
-                                    changeState(State.FALLING,false);
+                              System.out.println(collider.getY() - collider.getHeight() / 2);
+                              System.out.println(ground.getY() + ground.getImage().getHeight() / 2);
+                              
+
+                                if (collider.getY() - collider.getHeight() / 2 <= ground.getY() + ground.getImage().getHeight() ){
+                                    setLocation(getX(),getY() + 2);
+                                    verticalVelocity = 5;
+                                    changeState(State.DEFAULT,false);
                                 }
                                 
-                        }*/
+                               
+                        }
                         
                     }
    
@@ -237,6 +232,24 @@ public class Player extends Subject
        speed = 1;
        setLocation(getX() + direction * speed, getY());
      //  super.move(direction * speed);
+    }
+    
+    public void checkWalls(){
+        
+        //Left side of platform.
+                    //if (getCurrentState().equals(State.MOVINGLEFT) && (collider.getX() - collider.getWidth() / 2) <= ground.getX() + ground.getImage().getWidth() / 2){
+        if (getOneObjectAtOffset(-collider.getWidth() * 2,0,Ground.class) != null){
+            System.out.println("why am i no longer working yo");
+            setLocation(getX() + 1 , getY());
+
+        }
+                    //Right side of platform
+        else if (getOneObjectAtOffset(collider.getWidth() * 2,0,Ground.class) != null){
+            System.out.println("why am i no longer working yo");
+            setLocation(getX() - 1 , getY());
+
+        }
+ 
     }
     
     public void jump(){
