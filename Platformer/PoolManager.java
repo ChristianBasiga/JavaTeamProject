@@ -19,10 +19,18 @@ public class PoolManager
         
         for (int i = 0; i < poolSize; ++i){
          
+            //so I could clonse and just override clone
+            //that way I could also just have same type item
+            //but different instances. Or could get class name and then 
+            //construct object based on that. Problem with that though is
+            //no guarantee that no argument, which makes this Pooling system
+            //very specific, cloning adds more flexibility, I'll do that.
+           
             try{
-            pools.get(id).add((Reusable)prefab.clone());
+                pools.get(id).add((Reusable)prefab.clone());
             }
             catch (CloneNotSupportedException e){
+                
             }
         }
        
@@ -36,6 +44,8 @@ public class PoolManager
             return obj;
         }
         
+        //Adding self back to pool
+        obj.doneUsing.addEvent(() -> {pools.get(id).add(obj);});
        
             
         pools.get(id).remove();

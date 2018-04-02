@@ -10,7 +10,7 @@ import greenfoot.*;  // (World, Actor, GreenfootImage, Greenfoot and MouseInfo)
 import java.util.*;
 import java.lang.Exception.*;
 
-public class Reusable extends Actor
+public abstract class Reusable extends Actor implements Cloneable
 {
     //It's okay if public, can only add to it so no risk of losing added events.
     public EventNotifier doneUsing;
@@ -19,5 +19,13 @@ public class Reusable extends Actor
     public Reusable(){
         doneUsing = new EventNotifier();
     }
+    
+    //This will be called by concrete classes when they're done being used
+    protected void DoneUsing(){
+        doneUsing.notify();
+    }
    
+    //Will be implemented by concrete classes cause they decide how they're cloned.
+    public abstract Object clone() throws CloneNotSupportedException;
+    
 }
