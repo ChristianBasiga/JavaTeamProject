@@ -10,6 +10,7 @@ import java.util.*;
 
 public class PoolManager  
 {
+    //I could change this so that pool is an object wrapped around a Queue then can just clone prefab.
     static Map<String, Queue<Reusable>> pools = new HashMap<String, Queue<Reusable>>();
     
     

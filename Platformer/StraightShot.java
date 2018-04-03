@@ -15,5 +15,16 @@ public class StraightShot extends RangedAttack
     public void act() 
     {
         // Add your action code here.
-    }    
+    } 
+    
+    public Object clone() throws CloneNotSupportedException{
+        
+        StraightShot copy = new StraightShot();
+        
+        copy.velocity = velocity;
+        copy.damage = damage;
+        copy.setImage(copy.getImage());
+        
+        return copy;
+    }
 }

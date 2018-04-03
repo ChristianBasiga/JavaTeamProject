@@ -15,12 +15,11 @@ public class GameManager extends Observer
         //threadName = "gm";
         priority = 2;
         
-        //Set image to be of player attack or enemy, etc.
-        StraightShot playerShot = new StraightShot();
+      
         
         StraightShot enemyShot = new StraightShot();
         
-        PoolManager.addPool("PlayerStraightShot",playerShot,20);
+
         PoolManager.addPool("EnemyStraightShot",enemyShot,20);
     }
     

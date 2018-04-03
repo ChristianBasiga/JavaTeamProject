@@ -9,9 +9,9 @@ import greenfoot.*;  // (World, Actor, GreenfootImage, Greenfoot and MouseInfo)
 public abstract class RangedAttack extends Reusable
 {
     //velocity of attack.
-    int velocity;
-    int damage;
-    boolean isDone;
+    protected int velocity;
+    protected int damage;
+    protected boolean isDone;
    
     //I could make this abstract so that they do different actions
     public void act() 
@@ -19,7 +19,6 @@ public abstract class RangedAttack extends Reusable
         continueAttack();
         
     }   
-    
 
     //Will probably get rid of melee attack and just do ranged to make it easier
     protected  void continueAttack(){

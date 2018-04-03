@@ -6,26 +6,45 @@ import greenfoot.*;  // (World, Actor, GreenfootImage, Greenfoot and MouseInfo)
  * @author (your name) 
  * @version (a version number or a date)
  */
-public class Item extends Reusable
+public abstract class Item extends Reusable
 {
     //At this point could have just different instances of Item and let events subscribed to
-    //that item change it's behavior
-    public EventNotifier pickUpNotification;
-    String name;
+    //that item change it's behavior, orr I could have both?
+  //  public EventNotifier pickUpNotification;
+   // String name;
+   
+
+   float timeLeft;
     
-    public Item(String name){
+    public Item(){
         
-        this.name = name;
+    //    pickUpNotification = new EventNotifier();
+    //    this.name = name;
     }
+   
+    public void act(){
+        
+        if (timeLeft > 0){
+            timeLeft -= 0.1f;
+        }
+        else if (timeLeft <= 0){
+            getWorld().removeObject(this);
+            doneUsing();
+        }
+        
+    }
+   
+   
     //I could just switch this on player, or can just trigger event hm
-    void pickUp(){
+   public void pickUp(Player player){
+        
         //Effect the player with correct effect.
-        pickUpNotification.notify();
-        //This was changed in mainDevelop, when merge branch this error will be gone.
-        doneUsing();
-    }
+      //  pickUpNotification.notify();
+       getWorld().removeObject(this);
+       doneUsing();
+   }
     
-    public Object clone() throws CloneNotSupportedException{
+   public abstract  Object clone() throws CloneNotSupportedException;/*{
         
         Item item = new Item(name);
         
@@ -34,5 +53,5 @@ public class Item extends Reusable
         return item;
         
     }
-
+*/
 }

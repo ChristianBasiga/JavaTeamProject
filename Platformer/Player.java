@@ -10,13 +10,12 @@ public class Player extends Subject
 {
     String currentTransformation = "default";
     int health;
-    float invincibilityFrames = 20.0f;
-    float timeLeft = 0;
+   
+    float invincibilityTime;
     
     //-1 for left and 1 for right.
     int directionFacing = 1;
     
-    //Since melee not much.
     int attackDistance = 5;
     int absorptionDistance = 20;
   
@@ -35,12 +34,6 @@ public class Player extends Subject
     int maxSpeed = 5;
     int speed = 0;
     
-    
-    
-
-    
-    boolean onGround;
-    
     //Blending states between movement and Jumping not working
     
     public Player(){   
@@ -57,7 +50,7 @@ public class Player extends Subject
         changeState(State.DEFAULT,false);
         
         collider = new Collider(this);
-        onGround = false;
+       
     }
     public void setSpeed(int speed){
         this.speed = speed;
@@ -93,24 +86,25 @@ public class Player extends Subject
     {
        
         if (collider.isTouchingObject(Enemy.class) && getCurrentState() != State.ATTACKING && getCurrentState() != PlayerState.TRANSFORMING
-        && getCurrentState() != PlayerState.ABSORBING && getCurrentState() != State.DAMAGED){
+        && getCurrentState() != State.DAMAGED){
             
-            changeState(State.DAMAGED,false);
-            Enemy enemy = (Enemy)getOneIntersectingObject(Enemy.class);
-            health -= enemy.getDamage();
             
-            timeLeft = invincibilityFrames;
+            if (!isInvincible()){
+                changeState(State.DAMAGED,false);
+                Enemy enemy = (Enemy)getOneIntersectingObject(Enemy.class); 
+                health -= enemy.getDamage();
+                invincibilityTime = 20.0f;
+            }
         }
         
-        if (timeLeft > 0){            
-            timeLeft -= 0.1f;
+        if (invincibilityTime > 0){
+            invincibilityTime -= 0.1f;
         }
-        if (timeLeft < (invincibilityFrames / 2) && getCurrentState() == State.DAMAGED){
-           //So when no longer stunned, can take in input again.
-            System.out.println("hello");
-            //K sthis isn't problem
+        else if (invincibilityTime <= 0){
+            
             changeState(State.DEFAULT,false);
         }
+        
             
         if (timeTillAttack > 0){
                 timeTillAttack -= 0.1f;
@@ -127,7 +121,7 @@ public class Player extends Subject
       
         
 
-        setLocation(getX()/* + (speed * directionFacing)*/, getY() + verticalVelocity);           
+        setLocation(getX(), getY() + verticalVelocity);           
         
         
         //Either when done jumping, aka when verticalVelocity is jumpHeight again.
@@ -156,6 +150,14 @@ public class Player extends Subject
    
         }
    
+   public boolean isInvincible(){
+       return invincibilityTime > 0;
+    }
+        
+   public void becomeInvincible(float timePeriod){
+       
+       invincibilityTime = timePeriod;
+   }
     
    public void move(int direction){
         
@@ -341,7 +343,7 @@ public class Player extends Subject
        
        if (item != null){
            //Picks up items, which will trigger events for item to take effect.
-           item.pickUp();
+           item.pickUp(this);
        }
     }
 }

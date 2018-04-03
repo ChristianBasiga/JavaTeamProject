@@ -1,10 +1,10 @@
 import greenfoot.*;  // (World, Actor, GreenfootImage, Greenfoot and MouseInfo)
 
 /**
- * Write a description of class PlayerController here.
- * 
- * @author (your name) 
- * @version (a version number or a date)
+ * Player controller maniplates the data in the player and handles input to the player.
+ * I could change this so that player is really just a nested class to PlayerController
+ * and access only allowed to PlayerController to change Player data
+ * that will enforce this design.
  */
 public class PlayerController extends Observer
 {
@@ -14,6 +14,8 @@ public class PlayerController extends Observer
     float timeTillAbsorb = 0;
     Player player;
     
+    
+    
     public PlayerController(Player subject){
         
         threadName = "pc";
@@ -21,8 +23,16 @@ public class PlayerController extends Observer
         this.observe(subject);
         priority = 1;
         
+        setUpPlayerAttacks();
         
 
+       
+    }
+    
+    private void setUpPlayerAttacks(){
+        
+        StraightShot playerShot = new StraightShot();
+        PoolManager.addPool("PlayerStraightShot",playerShot,20);
     }
     
     public void observe(Subject subject){
@@ -147,7 +157,7 @@ public class PlayerController extends Observer
                     player.changeState(PlayerState.DEFAULT,false);
 
                    }
-                }
+        }
         
     }
 
