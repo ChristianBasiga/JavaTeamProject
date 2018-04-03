@@ -63,7 +63,7 @@ public class Subject extends Actor
         //Notifies all the observers of the change. Prioritizing PlayerController, GameManager first to make sure  player done changing and game state still valid.
         for (Observer observer : observers){
             
-            observer.react(false);
+            observer.react();
             
         }
     }

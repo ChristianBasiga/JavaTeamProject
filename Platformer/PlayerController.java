@@ -13,19 +13,12 @@ public class PlayerController extends Observer
     float absorbCD = 10.0f;
     float timeTillAbsorb = 0;
     Player player;
-    
-    
-    
+
     public PlayerController(Player subject){
-        
-        threadName = "pc";
-       
+   
         this.observe(subject);
         priority = 1;
-        
-        setUpPlayerAttacks();
-        
-
+        threadName = "pc";
        
     }
    
@@ -36,7 +29,7 @@ public class PlayerController extends Observer
         takingInput = true;
     }
 
-    public void run() 
+    public void react() 
     {
 
         //Reaction code to changes in state to subject go here

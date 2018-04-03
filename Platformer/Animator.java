@@ -41,7 +41,7 @@ public class Animator extends Observer
         animating = subject;
     }
     
-    public void run(){
+    public void react(){
         
 
                                     

@@ -1,5 +1,5 @@
 import greenfoot.*;  // (World, Actor, GreenfootImage, Greenfoot and MouseInfo)
-
+import java.util.*;
 /**
  * Write a description of class GameManager here.
  * 
@@ -12,18 +12,28 @@ public class GameManager extends Observer
     
     
     public GameManager() {
-        //threadName = "gm";
-        priority = 2;
-        
-      
-        
+        threadName = "gm";
+        priority = 2;    
         StraightShot enemyShot = new StraightShot();
-        
-
-        PoolManager.addPool("EnemyStraightShot",enemyShot,20);
     }
     
-    public void run() {
+    //At the start of the game, makes all the colliders in the world invisible.
+    //honestly could prob just do based on image, since theirs prob better, maybe.
+    public void startGame(){
+        
+        //Makes all colliders invisible.
+        List<Collider> colliders = getWorld().getObjects(Collider.class);
+        GreenfootImage transparentImage = new GreenfootImage("transparent");
+        for (Collider coll : colliders){
+            
+            //Make their image into something transparent with same dimensions
+            //so collision still works fine.
+            transparentImage.scale(coll.getWidth(),coll.getHeight());
+            coll.setImage(transparentImage);
+        }
+    }
+    
+    public void react() {
         
         if (subject != null) {
                 

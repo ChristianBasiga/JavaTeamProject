@@ -71,39 +71,4 @@ public class ItemManager extends Actor
         return null;
         
     } 
-    
-    //This method is for placing items into the world or assigning to enemies as drops.
-   /* private void allocateItems(){
-    
-        //Also subscribing events to the items
-        
-        //Always finding player incase the player transformed
-        Player playerInWorld = getWorld().getObjects(Player.class).get(0);
-        
-        //If not same player.
-        if (player != playerInWorld){
-            player = playerInWorld;
-            
-            //Add more events to these items as neccessarry
-        
-            //Now here's the fuck up, THE CLONED OBJECTS DO NOT GET THE UODATED EVENTS UNLESS overwrite it each time which is stupid, yeah no fuck using event system for it
-            //tried something new but it has flaws will just do tried and true way.
-            /*Deprecated, will delete once sure it won't be used but 99% won't be
-        
-            //Become invincible on picing up star.
-            star.pickUpNotification.addEvent(() -> {player.becomeInvincible(10.0f);});
-            
-            //Heals player
-            healing.pickUpNotification.addEvent(() -> {player.setHealth(player.getHealth() + 5);});
-            
-            PoolManager.addPool(star.getName(),star,5);
-        
-            PoolManager.addPool(healing.getName(),healing,10);
-        
-        } 
-        
-        
-        
-    }
-    */
 }
