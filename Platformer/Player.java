@@ -11,6 +11,8 @@ public class Player extends Subject
     String currentTransformation = "default";
     int health;
    
+    //This is mainly to be set for damage so at half way point still invincibile but can move.
+    float initialInvincTime;
     float invincibilityTime;
     
     //-1 for left and 1 for right.
@@ -85,7 +87,15 @@ public class Player extends Subject
     public void act() 
     {
        
-        if (collider.isTouchingObject(Enemy.class) && getCurrentState() != State.ATTACKING && getCurrentState() != PlayerState.TRANSFORMING
+       
+        manageInvincibility(); 
+        managePlayerYPosition();
+                
+    }    
+    
+    private void manageInvincibility(){
+        
+         if (collider.isTouchingObject(Enemy.class) && getCurrentState() != State.ATTACKING && getCurrentState() != PlayerState.TRANSFORMING
         && getCurrentState() != State.DAMAGED){
             
             
@@ -95,6 +105,11 @@ public class Player extends Subject
                 health -= enemy.getDamage();
                 invincibilityTime = 20.0f;
             }
+        }
+        
+        //So they can move while still invincible, otherwise fucked, if enemy stays on player.
+        if (invincibilityTime <= initialInvincTime && getCurrentState() == State.DAMAGED){
+            changeState(State.DEFAULT,false);
         }
         
         if (invincibilityTime > 0){
@@ -112,10 +127,7 @@ public class Player extends Subject
         
        
      
-        
-        managePlayerYPosition();
-                
-    }    
+    }
     
     private void managePlayerYPosition(){
       
@@ -157,6 +169,7 @@ public class Player extends Subject
    public void becomeInvincible(float timePeriod){
        
        invincibilityTime = timePeriod;
+       initialInvincTime = timePeriod;
    }
     
    public void move(int direction){
@@ -201,9 +214,7 @@ public class Player extends Subject
                 }
                 
                 for (Ground ground : grounds){      
-
-                    
-                    
+   
                     //Making sure within bounds of the ground touching
                     if (collider.getX() >= ground.getX() || collider.getX() + (collider.getWidth() + (collider.getWidth() / 2)) <= ground.getX() + ground.getImage().getWidth()){
                         

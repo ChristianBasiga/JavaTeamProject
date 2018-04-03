@@ -13,13 +13,31 @@ public class PlayerController extends Observer
     float absorbCD = 10.0f;
     float timeTillAbsorb = 0;
     Player player;
+    
+    //Pool for player attacks could be here.
+    
+    PoolManager playerAttackPools;
 
     public PlayerController(Player subject){
    
+        playerAttackPools = new PoolManager();
         this.observe(subject);
         priority = 1;
         threadName = "pc";
        
+        initPlayerAttacks();
+    }
+    
+    private void initPlayerAttacks(){
+        
+        //Could be something else, whatever.
+        StraightShot fireAttack = new StraightShot();
+        //Set image to be fire image.
+        
+        playerAttackPools.addPool("fireAttack",fireAttack,20);
+        
+        //Set up other attacks.
+        
     }
    
     public void observe(Subject subject){
@@ -41,8 +59,7 @@ public class PlayerController extends Observer
                 takingInput = false;
               
                 if (subject.getCurrentState() == PlayerState.TRANSFORMING){
-                    
-                    
+                                        
                     System.out.println("Transforming");
                     //Changes subject to Player
                     //I may need to reset what others are observing
@@ -107,7 +124,7 @@ public class PlayerController extends Observer
         if (!player.getCurrentState().equals(State.JUMPING) && !player.getCurrentState().equals(State.FALLING)){
                     
                     if (Greenfoot.isKeyDown("w")){
-                     
+                   
                         player.jump();
                     }               
                     //Transformations.
