@@ -32,6 +32,8 @@ public class ItemManager extends Actor
         star = new Star();
         healing = new Heal();
         
+        //Also add different player attacks here.
+        
         itemPools.addPool("Star",star,5);
         itemPools.addPool("Heal",healing,10);
           

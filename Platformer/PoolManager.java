@@ -11,10 +11,10 @@ import java.util.*;
 public class PoolManager  
 {
     //I could change this so that pool is an object wrapped around a Queue then can just clone prefab.
-    static Map<String, Queue<Reusable>> pools = new HashMap<String, Queue<Reusable>>();
+    Map<String, Queue<Reusable>> pools = new HashMap<String, Queue<Reusable>>();
     
     
-    public static void addPool(String id, Reusable prefab, int poolSize){
+    public void addPool(String id, Reusable prefab, int poolSize){
        
         pools.put(id,new LinkedList<Reusable>());
         
@@ -37,7 +37,7 @@ public class PoolManager
        
     }
     
-    public static Reusable getReusable(String id){
+    public Reusable getReusable(String id){
         
         Reusable obj = pools.get(id).peek();
         

@@ -28,13 +28,7 @@ public class PlayerController extends Observer
 
        
     }
-    
-    private void setUpPlayerAttacks(){
-        
-        StraightShot playerShot = new StraightShot();
-        PoolManager.addPool("PlayerStraightShot",playerShot,20);
-    }
-    
+   
     public void observe(Subject subject){
         
         super.observe(subject);
