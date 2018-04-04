@@ -16,6 +16,7 @@ public class State
     public static final State MOVINGRIGHT = new State(16,"MovingRight");
     public static final State JUMPING = new State(32,"Jumping");
     public static final State FALLING = new State(64,"Falling");
+  
     //Cannot be final since then cannot do bitwise.
     private int id;
     private String name;
@@ -40,8 +41,11 @@ public class State
       //Only if it's on can I turn off, otherwise will switch it on
       if ((id & other.id) > 0){
         id =  id & ~other.id;
+        
+        //The string not really neccesarry
         String[] activeStates = name.split("[, ]");
         String newName = "";
+        
         for (String state : activeStates){
             //If equal then don't re-add it
             if (state != other.name){

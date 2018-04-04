@@ -32,8 +32,7 @@ public class EventNotifier
     
     
     public void notifyEvents(){
-        
-        
+           
         for (IEvent event : events){
             event.triggerEvent();
         }

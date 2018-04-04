@@ -14,6 +14,9 @@ public class PlayerController extends Observer
     float timeTillAbsorb = 0;
     Player player;
     
+    //Player attacks
+    StraightShot fireAttack;
+    
     //Pool for player attacks could be here.
     
     PoolManager playerAttackPools;
@@ -30,8 +33,12 @@ public class PlayerController extends Observer
     
     private void initPlayerAttacks(){
         
+        
+        //It might better if just have AttackManager that pools all the attacks
+        //and will basically be exact same as ItemManager...Then should I make amnager class? or just put it in ItemManager, that
+        
         //Could be something else, whatever.
-        StraightShot fireAttack = new StraightShot();
+        fireAttack = new StraightShot();
         //Set image to be fire image.
         
         playerAttackPools.addPool("fireAttack",fireAttack,20);
@@ -52,12 +59,18 @@ public class PlayerController extends Observer
 
         //Reaction code to changes in state to subject go here
 
-            if (subject.getCurrentState() == State.DAMAGED || 
-                subject.getCurrentState() == PlayerState.TRANSFORMING){
+            if (player.getCurrentState() == State.DAMAGED || 
+                player.getCurrentState() == PlayerState.TRANSFORMING || player.getCurrentState() == PlayerState.PAUSED){
                 
                 //Stop taking input for movement, attacking, while transformation is happening, ie: animation still playing.
                 takingInput = false;
               
+                //Indefinitely invincible if paused
+                if (player.getCurrentState() == PlayerState.PAUSED){
+                    player.becomeInvincible(-1);
+                }
+                //also shouldn't be taking damage anymore as player so become invincible
+                
                 if (subject.getCurrentState() == PlayerState.TRANSFORMING){
                                         
                     System.out.println("Transforming");
@@ -142,7 +155,8 @@ public class PlayerController extends Observer
                     }              
                     //Attacking
                     else if (Greenfoot.isKeyDown("f") && player.canAttack()){
-                        player.attack();             
+                        
+                        checkAttack();
                     }
                     
                     //Picking up items
@@ -163,6 +177,32 @@ public class PlayerController extends Observer
                    }
         }
         
+    }
+    
+    private void checkAttack(){
+        
+          RangedAttack playerAttack = (RangedAttack)playerAttackPools.getReusable(player.getCurrentTransformation() + "attack");
+          if (playerAttack == null){
+              
+          }
+          player.attack(playerAttack);  
+    }
+    
+    
+    private RangedAttack playerAttackFactory(String attackName){
+        
+        RangedAttack product = null;
+        
+        try{
+            if (attackName == "fireattack"){
+                product =  (RangedAttack)fireAttack.clone();
+            }
+        }
+        catch (Exception e){
+            //Log it.
+        }
+        
+        return product;
     }
 
     

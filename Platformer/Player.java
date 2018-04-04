@@ -14,6 +14,7 @@ public class Player extends Subject
     //This is mainly to be set for damage so at half way point still invincibile but can move.
     float initialInvincTime;
     float invincibilityTime;
+    boolean indefinitelyInvincible;
     
     //-1 for left and 1 for right.
     int directionFacing = 1;
@@ -96,7 +97,7 @@ public class Player extends Subject
     private void manageInvincibility(){
         
          if (collider.isTouchingObject(Enemy.class) && getCurrentState() != State.ATTACKING && getCurrentState() != PlayerState.TRANSFORMING
-        && getCurrentState() != State.DAMAGED){
+        && getCurrentState() != State.DAMAGED && getCurrentState() != PlayerState.PAUSED){
             
             
             if (!isInvincible()){
@@ -168,8 +169,14 @@ public class Player extends Subject
         
    public void becomeInvincible(float timePeriod){
        
+        if (timePeriod <= 0){
+          indefinitelyInvincible = true;
+          return;
+       }
+       
        invincibilityTime = timePeriod;
        initialInvincTime = timePeriod;
+      
    }
     
    public void move(int direction){
@@ -323,9 +330,14 @@ public class Player extends Subject
     //If moving while dropping I don't get stopped
   
     //By default just rgular attack all transformations will override this attack method
-    public void attack(){
+    //will rpob bchange t case Attack but for now it's whatever.
+    public void attack(RangedAttack attack){
         
         System.out.println("default attack");
+        
+        //What will be overriden part is where it spawns from player and what player does as attacks
+        //
+        
         
         //Actually tbh, could just have PlayerAttackFactory instead of polymorphism, to avoid
         getWorld().addObject(new PlayerMeleeAttack(),getX() + (attackDistance * directionFacing),getY());

@@ -1,10 +1,8 @@
 import greenfoot.*;  // (World, Actor, GreenfootImage, Greenfoot and MouseInfo)
     import java.util.*;
 /**
- * Write a description of class Collider here.
- * 
- * @author (your name) 
- * @version (a version number or a date)
+ * This class is meant to act as Collider for all actors in the game.
+ * Doing based offof greenfootImage not consistent enough.
  */
 public class Collider extends Actor
 {
@@ -14,7 +12,7 @@ public class Collider extends Actor
      */
 
     Actor detectingFor;
-    //Then this is just a fucking box.
+
     
     //Collider is really another observer to Subjects and it's truly one-to-one.
     public Collider(Actor actor){

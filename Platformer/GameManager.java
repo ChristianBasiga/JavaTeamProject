@@ -10,18 +10,30 @@ public class GameManager extends Observer
 {   
     static final double GRAVITY = 9.81;
     
+    //UI
+    GameOver gameOver;
+    PauseMenu pauseMenu;
+    
+    
     
     public GameManager() {
         threadName = "gm";
         priority = 2;    
         StraightShot enemyShot = new StraightShot();
+        gameOver = new GameOver();
+        pauseMenu = new PauseMenu();
     }
     
     //At the start of the game, makes all the colliders in the world invisible.
     //honestly could prob just do based on image, since theirs prob better, maybe.
     public void startGame(){
         
-        //Makes all colliders invisible.
+       hideColliders();
+    }
+    
+    private void hideColliders(){
+        
+         //Makes all colliders invisible.
         List<Collider> colliders = getWorld().getObjects(Collider.class);
         GreenfootImage transparentImage = new GreenfootImage("transparent");
         for (Collider coll : colliders){
@@ -35,16 +47,32 @@ public class GameManager extends Observer
     
     public void react() {
         
+        //I could just set up UI here instead of UIManager
+        //cause at this point GameManager wouldn't nothing else.
         if (subject != null) {
+            
+           Player player = (Player)(subject);
                 
+           if (player.getCurrentState() == State.DEAD){
+               gameOver();
+           }
+           
+           else if (player.getCurrentState() == PlayerState.PAUSED){
+               pauseGame();
+           }
            
         }
         
     }
-    
-    
-    public void act(){
-  
+   
+    private void gameOver(){
+
+        getWorld().addObject(gameOver, getWorld().getWidth() / 2, getWorld().getHeight() / 2);
+
     }
     
+    private void pauseGame(){
+        getWorld().addObject(pauseMenu, getWorld().getWidth() / 2, getWorld().getHeight() / 2);
+    }
+   
 }

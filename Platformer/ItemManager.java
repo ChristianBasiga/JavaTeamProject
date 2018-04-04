@@ -40,7 +40,7 @@ public class ItemManager extends Actor
     }
     
     //This will be called by Player for attacks and Enemies for item drops
-    public Item getItem(String itemName){
+    public Item getItem(String itemName) throws Exception{
         
         Item item = (Item)itemPools.getReusable(itemName);
         
@@ -51,7 +51,7 @@ public class ItemManager extends Actor
             
             //if still null then item does not exist and throw exception
             if (item == null){
-                //Throw item not exist exception
+                throw new Exception(String.format("The Item %s does not exist",itemName));
             }
         }
         
