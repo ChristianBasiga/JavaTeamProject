@@ -12,6 +12,7 @@ public class PlayerState extends State
    public static final PlayerState TRANSFORMING = new PlayerState(128,"Transforming");
    public static final PlayerState ABSORBING = new PlayerState(254,"Absorbing");
    public static final PlayerState PAUSED = new PlayerState(1024,"Paused");
+   public static final PlayerState INVINCIBLE = new PlayerState(1024,"Invincible");
 
 
    

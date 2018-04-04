@@ -74,8 +74,9 @@ public class PlayerController extends Observer
                 if (subject.getCurrentState() == PlayerState.TRANSFORMING){
                                         
                     System.out.println("Transforming");
-                    //Changes subject to Player
-                    //I may need to reset what others are observing
+
+                    //Changes transforms player to different instance
+
                     Player prevPlayer = player;
                     Player newPlayer = PlayerFactory.produce(prevPlayer.getCurrentTransformation());
                     

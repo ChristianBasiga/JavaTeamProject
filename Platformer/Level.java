@@ -31,6 +31,7 @@ public class Level extends World
         
         playerAnimator = new Animator(player);     
        
+        playerSpawn = new int[]{getWidth() / 2,getHeight() / 2};
         addObject(player,playerSpawn[0],playerSpawn[1]);
         addObject(playerAnimator,0,0);
         addObject(gm,0,0);
@@ -39,7 +40,7 @@ public class Level extends World
         //Set up ground 
         
         addObject(new Ground(), getWidth() / 2, (getHeight() / 2) + 300);
-        
+                addObject(new Ground(), getWidth() / 2, (getHeight() / 2) - 100);
        /* for (int i = -5; i < 0; ++i){
             addObject(new Ground(), (getWidth() / 2) + (i * 50), (getHeight() / 2) - 100);
         }

@@ -88,7 +88,7 @@ public class Player extends Subject
     public void act() 
     {
        
-       
+      // System.out.println("Current state: " + getCurrentState());
         manageInvincibility(); 
         managePlayerYPosition();
                 
@@ -112,13 +112,18 @@ public class Player extends Subject
         if (invincibilityTime <= initialInvincTime && getCurrentState() == State.DAMAGED){
             changeState(State.DEFAULT,false);
         }
+     
+        
         
         if (invincibilityTime > 0){
             invincibilityTime -= 0.1f;
         }
         else if (invincibilityTime <= 0){
             
-            changeState(State.DEFAULT,false);
+            //Only if became invincible or damaged
+            if (getCurrentState().equals(PlayerState.INVINCIBLE) || getCurrentState() == State.DAMAGED){
+                changeState(State.DEFAULT,false);
+            }
         }
         
             
@@ -139,21 +144,23 @@ public class Player extends Subject
         
         //Either when done jumping, aka when verticalVelocity is jumpHeight again.
         //Otherwise when done falling, aka hit ground, and then this will change
+        //System.out.println("Vertical Velocity is " + verticalVelocity);
         if ((getCurrentState().equals(State.JUMPING) || getCurrentState().equals(State.FALLING)) && verticalVelocity <= jumpHeight){
             
            verticalVelocity += acceleration;
-           
+              //         System.out.println("here");
            //Then this is critical point and switches directions
            if (verticalVelocity == 0){
                changeState(State.FALLING,false);
            }
         }
-        else if (!getCurrentState().equals(State.JUMPING) && !collider.isTouchingObject(Ground.class)){
+        //Then not hit ground yet, cause not moving.
+        else if (!getCurrentState().equals(State.JUMPING) && !(collider.isTouchingObject(Ground.class))){
             
-            //then go bakc to falling.
             verticalVelocity = 0;
             changeState(State.FALLING,false);
         }
+        
         
         checkWalls(); 
                         
@@ -212,12 +219,11 @@ public class Player extends Subject
                         
              
                 List<Ground> grounds = collider.getCollidingObjects(Ground.class);
+                
                 if (grounds.size() == 0){
                     
-                    speed = 0;
-                    
-                    //no longer on ground, so need to keep falling
                     changeState(State.DEFAULT,false);
+                    return;
                 }
                 
                 for (Ground ground : grounds){      
@@ -225,15 +231,15 @@ public class Player extends Subject
                     //Making sure within bounds of the ground touching
                     if (collider.getX() >= ground.getX() || collider.getX() + (collider.getWidth() + (collider.getWidth() / 2)) <= ground.getX() + ground.getImage().getWidth()){
                         
-                        
-                        //For if falls onto ground
+                        System.out.println("Current State is" + getCurrentState());
+
                         if (getCurrentState().equals(State.FALLING)){
-                            
+
                             if (collider.getY() + collider.getHeight() + collider.getHeight() / 2 >= ground.getY()){
                            // if (getOneObjectAtOffset(collider.getWidth() / 2,collider.getHeight(),Ground.class) != null){                
                                 verticalVelocity = 0;
                                 changeState(State.DEFAULT,false);
-                                                                                                        System.out.println("I happen too");
+
 
                             }
                             
@@ -259,19 +265,25 @@ public class Player extends Subject
    
                 }
             }
+           
     }
     
     public void checkWalls(){
         
+        //Only enforce this if not on the wall itse'f
         //Left side of platform.
                     //if (getCurrentState().equals(State.MOVINGLEFT) && (collider.getX() - collider.getWidth() / 2) <= ground.getX() + ground.getImage().getWidth() / 2){
-        if (getOneObjectAtOffset(-collider.getWidth() * 2,0,Ground.class) != null){
-            System.out.println("why am i no longer working yo");
-            setLocation(getX() + 1 , getY());
+        Ground ground;
+        if ((ground = (Ground)getOneObjectAtOffset(-collider.getWidth()/ 2,0,Ground.class)) != null){
+
+             //Making sure within bounds of the ground touching
+            if (!(collider.getX() >= ground.getX() &&  collider.getX() + (collider.getWidth() + (collider.getWidth() / 2)) <= ground.getX() + ground.getImage().getWidth())){
+                setLocation(getX() + 1 , getY());
+            }
 
         }
                     //Right side of platform
-        else if (getOneObjectAtOffset(collider.getWidth() * 2,0,Ground.class) != null){
+        else if (getOneObjectAtOffset(collider.getWidth() / 2,0,Ground.class) != null){
             System.out.println("why am i no longer working yo");
             setLocation(getX() - 1 , getY());
 
