@@ -74,6 +74,8 @@ public class Animator extends Observer
                 return;
             }
             if (animating.getCurrentState() != State.DEFAULT ){
+                
+                //Setting back to default makes sure that it doesn't say in attack state or something.
                 animating.changeState(State.DEFAULT,false);
             }
         }

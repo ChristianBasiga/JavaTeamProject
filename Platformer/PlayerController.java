@@ -15,7 +15,9 @@ public class PlayerController extends Observer
     Player player;
     
     //Player attacks
-    StraightShot fireAttack;
+    StraightShot defaultAtt;
+    WaveShot waterAtt;
+    
     
     //Pool for player attacks could be here.
     
@@ -34,14 +36,18 @@ public class PlayerController extends Observer
     private void initPlayerAttacks(){
         
         
+        
         //It might better if just have AttackManager that pools all the attacks
         //and will basically be exact same as ItemManager...Then should I make amnager class? or just put it in ItemManager, that
         
         //Could be something else, whatever.
-        fireAttack = new StraightShot();
-        //Set image to be fire image.
+        defaultAtt = new StraightShot();
+        waterAtt = new WaveShot();
         
-        playerAttackPools.addPool("fireAttack",fireAttack,20);
+        
+        
+        playerAttackPools.addPool("defaultattack",defaultAtt,20);
+        playerAttackPools.addPool("waterattack",waterAtt,10);
         
         //Set up other attacks.
         
@@ -132,7 +138,7 @@ public class PlayerController extends Observer
 
 
                 }
-                if (Greenfoot.isKeyDown("d")){
+                else if (Greenfoot.isKeyDown("d")){
                     
                     player.move(1);
 
@@ -194,10 +200,14 @@ public class PlayerController extends Observer
     
     private void checkAttack(){
         
-          RangedAttack playerAttack = (RangedAttack)playerAttackPools.getReusable(player.getCurrentTransformation() + "attack");
+         // RangedAttack playerAttack = (RangedAttack)playerAttackPools.getReusable(player.getCurrentTransformation() + "attack");
+          RangedAttack playerAttack = (RangedAttack)playerAttackPools.getReusable("waterattack");
           if (playerAttack == null){
-              
+              //Log the error, but user need not know about this issue so still attack like normal
+              playerAttack = playerAttackFactory(player.getCurrentTransformation() + "attack");
           }
+         
+          playerAttack.setTarget(Enemy.class);
           player.attack(playerAttack);  
     }
     
@@ -207,8 +217,11 @@ public class PlayerController extends Observer
         RangedAttack product = null;
         
         try{
-            if (attackName == "fireattack"){
-                product =  (RangedAttack)fireAttack.clone();
+            if (attackName == "defaultattack"){
+                product =  (RangedAttack)defaultAtt.clone();
+            }
+            else if (attackName == "waterattack"){
+               product =  (RangedAttack)waterAtt.clone();
             }
         }
         catch (Exception e){

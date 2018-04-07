@@ -8,22 +8,61 @@ import greenfoot.*;  // (World, Actor, GreenfootImage, Greenfoot and MouseInfo)
  */
 public class StraightShot extends RangedAttack
 {
-    /**
-     * Act - do whatever the StraightShot wants to do. This method is called whenever
-     * the 'Act' or 'Run' button gets pressed in the environment.
-     */
+    //Could have direction of shot, but that's decided by player shooting, not itself
+    //so it should rotate it? or should I have attribute here.
+   
+    //
+    float secondsTillAccel;
+    float secondsForAccel = 1.0f;
+    
+    public StraightShot(){
+        
+        secondsTillAccel = 0;  
+    
+        velocity = 1;
+        topSpeed = 10;
+        acceleration = 1;
+    }
+    
     public void act() 
     {
-        // Add your action code here.
+
+        setLocation(getX() + velocity, getY());
+        
+        if (secondsTillAccel > 0){
+            secondsTillAccel -= 0.1f;
+        }
+        else{
+            continueAttack();
+        }
+        
     } 
+    
+    @Override
+    protected void continueAttack(){
+  
+        velocity += acceleration;
+        
+        
+        isDone = velocity >= topSpeed;
+        
+       
+        
+        secondsTillAccel = secondsForAccel;
+        
+        super.continueAttack();
+    }
     
     public Object clone() throws CloneNotSupportedException{
         
         StraightShot copy = new StraightShot();
         
         copy.velocity = velocity;
+        copy.topSpeed = topSpeed;
         copy.damage = damage;
         copy.setImage(copy.getImage());
+        copy.secondsForAccel = secondsForAccel;
+        copy.acceleration = acceleration;
         
         return copy;
     }

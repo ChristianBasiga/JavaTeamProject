@@ -6,7 +6,7 @@ import java.util.*;
  * @author (your name) 
  * @version (a version number or a date)
  */
-public class Player extends Subject
+public class Player extends Subject implements ITakeDamage
 {
     String currentTransformation = "default";
     int health;
@@ -31,13 +31,20 @@ public class Player extends Subject
     
     Collider collider;
     
-    float attackCD = 10.0f;
+    float attackCD = 5.0f;
     float timeTillAttack = 0;
     
     int maxSpeed = 5;
     int speed = 0;
     
-    //Blending states between movement and Jumping not working
+    
+   
+  
+   public void damage(int dmg){
+       health -= dmg;
+   }
+    
+
     
     public Player(){   
         
@@ -87,11 +94,18 @@ public class Player extends Subject
     //What I need to do is have one set location happening, and just have movement so it's more synchronous
     public void act() 
     {
+        
        
+        if (speed > 0 && speed < maxSpeed){
+            speed += acceleration;
+        }
+        
+
       // System.out.println("Current state: " + getCurrentState());
         manageInvincibility(); 
         managePlayerYPosition();
         findItem();
+        setLocation(getX() + speed * directionFacing, getY() + verticalVelocity);           
                 
     }    
     
@@ -138,7 +152,7 @@ public class Player extends Subject
     
     private void managePlayerYPosition(){
         
-        setLocation(getX(), getY() + verticalVelocity);           
+
   
         //Either when done jumping, aka when verticalVelocity is jumpHeight again.
         //Otherwise when done falling, aka hit ground, and then this will change
@@ -205,7 +219,7 @@ public class Player extends Subject
         
        changeDirection(direction);
        speed = 1;
-       setLocation(getX() + direction * speed, getY());
+    
      //  super.move(direction * speed);
     }
     
@@ -229,24 +243,26 @@ public class Player extends Subject
                     //Making sure within bounds of the ground touching
                     if (collider.getX() >= ground.getX() || collider.getX() + (collider.getWidth() + (collider.getWidth() / 2)) <= ground.getX() + ground.getImage().getWidth()){
                         
-                        System.out.println("Current State is" + getCurrentState());
+
 
                         if (getCurrentState().equals(State.FALLING)){
 
                             //This could be made better, it's dipping past floor a little bit prob due to velocity
-                            if (collider.getY() + collider.getHeight() + collider.getHeight() / 2 > ground.getY() - ground.getImage().getHeight() / 2){
-                         //   if (getOneObjectAtOffset(0,collider.getHeight() + collider.getHeight() / 2,Ground.class) != null){                
-                                verticalVelocity = 0;
+                            if (collider.getY() + collider.getHeight() + verticalVelocity > ground.getY() - ground.getImage().getHeight() / 2){
+                          
+                                    verticalVelocity = 0;
+                                System.out.println("fdg");
                                 changeState(State.DEFAULT,false);
                                 break;
 
                             }   
                         }    
                         //For if jumps into bottom edge of ground or cieling.
-                          if (getCurrentState().equals(State.JUMPING)){
+                        else if (getCurrentState().equals(State.JUMPING)){
                                   
-                                if (collider.getY() - collider.getHeight() / 2 <= ground.getY() + ground.getImage().getHeight() ){
-                                    setLocation(getX(),getY() + 2);
+                                if (collider.getY() - collider.getHeight() / 2  - verticalVelocity <= ground.getY() + ground.getImage().getHeight() ){
+                                
+                                   
                                     verticalVelocity = 10;
                                     changeState(State.DEFAULT,false);
                                     break;
@@ -266,16 +282,16 @@ public class Player extends Subject
         //Left side of platform.
                     //if (getCurrentState().equals(State.MOVINGLEFT) && (collider.getX() - collider.getWidth() / 2) <= ground.getX() + ground.getImage().getWidth() / 2){
         Ground ground;
-        if ((ground = (Ground)getOneObjectAtOffset(-collider.getWidth()/ 2,0,Ground.class)) != null){
+        if ((ground = (Ground)getOneObjectAtOffset(-(collider.getWidth()/ 2 + speed),0,Ground.class)) != null){
 
            
-            setLocation(getX() + 1, getY());
+            setLocation(getX() + speed, getY());
 
         }
                     //Right side of platform
-        else if (getOneObjectAtOffset(collider.getWidth() / 2,0,Ground.class) != null){
+        else if (getOneObjectAtOffset((collider.getWidth() / 2) + speed,0,Ground.class) != null){
             System.out.println("why am i no longer working yo");
-            setLocation(getX() - 1 , getY());
+            setLocation(getX() - speed , getY());
 
         }
  
@@ -321,7 +337,7 @@ public class Player extends Subject
         
         //Can no longer take in input.
         changeState(PlayerState.TRANSFORMING, false);
-                     System.out.println("Current State is" + getCurrentState());    
+
         
     }
     
@@ -329,25 +345,23 @@ public class Player extends Subject
       transform("default");
     }
     
-    //If moving while dropping I don't get stopped
-  
-    //By default just rgular attack all transformations will override this attack method
-    //will rpob bchange t case Attack but for now it's whatever.
     public void attack(RangedAttack attack){
         
         System.out.println("default attack");
         
         //What will be overriden part is where it spawns from player and what player does as attacks
         //
+        attack.setDirection(directionFacing);
         
-        
-        //Actually tbh, could just have PlayerAttackFactory instead of polymorphism, to avoid
-        getWorld().addObject(new PlayerMeleeAttack(),getX() + (attackDistance * directionFacing),getY());
+        //Where it spawns will also differ.
+        getWorld().addObject(attack,getX() + collider.getWidth() + (attackDistance * directionFacing),getY());
         
         //This will be duplicate code though otherwise, but worry about that later, or actually do move this back there
         timeTillAttack = attackCD;
+        
         //Instead of changing state, it will blendstate so blending so that it's state can be both attacking and running, but for now just changeState is fine.
         changeState(State.ATTACKING,false);
+        
     }
     
     public void absorb(){
