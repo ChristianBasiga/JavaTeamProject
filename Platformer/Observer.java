@@ -6,7 +6,7 @@
  */
 import greenfoot.Actor;
 import java.util.*;
-public abstract class Observer extends Actor implements  Comparable<Observer>
+public abstract class Observer extends Actor implements  Comparable<Observer>, Runnable
 {
     
     //Separate thread for doing the reaction in.
@@ -26,23 +26,19 @@ public abstract class Observer extends Actor implements  Comparable<Observer>
     //All logic where Observer is reacting to a subject will be in run override
     //Might not need it to be threaded anymore, stuff like damage and then health going down
     //can just happen after another, frames go by pretty fast anyway.
-   /* final public void react(boolean isConCurrentReaction) {
-
-        if (isConCurrentReaction){
-        
-          
+    final public void react() {
+  
+          try{
             t = new Thread(this,threadName);
-            
-        
             t.start();
-        }else{
-            //Otherwise I call run myself directly to run it in main thread.
-            run();
+        }
+        catch(Exception e){
+            
         }
         
-   }*/
+   }
    
-   public abstract void react();
+ 
     
     public void observe(Subject subject) {
         this.subject = subject;

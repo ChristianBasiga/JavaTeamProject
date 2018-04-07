@@ -60,7 +60,7 @@ public class PlayerController extends Observer
         takingInput = true;
     }
 
-    public void react() 
+    public void run() 
     {
 
         //Reaction code to changes in state to subject go here
@@ -132,9 +132,19 @@ public class PlayerController extends Observer
     
     private void checkMovement(){
         
-                 if (Greenfoot.isKeyDown("a")){
                     
-                    player.move(-1);
+        
+               
+    }
+   
+    private void checkActions(){
+        
+        if (!player.getCurrentState().equals(State.JUMPING) && !player.getCurrentState().equals(State.FALLING)){
+                    
+              if (Greenfoot.isKeyDown("a")){
+                    
+                 
+                   player.move(-1);
 
 
                 }
@@ -144,18 +154,10 @@ public class PlayerController extends Observer
 
                 }
                 else{
-                    //It seems it must wait for frame until these states are turned off, to register falling to floor.
-                    player.getCurrentState().turnOffState(State.MOVINGLEFT);
-                    player.getCurrentState().turnOffState(State.MOVINGRIGHT);
+                    
                     player.setSpeed(0);
                 }
-    }
-   
-    private void checkActions(){
-        
-        if (!player.getCurrentState().equals(State.JUMPING) && !player.getCurrentState().equals(State.FALLING)){
-                    
-                    if (Greenfoot.isKeyDown("w")){
+                 if (Greenfoot.isKeyDown("w")){
                    
                         player.jump();
                     }               
@@ -190,11 +192,10 @@ public class PlayerController extends Observer
                             timeTillAbsorb = absorbCD;      
                         }
                     
-                    //Otherwise if it's not default, then set to default.
-                    player.changeState(PlayerState.DEFAULT,false);
+                    
 
                    }
-        }
+       }
         
     }
     

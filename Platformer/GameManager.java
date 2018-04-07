@@ -45,7 +45,7 @@ public class GameManager extends Observer
         }
     }
     
-    public void react() {
+    public void run() {
         
         //I could just set up UI here instead of UIManager
         //cause at this point GameManager wouldn't nothing else.

@@ -33,6 +33,13 @@ public class Collider extends Actor
         
     }
     
+    public <A> Object getObjectAtOffset(int xOffset, int yOffset, java.lang.Class<A> cls){
+        
+        return getOneObjectAtOffset(xOffset,yOffset, cls);
+    }
+    
+   
+    
     public void setWidth(int width){
         
         getImage().scale(width, getImage().getHeight());

@@ -27,7 +27,7 @@ public class Player extends Subject implements ITakeDamage
     int verticalVelocity;
     int acceleration = 1;
     int jumpHeight;
-    int groundY;
+   
     
     Collider collider;
     
@@ -36,6 +36,8 @@ public class Player extends Subject implements ITakeDamage
     
     int maxSpeed = 5;
     int speed = 0;
+    
+    int momentum;
     
     
    
@@ -95,18 +97,16 @@ public class Player extends Subject implements ITakeDamage
     public void act() 
     {
         
-       
-        if (speed > 0 && speed < maxSpeed){
-            speed += acceleration;
-        }
         
+
+        
+
 
       // System.out.println("Current state: " + getCurrentState());
         manageInvincibility(); 
         managePlayerYPosition();
         findItem();
-        setLocation(getX() + speed * directionFacing, getY() + verticalVelocity);           
-                
+               
     }    
     
     private void manageInvincibility(){
@@ -157,6 +157,19 @@ public class Player extends Subject implements ITakeDamage
         //Either when done jumping, aka when verticalVelocity is jumpHeight again.
         //Otherwise when done falling, aka hit ground, and then this will change
        
+         
+        if (getCurrentState().equals(State.JUMPING) || getCurrentState().equals(State.FALLING)){
+            //the x is so momentum carries
+            setLocation(getX() + momentum , getY() + verticalVelocity);    
+            if (momentum != 0){
+                momentum += acceleration * directionFacing;
+            }
+            checkFloorAndCieling();
+
+        }
+                        
+        
+        
         if ((getCurrentState().equals(State.JUMPING) || getCurrentState().equals(State.FALLING)) && verticalVelocity <= jumpHeight){
             
            verticalVelocity += acceleration;
@@ -173,10 +186,7 @@ public class Player extends Subject implements ITakeDamage
             changeState(State.FALLING,false);
         }
         
-        
-        checkWalls(); 
-                        
-        checkFloorAndCieling();
+       
             
             
    
@@ -207,10 +217,10 @@ public class Player extends Subject implements ITakeDamage
             
         switch (direction){
                case -1:
-                   changeState(State.MOVINGLEFT,blendMovement);
+                   changeState(State.MOVINGLEFT,false);
                    break;
                case 1:
-                   changeState(State.MOVINGRIGHT,blendMovement);
+                   changeState(State.MOVINGRIGHT,false);
                    break;
         }
             
@@ -218,8 +228,19 @@ public class Player extends Subject implements ITakeDamage
         
         
        changeDirection(direction);
-       speed = 1;
-    
+       
+       //If was already moving before, accelerate, otherwise set speed
+       if (speed > 0 && speed < maxSpeed){
+            speed += acceleration;
+        }
+       else{
+           speed = 1;
+       }
+       
+       
+       setLocation(getX() + speed * directionFacing,getY());
+       
+       checkWalls(); 
      //  super.move(direction * speed);
     }
     
@@ -228,16 +249,20 @@ public class Player extends Subject implements ITakeDamage
 
          if (collider.isTouchingObject(Ground.class) || collider.getY() + 1 == getWorld().getHeight() ){
 
-                        
-             
-                List<Ground> grounds = collider.getCollidingObjects(Ground.class);
-            
+                List<Ground> grounds = collider.getCollidingObjects(Ground.class);  
+                
+                momentum = 0;
+                
+                
                 if (grounds.size() == 0){
+                    
                     
                     changeState(State.DEFAULT,false);
                     return;
                 }
                 
+              
+             
                 for (Ground ground : grounds){      
    
                     //Making sure within bounds of the ground touching
@@ -248,10 +273,11 @@ public class Player extends Subject implements ITakeDamage
                         if (getCurrentState().equals(State.FALLING)){
 
                             //This could be made better, it's dipping past floor a little bit prob due to velocity
-                            if (collider.getY() + collider.getHeight() + verticalVelocity > ground.getY() - ground.getImage().getHeight() / 2){
+                            if (collider.getY() + collider.getHeight() + collider.getHeight() / 2 >=  ground.getY()){
                           
-                                    verticalVelocity = 0;
-                                System.out.println("fdg");
+                                verticalVelocity = 0;
+                              
+                                momentum = 0;
                                 changeState(State.DEFAULT,false);
                                 break;
 
@@ -264,6 +290,7 @@ public class Player extends Subject implements ITakeDamage
                                 
                                    
                                     verticalVelocity = 10;
+                                    momentum = 0;
                                     changeState(State.DEFAULT,false);
                                     break;
                                 }                    
@@ -277,20 +304,19 @@ public class Player extends Subject implements ITakeDamage
     }
     
     public void checkWalls(){
-        
-        //Only enforce this if not on the wall itse'f
-        //Left side of platform.
-                    //if (getCurrentState().equals(State.MOVINGLEFT) && (collider.getX() - collider.getWidth() / 2) <= ground.getX() + ground.getImage().getWidth() / 2){
-        Ground ground;
-        if ((ground = (Ground)getOneObjectAtOffset(-(collider.getWidth()/ 2 + speed),0,Ground.class)) != null){
+      
+      
+     
+    
+        //This won't work, I do actually need to do it manually
+        if (getCurrentState().equals(State.MOVINGLEFT) && getOneObjectAtOffset(-(collider.getWidth()/ 2 ),0,Ground.class) != null){
 
            
-            setLocation(getX() + speed, getY());
+            setLocation(getX() + speed , getY());
 
         }
                     //Right side of platform
-        else if (getOneObjectAtOffset((collider.getWidth() / 2) + speed,0,Ground.class) != null){
-            System.out.println("why am i no longer working yo");
+        else if (getCurrentState().equals(State.MOVINGRIGHT) && getOneObjectAtOffset((collider.getWidth() / 2),0,Ground.class) != null){
             setLocation(getX() - speed , getY());
 
         }
@@ -299,10 +325,14 @@ public class Player extends Subject implements ITakeDamage
     
     public void jump(){
         
-        if (collider.isTouchingObject(Ground.class) || collider.getY() + 1 == getWorld().getHeight()){
+        if (collider.isTouchingObject(Ground.class) || collider.getY() + 1 >= getWorld().getHeight()){
             
-            groundY= getY();
+         
             changeState(State.JUMPING,false);
+            System.out.println("Speed now is" + speed);
+            momentum = speed * directionFacing;
+            momentum /= 2;
+            
             verticalVelocity = -jumpHeight;
             
         }

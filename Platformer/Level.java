@@ -19,7 +19,17 @@ public class Level extends World
 
     public void started(){
        
-        im = new ItemManager();
+    }
+    /**
+     * Constructor for objects of class Level.
+     * 
+     */
+    public Level()
+    {    
+        // Create a new world with 600x400 cells with a cell size of 1x1 pixels.
+        super(600, 400, 1); 
+        
+          im = new ItemManager();
         gm = new GameManager();
       
         Player player = new Player();
@@ -38,29 +48,8 @@ public class Level extends World
         addObject(pc,0,0);
        
         //Set up ground 
-        
-        addObject(new Ground(), getWidth() /2, (getHeight() / 2) + 300);
-        
-        Random random = new Random();
-        //Testing star
-    //    addObject(new Star(), random.nextInt(getWidth() - 50) + 50, getHeight() / 2 + 300);
-        
-      //  addObject(new Ground(), getWidth() / 2, (getHeight() / 2) - 70);
-       /* for (int i = -5; i < 0; ++i){
-            addObject(new Ground(), (getWidth() / 2) + (i * 50), (getHeight() / 2) - 100);
-        }
-       for (int i = 0; i < 5; ++i){
-            addObject(new Ground(), (getWidth() / 2) + (i * 50), (getHeight() / 2) + 100);
-        }*/
-    }
-    /**
-     * Constructor for objects of class Level.
-     * 
-     */
-    public Level()
-    {    
-        // Create a new world with 600x400 cells with a cell size of 1x1 pixels.
-        super(600, 400, 1); 
+      
+      
     }
     
     public void act(){
