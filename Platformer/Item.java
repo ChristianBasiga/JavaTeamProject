@@ -24,11 +24,13 @@ public abstract class Item extends Reusable
    
     public void act(){
         
+
         if (timeLeft > 0){
+
             timeLeft -= 0.1f;
         }
         else if (timeLeft <= 0){
-            getWorld().removeObject(this);
+
             doneUsing();
         }
         
@@ -36,11 +38,7 @@ public abstract class Item extends Reusable
    
    
     //I could just switch this on player, or can just trigger event hm
-   public void pickUp(Player player){
-        
-        //Effect the player with correct effect.
-      //  pickUpNotification.notify();
-       getWorld().removeObject(this);
+   public void pickUp(Player player){     
        doneUsing();
    }
     

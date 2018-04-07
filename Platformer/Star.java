@@ -10,8 +10,8 @@ public class Star extends Item
 {
     float invincibilityTime;
     
-    public void Star(){
-        timeLeft = 10.0f;
+    public Star(){
+       timeLeft = 100.0f;
         invincibilityTime = 10.0f;
     }
     
@@ -24,9 +24,8 @@ public class Star extends Item
     
     public void pickUp(Player player){
         
+        System.out.println("I happen");
         player.becomeInvincible(invincibilityTime);
-
-        //Other stuff if needed.
         
         super.pickUp(player);
     }

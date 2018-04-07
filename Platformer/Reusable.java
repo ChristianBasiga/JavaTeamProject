@@ -23,8 +23,12 @@ public abstract class Reusable extends Actor implements Cloneable
     //This will be called by concrete classes when they're done being used
     protected void doneUsing(){  
         
-        if (doneUsing != null)
-        doneUsing.notify();
+        if (doneUsing != null){
+                      
+            System.out.printf("%s is gone", this.toString());
+            doneUsing.notifyEvents();
+            getWorld().removeObject(this);
+        }
     }
    
     //Will be implemented by concrete classes cause they decide how they're cloned.

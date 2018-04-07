@@ -1,5 +1,5 @@
 import greenfoot.*;  // (World, Actor, GreenfootImage, Greenfoot and MouseInfo)
-
+import java.util.Random;
 /**
  * Write a description of class Level here.
  * 
@@ -39,8 +39,13 @@ public class Level extends World
        
         //Set up ground 
         
-        addObject(new Ground(), getWidth() / 2, (getHeight() / 2) + 300);
-                addObject(new Ground(), getWidth() / 2, (getHeight() / 2) - 100);
+        addObject(new Ground(), getWidth() + 50, (getHeight() / 2) + 300);
+        
+        Random random = new Random();
+        //Testing star
+    //    addObject(new Star(), random.nextInt(getWidth() - 50) + 50, getHeight() / 2 + 300);
+        
+        addObject(new Ground(), getWidth() / 2, (getHeight() / 2) - 70);
        /* for (int i = -5; i < 0; ++i){
             addObject(new Ground(), (getWidth() / 2) + (i * 50), (getHeight() / 2) - 100);
         }

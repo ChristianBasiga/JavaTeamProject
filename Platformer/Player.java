@@ -91,6 +91,7 @@ public class Player extends Subject
       // System.out.println("Current state: " + getCurrentState());
         manageInvincibility(); 
         managePlayerYPosition();
+        findItem();
                 
     }    
     
@@ -120,7 +121,7 @@ public class Player extends Subject
         }
         else if (invincibilityTime <= 0){
             
-            //Only if became invincible or damaged
+            //Only if became invincible or damaged, cause if paused then stays invincible
             if (getCurrentState().equals(PlayerState.INVINCIBLE) || getCurrentState() == State.DAMAGED){
                 changeState(State.DEFAULT,false);
             }
@@ -136,15 +137,12 @@ public class Player extends Subject
     }
     
     private void managePlayerYPosition(){
-      
         
-
         setLocation(getX(), getY() + verticalVelocity);           
-        
-        
+  
         //Either when done jumping, aka when verticalVelocity is jumpHeight again.
         //Otherwise when done falling, aka hit ground, and then this will change
-        //System.out.println("Vertical Velocity is " + verticalVelocity);
+       
         if ((getCurrentState().equals(State.JUMPING) || getCurrentState().equals(State.FALLING)) && verticalVelocity <= jumpHeight){
             
            verticalVelocity += acceleration;
@@ -154,7 +152,7 @@ public class Player extends Subject
                changeState(State.FALLING,false);
            }
         }
-        //Then not hit ground yet, cause not moving.
+        //If not hit gorund yet, but no longer moving, reset velociy to keep moving
         else if (!getCurrentState().equals(State.JUMPING) && !(collider.isTouchingObject(Ground.class))){
             
             verticalVelocity = 0;
@@ -219,7 +217,7 @@ public class Player extends Subject
                         
              
                 List<Ground> grounds = collider.getCollidingObjects(Ground.class);
-                
+            
                 if (grounds.size() == 0){
                     
                     changeState(State.DEFAULT,false);
@@ -235,30 +233,24 @@ public class Player extends Subject
 
                         if (getCurrentState().equals(State.FALLING)){
 
-                            if (collider.getY() + collider.getHeight() + collider.getHeight() / 2 >= ground.getY()){
-                           // if (getOneObjectAtOffset(collider.getWidth() / 2,collider.getHeight(),Ground.class) != null){                
+                            //This could be made better, it's dipping past floor a little bit prob due to velocity
+                            if (collider.getY() + collider.getHeight() + collider.getHeight() / 2 > ground.getY() - ground.getImage().getHeight() / 2){
+                         //   if (getOneObjectAtOffset(0,collider.getHeight() + collider.getHeight() / 2,Ground.class) != null){                
                                 verticalVelocity = 0;
                                 changeState(State.DEFAULT,false);
+                                break;
 
-
-                            }
-                            
-                           
+                            }   
                         }    
                         //For if jumps into bottom edge of ground or cieling.
                           if (getCurrentState().equals(State.JUMPING)){
-                                
-                              System.out.println(collider.getY() - collider.getHeight() / 2);
-                              System.out.println(ground.getY() + ground.getImage().getHeight() / 2);
-                              
-
+                                  
                                 if (collider.getY() - collider.getHeight() / 2 <= ground.getY() + ground.getImage().getHeight() ){
                                     setLocation(getX(),getY() + 2);
                                     verticalVelocity = 10;
                                     changeState(State.DEFAULT,false);
-                                }
-                                
-                               
+                                    break;
+                                }                    
                         }
                         
                     }
@@ -276,10 +268,8 @@ public class Player extends Subject
         Ground ground;
         if ((ground = (Ground)getOneObjectAtOffset(-collider.getWidth()/ 2,0,Ground.class)) != null){
 
-             //Making sure within bounds of the ground touching
-            if (!(collider.getX() >= ground.getX() &&  collider.getX() + (collider.getWidth() + (collider.getWidth() / 2)) <= ground.getX() + ground.getImage().getWidth())){
-                setLocation(getX() + 1 , getY());
-            }
+           
+            setLocation(getX() + 1, getY());
 
         }
                     //Right side of platform
@@ -371,12 +361,17 @@ public class Player extends Subject
     
     public void findItem(){
       
+       
        //For deciing if looking left or right.
-       int whereToLook = collider.getWidth() * directionFacing;
+       int whereToLook = collider.getWidth() / 2 * directionFacing;
         
        Item item = (Item)getOneObjectAtOffset(whereToLook,0,Item.class);
        
+       //Item item = (Item)getOneIntersectingObject(Item.class);
+       
        if (item != null){
+           
+
            //Picks up items, which will trigger events for item to take effect.
            item.pickUp(this);
        }

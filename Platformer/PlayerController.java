@@ -98,14 +98,26 @@ public class PlayerController extends Observer
     
     public void act(){
 
-            if (takingInput){
+          //has to be before as this may change takingInput's value.
+          if (Greenfoot.isKeyDown("escape")){
+                
+                if (player.getCurrentState() == PlayerState.PAUSED){
+                    
+                    player.changeState(State.DEFAULT,false);
+                }
+                else{
+                    player.changeState(PlayerState.PAUSED,false);
+                }
+               
+          }
+            
+          if (takingInput){
 
 
                 checkMovement();
                 checkActions();
                 
-            }
-          
+          }
 
         if (timeTillAbsorb > 0){
                 timeTillAbsorb -= 0.1f;
