@@ -160,15 +160,9 @@ public class Player extends Subject implements ITakeDamage
          
         if (getCurrentState().equals(State.JUMPING) || getCurrentState().equals(State.FALLING)){
 
-            if (getCurrentState().equals(State.FALLING)){
-              momentum = 0;   
-            }
-            setLocation(getX() + momentum , getY() + verticalVelocity);
             
-         
-            if (momentum != 0){
-                momentum += acceleration * directionFacing;
-            }
+            
+            setLocation(getX() + momentum , getY() + verticalVelocity);
             checkFloorAndCieling();
 
         }
@@ -335,7 +329,7 @@ public class Player extends Subject implements ITakeDamage
          
             changeState(State.JUMPING,false);
             System.out.println("Speed now is" + speed);
-            momentum = speed * directionFacing;
+            momentum = directionFacing * speed;;
             
             
             verticalVelocity = -jumpHeight;
