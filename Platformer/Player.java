@@ -159,8 +159,13 @@ public class Player extends Subject implements ITakeDamage
        
          
         if (getCurrentState().equals(State.JUMPING) || getCurrentState().equals(State.FALLING)){
-            //the x is so momentum carries
-            setLocation(getX() + momentum , getY() + verticalVelocity);    
+
+            if (getCurrentState().equals(State.FALLING)){
+              momentum = 0;   
+            }
+            setLocation(getX() + momentum , getY() + verticalVelocity);
+            
+         
             if (momentum != 0){
                 momentum += acceleration * directionFacing;
             }
@@ -331,7 +336,7 @@ public class Player extends Subject implements ITakeDamage
             changeState(State.JUMPING,false);
             System.out.println("Speed now is" + speed);
             momentum = speed * directionFacing;
-            momentum /= 2;
+            
             
             verticalVelocity = -jumpHeight;
             
@@ -377,15 +382,21 @@ public class Player extends Subject implements ITakeDamage
     
     public void attack(RangedAttack attack){
         
-        System.out.println("default attack");
-        
         //What will be overriden part is where it spawns from player and what player does as attacks
-        //
+        
+        prepareAttack(attack);
+          //Where it spawns will also differ.
+        getWorld().addObject(attack,getX() + collider.getWidth() + (attackDistance * directionFacing),getY() - getImage().getHeight());
+        
+    }
+    
+    //This is part that will be overridden
+    protected void prepareAttack(RangedAttack attack){
+          
+        
         attack.setDirection(directionFacing);
         
-        //Where it spawns will also differ.
-        getWorld().addObject(attack,getX() + collider.getWidth() + (attackDistance * directionFacing),getY());
-        
+     
         //This will be duplicate code though otherwise, but worry about that later, or actually do move this back there
         timeTillAttack = attackCD;
         

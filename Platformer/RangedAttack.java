@@ -49,6 +49,7 @@ public abstract class RangedAttack extends Reusable
             obj.damage(damage);
             isDone = true;
            
+           
         }
         
       

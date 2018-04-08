@@ -17,7 +17,7 @@ public class PlayerController extends Observer
     //Player attacks
     StraightShot defaultAtt;
     WaveShot waterAtt;
-    
+    LightningShot lightningAtt;
     
     //Pool for player attacks could be here.
     
@@ -43,12 +43,13 @@ public class PlayerController extends Observer
         //Could be something else, whatever.
         defaultAtt = new StraightShot();
         waterAtt = new WaveShot();
+        lightningAtt = new LightningShot();
         
         
         
         playerAttackPools.addPool("defaultattack",defaultAtt,20);
         playerAttackPools.addPool("waterattack",waterAtt,10);
-        
+        playerAttackPools.addPool("lightningattack",lightningAtt,10);
         //Set up other attacks.
         
     }
@@ -202,7 +203,7 @@ public class PlayerController extends Observer
     private void checkAttack(){
         
          // RangedAttack playerAttack = (RangedAttack)playerAttackPools.getReusable(player.getCurrentTransformation() + "attack");
-          RangedAttack playerAttack = (RangedAttack)playerAttackPools.getReusable("waterattack");
+          RangedAttack playerAttack = (RangedAttack)playerAttackPools.getReusable("lightningattack");
           if (playerAttack == null){
               //Log the error, but user need not know about this issue so still attack like normal
               playerAttack = playerAttackFactory(player.getCurrentTransformation() + "attack");
