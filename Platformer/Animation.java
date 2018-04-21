@@ -1,29 +1,104 @@
-import greenfoot.*;
-
 /**
- * Write a description of class Animation here.
- * This will be what animator will have array of. Initialized with array of strings
- * or greenfoot images.
+ * This class contains and plays the different animations of the characters
+ * 
+ * @author (Melirose Liwag) 
  */
-public class Animation  
+import greenfoot.*;
+import java.util.*;
+
+public class Animation extends Observer
 {
-    private GreenfootImage[] frames;
-    int currentFrame = 0;
-    //Decide how you determine this.
-    boolean donePlaying;
-    //Can add as you feel fit.
-    /**
-     * Constructor for objects of class Animation
-     */
-    public Animation()
+    private int timer = 10;
+    private int num = 0;
+    private int speed = 1;
+    private GreenfootImage[] AnimFrames = new GreenfootImage[11];
+    private AnimationManager frames;
+
+    public Animation(String[] frames)
     {
-        donePlaying = true;
+       
+        for(int i = 0; i < AnimFrames.length; i++){
+            System.out.println("setting up frames");
+            AnimFrames[i] = new GreenfootImage(frames[i]);  
+        }
+        System.out.println("setting up frames");
+    }
+
+    public void addedToWorld(World myWorld){
+        frames = getWorld().getObjects(AnimationManager.class).get(1);
+        subject.setImage(AnimFrames[0]);
     }
     
-    public boolean isDone(){
-
-        return donePlaying;
+    public void animate(){
+        if(timer == 10){
+            timer = 0;
+        }    
+        if(timer == 0){
+           subject.setImage(AnimFrames[num]);
+           num++;
+            if(num >= AnimFrames.length){
+                num = 0;
+            }  
+            
+        }
+        timer = timer + 2;
+           
+    } 
+    
+    public void act(){
+        animate();
     }
-
-    //think about different methods animations will have, like next frame, time between, etc.
+    
+    public void run(){
+        if(subject.getCurrentState().equals(State.MOVINGRIGHT)){
+            for(int i = 0; i < frames.sideFramesR.length; i++){
+                AnimFrames[i] = new GreenfootImage(frames.sideFramesR[i]);
+            }
+                                
+        }
+        else if(subject.getCurrentState().equals(State.MOVINGLEFT)){
+            for(int i = 0; i < frames.sideFramesL.length; i++){
+                AnimFrames[i] = new GreenfootImage(frames.sideFramesL[i]);
+            }  
+                
+        }    
+        else if (subject.getCurrentState().equals(State.JUMPING) && subject.getCurrentState().equals(State.MOVINGRIGHT)){
+            for(int i = 0; i < frames.jumpFramesR.length; i++){
+                AnimFrames[i] = new GreenfootImage(frames.jumpFramesR[i]);
+            }  
+        }  
+        else if (subject.getCurrentState().equals(State.JUMPING) && subject.getCurrentState().equals(State.MOVINGLEFT)){
+            for(int i = 0; i < frames.jumpFramesL.length; i++){
+                AnimFrames[i] = new GreenfootImage(frames.jumpFramesL[i]);
+            }  
+        }  
+         else if (subject.getCurrentState().equals(PlayerState.ABSORBING)){
+            for(int i = 0; i < frames.absorbFrames.length; i++){
+                AnimFrames[i] = new GreenfootImage(frames.absorbFrames[i]);
+            }
+                
+        }
+        else if (subject.getCurrentState().equals(State.DAMAGED)){
+            
+            for(int i = 0; i < frames.hitFrames.length; i++){
+                AnimFrames[i] = new GreenfootImage(frames.hitFrames[i]);
+            }
+               
+        }
+        
+        else if (subject.getCurrentState().equals(State.DEAD)){
+               
+            for(int i = 0; i < frames.deathFrames.length; i++){        
+                AnimFrames[i] = new GreenfootImage(frames.deathFrames[i]);    
+            }
+        }
+        else{
+            
+            for(int i = 0; i < AnimFrames.length; i++){
+                AnimFrames[i] = new GreenfootImage(frames.idleFrames[i]);
+            }
+                
+        }
+    }    
+    
 }
