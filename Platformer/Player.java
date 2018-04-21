@@ -303,24 +303,25 @@ public class Player extends Subject implements ITakeDamage
     
     public void checkWalls(){
     
-        //This won't work, I do actually need to do it manually
+       
       
         int pullBack = 0;
+        //Jittery v.s going through walls while jumping choose former.
         if (getCurrentState().equals(State.MOVINGLEFT) && getOneObjectAtOffset(-(collider.getWidth()/ 2  + speed),-collider.getHeight() / 2,Ground.class) != null){
-                pullBack = speed;    
+                pullBack = speed * 2; 
         }
                     //Right side of platform
         else if (getCurrentState().equals(State.MOVINGRIGHT) && getOneObjectAtOffset((collider.getWidth() / 2 + speed),-collider.getHeight() / 2,Ground.class) != null){
-               pullBack = -speed;
+               pullBack = -speed * 2;
         }
        
         //It does work sometimes, main problem is the differing sizes.
-        if ((getCurrentState().equals(State.JUMPING) || getCurrentState().equals(State.FALLING))){
+        /*if ((getCurrentState().equals(State.JUMPING) || getCurrentState().equals(State.FALLING))){
             
             System.out.println("pull back " + pullBack);
             pullBack *= 2;
                         System.out.println("pull back after" + pullBack);
-        }
+        }*/
         
         setLocation(getX() + pullBack, getY());
         
