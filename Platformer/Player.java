@@ -34,7 +34,7 @@ public class Player extends Subject implements ITakeDamage
     float attackCD = 5.0f;
     float timeTillAttack = 0;
     
-    int maxSpeed = 5;
+    int maxSpeed = 4;
     int speed = 0;
     
     int momentum;
@@ -66,6 +66,7 @@ public class Player extends Subject implements ITakeDamage
     }
     public void setSpeed(int speed){
         this.speed = speed;
+       
     }
     protected void addedToWorld(World world){
         
@@ -100,13 +101,18 @@ public class Player extends Subject implements ITakeDamage
         
 
         //So it becomes just that,
-        System.out.println("Current state " +getCurrentState() );
+      //  System.out.println("Current state " +getCurrentState() );
 
 
       
         manageInvincibility(); 
+                   
+       
         managePlayerYPosition();
+        checkWalls();
         findItem();
+        
+        
                
     }    
     
@@ -161,36 +167,30 @@ public class Player extends Subject implements ITakeDamage
          
         if (getCurrentState().equals(State.JUMPING) || getCurrentState().equals(State.FALLING)){
 
-            
-            
             setLocation(getX() + momentum , getY() + verticalVelocity);
-            checkFloorAndCieling();
 
+            
+            if (verticalVelocity <= jumpHeight){
+             
+           
+                verticalVelocity += acceleration;
+                if (verticalVelocity == 0){   
+                    changeState(State.FALLING,false);
+           
+                }    
+            }
+            else if (!(collider.isTouchingObject(Ground.class))){//HERE IT WASSSS. Makes sense fall at slow from high jump height, makes perfect sense
+            
+                verticalVelocity -= 1;
+            }
         }
+            
+
+        
+       checkFloorAndCieling();
                         
         
-        
-        if ((getCurrentState().equals(State.JUMPING) || getCurrentState().equals(State.FALLING)) && verticalVelocity <= jumpHeight){
-            
-           verticalVelocity += acceleration;
-              //         System.out.println("here");
-           //Then this is critical point and switches directions
-           if (verticalVelocity == 0){
-               changeState(State.FALLING,false);
-           }
-        }
-        //If not hit gorund yet, but no longer moving, reset velociy to keep moving
-        else if (!getCurrentState().equals(State.JUMPING) && !(collider.isTouchingObject(Ground.class))){
-            
-            verticalVelocity = 0;
-            changeState(State.FALLING,false);
-        }
-        
-       
-            
-            
-   
-        }
+    }
    
    public boolean isInvincible(){
        return invincibilityTime > 0;
@@ -228,15 +228,13 @@ public class Player extends Subject implements ITakeDamage
        if (speed > 0 && speed < maxSpeed){
             speed += acceleration;
         }
-       else{
+       else if (speed == 0){
            speed = 1;
        }
        
-       
+   
+          
        setLocation(getX() + speed * directionFacing,getY());
-       
-       checkWalls(); 
-     //  super.move(direction * speed);
     }
     
     public void checkFloorAndCieling(){
@@ -268,6 +266,7 @@ public class Player extends Subject implements ITakeDamage
 
                         if (getCurrentState().equals(State.FALLING)){
 
+                            //This should happen when jump against wall, but not standing atop it.
                             //This could be made better, it's dipping past floor a little bit prob due to velocity
                             if (collider.getY() + collider.getHeight() + collider.getHeight() / 2 >=  ground.getY()){
                           
@@ -296,22 +295,35 @@ public class Player extends Subject implements ITakeDamage
    
                 }
             }
+            else{
+                changeState(State.FALLING,false);
+            }
            
     }
     
     public void checkWalls(){
     
         //This won't work, I do actually need to do it manually
-        if (getCurrentState().equals(State.MOVINGLEFT) && getOneObjectAtOffset(-(collider.getWidth()/ 2 ),0,Ground.class) != null){
-
-            setLocation(getX() + speed , getY());
-
+      
+        int pullBack = 0;
+        if (getCurrentState().equals(State.MOVINGLEFT) && getOneObjectAtOffset(-(collider.getWidth()/ 2  + speed),-collider.getHeight() / 2,Ground.class) != null){
+                pullBack = speed;    
         }
                     //Right side of platform
-        else if (getCurrentState().equals(State.MOVINGRIGHT) && getOneObjectAtOffset((collider.getWidth() / 2),0,Ground.class) != null){
-            setLocation(getX() - speed , getY());
-
+        else if (getCurrentState().equals(State.MOVINGRIGHT) && getOneObjectAtOffset((collider.getWidth() / 2 + speed),-collider.getHeight() / 2,Ground.class) != null){
+               pullBack = -speed;
         }
+       
+        //It does work sometimes, main problem is the differing sizes.
+        if ((getCurrentState().equals(State.JUMPING) || getCurrentState().equals(State.FALLING))){
+            
+            System.out.println("pull back " + pullBack);
+            pullBack *= 2;
+                        System.out.println("pull back after" + pullBack);
+        }
+        
+        setLocation(getX() + pullBack, getY());
+        
  
     }
     
@@ -319,14 +331,14 @@ public class Player extends Subject implements ITakeDamage
         
         if (collider.isTouchingObject(Ground.class) ){
             
-         
-        
             boolean blend = getCurrentState() == State.MOVINGRIGHT || getCurrentState() == State.MOVINGLEFT;
         
             //okay, does blend now but now falls when moves??
             changeState(State.JUMPING,blend);
            
-            momentum = directionFacing * speed;; 
+            if (blend){
+                momentum = directionFacing * speed;
+            }
 
             verticalVelocity = -jumpHeight;
                       

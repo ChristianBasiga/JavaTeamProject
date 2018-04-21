@@ -156,12 +156,16 @@ public class PlayerController extends Observer
                 }
                 else{
                     
-                    player.setSpeed(0);
+                  
+                  //  player.setSpeed(0);
+                    player.changeState(State.DEFAULT,false);
+                   
                 }
                  if (Greenfoot.isKeyDown("w")){
                    
                         player.jump();
-                    }               
+                       
+                  }              
                     //Transformations.
                     else if (Greenfoot.isKeyDown("e")){            
                    
@@ -193,9 +197,14 @@ public class PlayerController extends Observer
                             timeTillAbsorb = absorbCD;      
                         }
                     
-                    
+                       // player.changeState(State.DEFAULT,false);
 
-                   }
+                   
+                }
+               
+                    
+               
+                
        }
         
     }
