@@ -71,11 +71,11 @@ public class Player extends Subject implements ITakeDamage
         
         if (collider.getWorld() == null)
         {
-            getWorld().addObject(collider,getX(),getY());
+                getWorld().addObject(collider,getX(),getY());
         
         //These 2 lines are for testing, as box will be invisible later.
-        getWorld().removeObject(this);
-        collider.getWorld().addObject(this,collider.getX(),collider.getY());
+                getWorld().removeObject(this);
+                collider.getWorld().addObject(this,collider.getX(),collider.getY());
         
                 changeState(State.FALLING, false);
         
@@ -99,10 +99,11 @@ public class Player extends Subject implements ITakeDamage
         
         
 
-        
+        //So it becomes just that,
+        System.out.println("Current state " +getCurrentState() );
 
 
-      // System.out.println("Current state: " + getCurrentState());
+      
         manageInvincibility(); 
         managePlayerYPosition();
         findItem();
@@ -207,12 +208,7 @@ public class Player extends Subject implements ITakeDamage
       
    }
     
-   public void move(int direction){
-        
-        boolean blendMovement = false;
-        //Cause otherwise don't want animation to play for moving left or right if falling.
-        blendMovement = (getCurrentState().equals(State.FALLING) || getCurrentState().equals(State.JUMPING));
-          
+   public void move(int direction){  
             
         switch (direction){
                case -1:
@@ -223,7 +219,7 @@ public class Player extends Subject implements ITakeDamage
                    break;
         }
             
-           
+        
         
         
        changeDirection(direction);
@@ -246,7 +242,7 @@ public class Player extends Subject implements ITakeDamage
     public void checkFloorAndCieling(){
         
 
-         if (collider.isTouchingObject(Ground.class) || collider.getY() + 1 == getWorld().getHeight() ){
+         if (collider.isTouchingObject(Ground.class) ){
 
                 List<Ground> grounds = collider.getCollidingObjects(Ground.class);  
                 
@@ -257,6 +253,7 @@ public class Player extends Subject implements ITakeDamage
                     
                     
                     changeState(State.DEFAULT,false);
+                   
                     return;
                 }
                 
@@ -303,14 +300,10 @@ public class Player extends Subject implements ITakeDamage
     }
     
     public void checkWalls(){
-      
-      
-     
     
         //This won't work, I do actually need to do it manually
         if (getCurrentState().equals(State.MOVINGLEFT) && getOneObjectAtOffset(-(collider.getWidth()/ 2 ),0,Ground.class) != null){
 
-           
             setLocation(getX() + speed , getY());
 
         }
@@ -324,16 +317,20 @@ public class Player extends Subject implements ITakeDamage
     
     public void jump(){
         
-        if (collider.isTouchingObject(Ground.class) || collider.getY() + 1 >= getWorld().getHeight()){
+        if (collider.isTouchingObject(Ground.class) ){
             
          
-            changeState(State.JUMPING,false);
-            System.out.println("Speed now is" + speed);
-            momentum = directionFacing * speed;;
-            
-            
+        
+            boolean blend = getCurrentState() == State.MOVINGRIGHT || getCurrentState() == State.MOVINGLEFT;
+        
+            //okay, does blend now but now falls when moves??
+            changeState(State.JUMPING,blend);
+           
+            momentum = directionFacing * speed;; 
+
             verticalVelocity = -jumpHeight;
-            
+                      
+             
         }
     }
     

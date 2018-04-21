@@ -53,7 +53,10 @@ public class Subject extends Actor
         }
 
         if (blend){
-            currentState.blendState(state);
+            State blended = currentState.getBlendedState(state);
+            if (blended == null) return;
+            
+            currentState = blended;
         }
         else{
             currentState = state;
