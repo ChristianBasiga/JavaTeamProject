@@ -23,6 +23,9 @@ public class PlayerController extends Observer
     
     PoolManager playerAttackPools;
 
+    float slightPauseDelay = 1.0f;
+    float timeLeftForUnpause = 0;
+    
     public PlayerController(Player subject){
    
         playerAttackPools = new PoolManager();
@@ -106,19 +109,41 @@ public class PlayerController extends Observer
     }    
     
     public void act(){
+        
+        System.out.println("current state: " + player.getCurrentState());
 
           //has to be before as this may change takingInput's value.
           if (Greenfoot.isKeyDown("escape")){
                 
-                if (player.getCurrentState() == PlayerState.PAUSED){
+                if (timeLeftForUnpause <= 0){
+                
+                    if (player.getCurrentState() == PlayerState.PAUSED){
+     
                     
-                    player.changeState(State.DEFAULT,false);
+                        player.becomeInvincible(0);
+                    
+                         timeLeftForUnpause = slightPauseDelay;
+                        player.changeState(State.DEFAULT,false);
+                        return;
+                   }
+                    else{
+                    
+                        player.changeState(PlayerState.PAUSED,false);
+                    
+                        timeLeftForUnpause = slightPauseDelay;
+                    
+                        return;
+                   }
                 }
                 else{
-                    player.changeState(PlayerState.PAUSED,false);
+                        
+                    timeLeftForUnpause -= 0.1f;
                 }
+                
+               
                
           }
+          
             
           if (takingInput){
 

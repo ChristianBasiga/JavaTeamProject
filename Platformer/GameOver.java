@@ -18,7 +18,7 @@ public class GameOver extends Actor
         
        
         
-         GreenfootImage image = new GreenfootImage("Game Over", 200, greenfoot.Color.GREEN, greenfoot.Color.GRAY);
+         GreenfootImage image = new GreenfootImage("Game Over", 200, greenfoot.Color.RED, greenfoot.Color.GRAY);
          setImage(image);
     }
     
@@ -28,8 +28,5 @@ public class GameOver extends Actor
         
     }
     
-    public void act() 
-    {
-        // Add your action code here.
-    }    
+   
 }

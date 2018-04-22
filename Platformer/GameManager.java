@@ -86,6 +86,9 @@ public class GameManager extends Observer
                
                
            }
+           else if (player.getCurrentState() == State.DEFAULT){
+               getWorld().removeObject(pauseMenu);
+            }
            
         }
         

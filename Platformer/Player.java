@@ -112,15 +112,14 @@ public class Player extends Subject implements ITakeDamage
       //  System.out.println("Current state " +getCurrentState() );
 
 
+        if (!indefinitelyInvincible && health > 0){
       
-        manageInvincibility(); 
-                   
-       
-        managePlayerYPosition();
-        checkWalls();
-        findItem();
+            manageInvincibility(); 
+            managePlayerYPosition();
+            checkWalls();
+            findItem();
         
-        
+        }
                
     }    
     
@@ -155,7 +154,9 @@ public class Player extends Subject implements ITakeDamage
             }
             else{
                 
-                changeState(State.DEFAULT,false);
+                if (!indefinitelyInvincible){
+                    changeState(State.DEFAULT,false);
+                }
             }
         }
      
@@ -222,10 +223,14 @@ public class Player extends Subject implements ITakeDamage
         
    public void becomeInvincible(float timePeriod){
        
-        if (timePeriod <= 0){
+        if (timePeriod < 0){
           indefinitelyInvincible = true;
           return;
        }
+       else if (timePeriod == 0){
+           indefinitelyInvincible = false;
+           return;
+        }
        
        invincibilityTime = timePeriod;
        initialInvincTime = timePeriod;
