@@ -72,11 +72,9 @@ public class PlayerController extends Observer
             if (player.getCurrentState() == State.DAMAGED || player.getCurrentState() == State.DEAD ||
                 player.getCurrentState() == PlayerState.TRANSFORMING || player.getCurrentState() == PlayerState.PAUSED){
                 
-                //Stop taking input for movement, attacking, while transformation is happening, ie: animation still playing.
+                //Stop taking input for movement, attacking, while transformation is happening, etc.
                 takingInput = false;
-               
-              
-      
+                
                 //Indefinitely invincible if paused
                 if (player.getCurrentState() == PlayerState.PAUSED){
                     player.becomeInvincible(-1);
@@ -90,8 +88,12 @@ public class PlayerController extends Observer
                     //Changes transforms player to different instance
 
                     Player prevPlayer = player;
+                    
+                    //PlayerFactory has different derived classes of player.
                     Player newPlayer = PlayerFactory.produce(prevPlayer.getCurrentTransformation());
                     
+                    
+                    //Copies all all data.
                     newPlayer.setHealth(prevPlayer.getHealth());
                    
                     prevPlayer.copyObservers(newPlayer);   
