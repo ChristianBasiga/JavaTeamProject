@@ -45,7 +45,14 @@ public class Player extends Subject implements ITakeDamage
    public void damage(int dmg){
        health -= dmg;
    }
+   
+   public void setHealth(int health){
+        this.health = health;
+    }
     
+    public int getHealth(){
+        return health;
+    }
 
     
     public Player(){   
@@ -123,15 +130,19 @@ public class Player extends Subject implements ITakeDamage
             
             
             if (!isInvincible()){
+                
                 changeState(State.DAMAGED,false);
                 Enemy enemy = (Enemy)getOneIntersectingObject(Enemy.class); 
+                if (enemy != null){
+                    System.out.println("here");
                 health -= enemy.getDamage();
                 invincibilityTime = 20.0f;
+             }
             }
         }
         
         //So they can move while still invincible, otherwise fucked, if enemy stays on player.
-        if (invincibilityTime <= initialInvincTime && getCurrentState() == State.DAMAGED){
+        if (invincibilityTime <= initialInvincTime / 2 && getCurrentState() == State.DAMAGED){
             changeState(State.DEFAULT,false);
         }
      
@@ -356,13 +367,7 @@ public class Player extends Subject implements ITakeDamage
         
     }
     
-    public void setHealth(int health){
-        this.health = health;
-    }
     
-    public int getHealth(){
-        return health;
-    }
     
     public void transform(String transformation){
         

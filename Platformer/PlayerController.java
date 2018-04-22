@@ -158,7 +158,9 @@ public class PlayerController extends Observer
                     
                   
                   //  player.setSpeed(0);
+                  if (player.getCurrentState() != PlayerState.PAUSED && !player.isInvincible()){
                     player.changeState(State.DEFAULT,false);
+                }
                    
                 }
                  if (Greenfoot.isKeyDown("w")){
