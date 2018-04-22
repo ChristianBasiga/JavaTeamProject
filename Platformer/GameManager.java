@@ -11,12 +11,15 @@ public class GameManager extends Observer
     static final double GRAVITY = 9.81;
     
     //UI
+    HealthBar playerHealth;
     GameOver gameOver;
     PauseMenu pauseMenu;
     
     
     
     public GameManager() {
+        
+        playerHealth = new HealthBar();
         threadName = "gm";
         priority = 2;    
         StraightShot enemyShot = new StraightShot();
@@ -24,11 +27,28 @@ public class GameManager extends Observer
         pauseMenu = new PauseMenu();
     }
     
+    public void addedToWorld(World myWorld){
+        
+       Player player = (Player)subject;
+       playerHealth.setHealth(player.getHealth());
+       myWorld.addObject(playerHealth, 50, 20);
+       
+        
+    }
+    
     //At the start of the game, makes all the colliders in the world invisible.
     //honestly could prob just do based on image, since theirs prob better, maybe.
     public void startGame(){
         
        hideColliders();
+    }
+    
+    public void act(){
+        
+        //Yeah, I mean of course it works here but that shouldn't be neccessarry.
+         Player player = (Player)subject;
+       //  playerHealth.setHealth(player.getHealth());
+              
     }
     
     private void hideColliders(){
@@ -60,6 +80,15 @@ public class GameManager extends Observer
            else if (player.getCurrentState() == PlayerState.PAUSED){
                pauseGame();
            }
+           else if (player.getCurrentState() == State.DAMAGED){
+               //Should only really ever set it again when state changes, I know if have this in act, it updates correctly.
+               playerHealth.setHealth(player.getHealth());
+               
+               
+           }
+           else if (player.getCurrentState() == State.DEFAULT){
+               getWorld().removeObject(pauseMenu);
+            }
            
         }
         

@@ -45,7 +45,14 @@ public class Player extends Subject implements ITakeDamage
    public void damage(int dmg){
        health -= dmg;
    }
+   
+   public void setHealth(int health){
+        this.health = health;
+    }
     
+    public int getHealth(){
+        return health;
+    }
 
     
     public Player(){   
@@ -61,6 +68,7 @@ public class Player extends Subject implements ITakeDamage
         verticalVelocity = jumpHeight;
         changeState(State.DEFAULT,false);
         
+        initialInvincTime = 10.0f;
         collider = new Collider(this);
        
     }
@@ -104,15 +112,14 @@ public class Player extends Subject implements ITakeDamage
       //  System.out.println("Current state " +getCurrentState() );
 
 
+        if (!indefinitelyInvincible && health > 0){
       
-        manageInvincibility(); 
-                   
-       
-        managePlayerYPosition();
-        checkWalls();
-        findItem();
+            manageInvincibility(); 
+            managePlayerYPosition();
+            checkWalls();
+            findItem();
         
-        
+        }
                
     }    
     
@@ -123,16 +130,34 @@ public class Player extends Subject implements ITakeDamage
             
             
             if (!isInvincible()){
-                changeState(State.DAMAGED,false);
+                
+               
                 Enemy enemy = (Enemy)getOneIntersectingObject(Enemy.class); 
+                if (enemy != null){
+                     
+                    System.out.println("here");
                 health -= enemy.getDamage();
-                invincibilityTime = 20.0f;
+                if (health <= 0){
+                    health = 0;
+                }
+                changeState(State.DAMAGED,false);
+                invincibilityTime = initialInvincTime;
+             }
             }
         }
         
         //So they can move while still invincible, otherwise fucked, if enemy stays on player.
-        if (invincibilityTime <= initialInvincTime && getCurrentState() == State.DAMAGED){
-            changeState(State.DEFAULT,false);
+        if (invincibilityTime <= initialInvincTime - 0.5f && getCurrentState() == State.DAMAGED){
+            
+            if (health == 0){
+                changeState(State.DEAD,false);
+            }
+            else{
+                
+                if (!indefinitelyInvincible){
+                    changeState(State.DEFAULT,false);
+                }
+            }
         }
      
         
@@ -198,10 +223,14 @@ public class Player extends Subject implements ITakeDamage
         
    public void becomeInvincible(float timePeriod){
        
-        if (timePeriod <= 0){
+        if (timePeriod < 0){
           indefinitelyInvincible = true;
           return;
        }
+       else if (timePeriod == 0){
+           indefinitelyInvincible = false;
+           return;
+        }
        
        invincibilityTime = timePeriod;
        initialInvincTime = timePeriod;
@@ -356,13 +385,7 @@ public class Player extends Subject implements ITakeDamage
         
     }
     
-    public void setHealth(int health){
-        this.health = health;
-    }
     
-    public int getHealth(){
-        return health;
-    }
     
     public void transform(String transformation){
         

@@ -23,6 +23,9 @@ public class PlayerController extends Observer
     
     PoolManager playerAttackPools;
 
+    float slightPauseDelay = 1.0f;
+    float timeLeftForUnpause = 0;
+    
     public PlayerController(Player subject){
    
         playerAttackPools = new PoolManager();
@@ -66,12 +69,14 @@ public class PlayerController extends Observer
 
         //Reaction code to changes in state to subject go here
 
-            if (player.getCurrentState() == State.DAMAGED || 
+            if (player.getCurrentState() == State.DAMAGED || player.getCurrentState() == State.DEAD ||
                 player.getCurrentState() == PlayerState.TRANSFORMING || player.getCurrentState() == PlayerState.PAUSED){
                 
                 //Stop taking input for movement, attacking, while transformation is happening, ie: animation still playing.
                 takingInput = false;
+               
               
+      
                 //Indefinitely invincible if paused
                 if (player.getCurrentState() == PlayerState.PAUSED){
                     player.becomeInvincible(-1);
@@ -104,19 +109,41 @@ public class PlayerController extends Observer
     }    
     
     public void act(){
+        
+        System.out.println("current state: " + player.getCurrentState());
 
           //has to be before as this may change takingInput's value.
           if (Greenfoot.isKeyDown("escape")){
                 
-                if (player.getCurrentState() == PlayerState.PAUSED){
+                if (timeLeftForUnpause <= 0){
+                
+                    if (player.getCurrentState() == PlayerState.PAUSED){
+     
                     
-                    player.changeState(State.DEFAULT,false);
+                        player.becomeInvincible(0);
+                    
+                         timeLeftForUnpause = slightPauseDelay;
+                        player.changeState(State.DEFAULT,false);
+                        return;
+                   }
+                    else{
+                    
+                        player.changeState(PlayerState.PAUSED,false);
+                    
+                        timeLeftForUnpause = slightPauseDelay;
+                    
+                        return;
+                   }
                 }
                 else{
-                    player.changeState(PlayerState.PAUSED,false);
+                        
+                    timeLeftForUnpause -= 0.1f;
                 }
+                
+               
                
           }
+          
             
           if (takingInput){
 
@@ -158,7 +185,9 @@ public class PlayerController extends Observer
                     
                   
                   //  player.setSpeed(0);
+                  if (player.getCurrentState() != PlayerState.PAUSED && !player.isInvincible()){
                     player.changeState(State.DEFAULT,false);
+                }
                    
                 }
                  if (Greenfoot.isKeyDown("w")){
