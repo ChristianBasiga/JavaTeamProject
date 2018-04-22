@@ -66,12 +66,14 @@ public class PlayerController extends Observer
 
         //Reaction code to changes in state to subject go here
 
-            if (player.getCurrentState() == State.DAMAGED || 
+            if (player.getCurrentState() == State.DAMAGED || player.getCurrentState() == State.DEAD ||
                 player.getCurrentState() == PlayerState.TRANSFORMING || player.getCurrentState() == PlayerState.PAUSED){
                 
                 //Stop taking input for movement, attacking, while transformation is happening, ie: animation still playing.
                 takingInput = false;
+               
               
+      
                 //Indefinitely invincible if paused
                 if (player.getCurrentState() == PlayerState.PAUSED){
                     player.becomeInvincible(-1);
