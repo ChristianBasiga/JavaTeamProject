@@ -29,7 +29,7 @@ public abstract class Observer extends Actor implements  Comparable<Observer>, R
     final public void react() {
   
           try{
-           // t = new Thread(this,threadName);
+          //  t = new Thread(this,threadName);
             //t.start();
             run();
         }

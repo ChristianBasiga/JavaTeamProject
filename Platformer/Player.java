@@ -68,6 +68,7 @@ public class Player extends Subject implements ITakeDamage
         verticalVelocity = jumpHeight;
         changeState(State.DEFAULT,false);
         
+        initialInvincTime = 10.0f;
         collider = new Collider(this);
        
     }
@@ -131,18 +132,20 @@ public class Player extends Subject implements ITakeDamage
             
             if (!isInvincible()){
                 
-                changeState(State.DAMAGED,false);
+               
                 Enemy enemy = (Enemy)getOneIntersectingObject(Enemy.class); 
                 if (enemy != null){
+                     
                     System.out.println("here");
                 health -= enemy.getDamage();
-                invincibilityTime = 20.0f;
+                changeState(State.DAMAGED,false);
+                invincibilityTime = initialInvincTime;
              }
             }
         }
         
         //So they can move while still invincible, otherwise fucked, if enemy stays on player.
-        if (invincibilityTime <= initialInvincTime / 2 && getCurrentState() == State.DAMAGED){
+        if (invincibilityTime <= initialInvincTime - 0.5f && getCurrentState() == State.DAMAGED){
             changeState(State.DEFAULT,false);
         }
      

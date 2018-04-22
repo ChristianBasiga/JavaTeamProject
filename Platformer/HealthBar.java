@@ -30,6 +30,7 @@ public class HealthBar extends Actor
         
         GreenfootImage image = new GreenfootImage(String.format("Health: %d",health),textSize, greenfoot.Color.RED, greenfoot.Color.BLACK);
         setImage(image);
+        act();
     }
     
     

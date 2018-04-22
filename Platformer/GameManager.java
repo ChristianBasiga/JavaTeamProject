@@ -48,7 +48,7 @@ public class GameManager extends Observer
         //Yeah, I mean of course it works here but that shouldn't be neccessarry.
          Player player = (Player)subject;
        //  playerHealth.setHealth(player.getHealth());
-              ww
+              
     }
     
     private void hideColliders(){
@@ -84,7 +84,7 @@ public class GameManager extends Observer
                //Should only really ever set it again when state changes, I know if have this in act, it updates correctly.
                playerHealth.setHealth(player.getHealth());
                
-               playerHealth.act();
+               
            }
            
         }
