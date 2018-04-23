@@ -92,11 +92,14 @@ public class AnimationManager extends Observer
     
 
     Map<String, HashMap<String, String[]>> animMap;
-   
+    Animation playerAnim;
    public AnimationManager(){
        
         initIndividualStateMaps();
         initAnimMap();
+        
+        playerAnim = new Animation((Player)subject);
+  
         
    }
    
@@ -163,10 +166,8 @@ public class AnimationManager extends Observer
     
     public void run(){
         Player player = (Player) subject;
-    String state = player.getCurrentState().toString();
-    String[] frames = animMap.get(state).get(player.getCurrentTransformation());
-    
-    Animation animFrames = new Animation();
-    animFrames.setFrames(frames);
+        String state = player.getCurrentState().toString();
+        String[] frames = animMap.get(state).get(player.getCurrentTransformation());
+        playerAnim.setFrames(frames);
     }
 }

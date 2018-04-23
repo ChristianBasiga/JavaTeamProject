@@ -13,13 +13,18 @@ public class Animation extends Actor
     private int speed = 1;
     private GreenfootImage[] AnimFrames = new GreenfootImage[11];
     private AnimationManager frames;
+    private Actor animating;
 
-    public Animation(){
+    public Animation(Actor animating){
+        
+        this.animating = animating;
     }
 
     public void addedToWorld(World myWorld){
+        
         frames = getWorld().getObjects(AnimationManager.class).get(1);
-        subject.setImage(AnimFrames[0]);
+        
+        animating.setImage(AnimFrames[0]);
     }
     
     public void animate(){
@@ -27,7 +32,7 @@ public class Animation extends Actor
             timer = 0;
         }    
         if(timer == 0){
-           subject.setImage(AnimFrames[num]);
+           animating.setImage(AnimFrames[num]);
            num++;
             if(num >= AnimFrames.length){
                 num = 0;
