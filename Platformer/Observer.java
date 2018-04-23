@@ -1,8 +1,7 @@
 /**
- * Write a description of class Observer here.
+ * Those that extend observer class are meant to observe a certain subject. And react accordingly.
  * 
- * @author (your name) 
- * @version (a version number or a date)
+ * @author Prince Christian Basiga
  */
 import greenfoot.Actor;
 import java.util.*;
@@ -29,6 +28,7 @@ public abstract class Observer extends Actor implements  Comparable<Observer>, R
     final public void react() {
   
           try{
+              //No longer threading, updating the frame gets messed up.
           //  t = new Thread(this,threadName);
             //t.start();
             run();
@@ -48,6 +48,7 @@ public abstract class Observer extends Actor implements  Comparable<Observer>, R
         this.subject.addObserver(this);
     }
     
+    //To make sure certain observers react first.
     public int compareTo(Observer other){
         return other.priority - this.getPriority();
     }

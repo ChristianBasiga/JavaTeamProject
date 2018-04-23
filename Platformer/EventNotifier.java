@@ -1,12 +1,11 @@
 import java.util.*;
 /**
- * Write a description of class EventNotifier here.
+ * 
  * EventNotifier has list of events that will happen when specific event is occured
  * If want event to happen at specific paint then different instance  of EventNotifier should 
  * be made for that event.
  * 
- * @author (your name) 
- * @version (a version number or a date)
+ * @author Prince Chrisitan Basiga
  */
 public class EventNotifier  
 {

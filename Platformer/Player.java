@@ -1,10 +1,11 @@
 import greenfoot.*;  // (World, Actor, GreenfootImage, Greenfoot and MouseInfo)
 import java.util.*;
 /**
- * Write a description of class Player here.
+ *
+ * This class holds all the data about the player and handles changes to its states.
  * 
- * @author (your name) 
- * @version (a version number or a date)
+ * @author Prince Christian Basiga
+ * 
  */
 public class Player extends Subject implements ITakeDamage
 {
@@ -59,7 +60,7 @@ public class Player extends Subject implements ITakeDamage
         
         
         health = 15;
-    //    changeState(State.DEFAULT,false);
+   
         currentTransformation = "default";
         
       
@@ -106,12 +107,6 @@ public class Player extends Subject implements ITakeDamage
     public void act() 
     {
         
-        
-
-        //So it becomes just that,
-      //  System.out.println("Current state " +getCurrentState() );
-
-
         if (!indefinitelyInvincible && health > 0){
       
             manageInvincibility(); 
@@ -184,11 +179,6 @@ public class Player extends Subject implements ITakeDamage
     
     private void managePlayerYPosition(){
         
-
-  
-        //Either when done jumping, aka when verticalVelocity is jumpHeight again.
-        //Otherwise when done falling, aka hit ground, and then this will change
-       
          
         if (getCurrentState().equals(State.JUMPING) || getCurrentState().equals(State.FALLING)){
 
@@ -260,9 +250,7 @@ public class Player extends Subject implements ITakeDamage
        else if (speed == 0){
            speed = 1;
        }
-       
-   
-          
+                 
        setLocation(getX() + speed * directionFacing,getY());
     }
     
@@ -283,15 +271,11 @@ public class Player extends Subject implements ITakeDamage
                    
                     return;
                 }
-                
-              
-             
+                           
                 for (Ground ground : grounds){      
    
                     //Making sure within bounds of the ground touching
                     if (collider.getX() >= ground.getX() || collider.getX() + (collider.getWidth() + (collider.getWidth() / 2)) <= ground.getX() + ground.getImage().getWidth()){
-                        
-
 
                         if (getCurrentState().equals(State.FALLING)){
 

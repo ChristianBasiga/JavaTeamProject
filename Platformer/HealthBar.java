@@ -1,9 +1,8 @@
 import greenfoot.*;
 /**
- * Write a description of class HealthBar here.
+ * Just visual representation of health.
  * 
- * @author (your name) 
- * @version (a version number or a date)
+ * @author Prince Christian Basiga
  */
 
 

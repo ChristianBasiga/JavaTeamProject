@@ -2,10 +2,9 @@ import greenfoot.*;  // (World, Actor, GreenfootImage, Greenfoot and MouseInfo)
 
 
 /**
- * Write a description of class ItemManager here.
+ * ItemManager class handles the pooling the items and producing new items.
  * 
- * @author (your name) 
- * @version (a version number or a date)
+ * @author Prince Christian Basiga
  */
 public class ItemManager extends Actor
 {

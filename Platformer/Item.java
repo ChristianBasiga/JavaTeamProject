@@ -1,10 +1,9 @@
 import greenfoot.*;  // (World, Actor, GreenfootImage, Greenfoot and MouseInfo)
 
 /**
- * Write a description of class Item here.
+ * Item: This is abstract tiem class, has behavior of item in that it only exists for certain amount of time, and then pickUp method that will mean it goes back into pool.
  * 
- * @author (your name) 
- * @version (a version number or a date)
+ * @author Prince Christian Basiga
  */
 public abstract class Item extends Reusable
 {

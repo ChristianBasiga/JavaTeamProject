@@ -1,8 +1,7 @@
  /**
- * Write a description of class State here.
+ * State class basically acts like an enum, except I wanted to add behaviour such as blending states.
  * 
- * @author (your name) 
- * @version (a version number or a date)
+ * @author Prince Christian Basiga
  */
 //Just to be used for shared type but otherwse simulates enum
 //There will be PlayerState, and EnemyState but base will contain the shared states

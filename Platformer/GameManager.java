@@ -1,14 +1,15 @@
 import greenfoot.*;  // (World, Actor, GreenfootImage, Greenfoot and MouseInfo)
 import java.util.*;
 /**
- * Write a description of class GameManager here.
+ *
+ * GameManager observes the player to determine the state of the game such as GameOver and Pausing
+ * and makes changes to the game and pops up UI accordingly.
  * 
- * @author (your name) 
- * @version (a version number or a date)
+ * @author Prince Christian Basiga 
  */
 public class GameManager extends Observer
 {   
-    static final double GRAVITY = 9.81;
+
     
     //UI
     HealthBar playerHealth;

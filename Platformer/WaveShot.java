@@ -1,6 +1,6 @@
 import greenfoot.*;  // (World, Actor, GreenfootImage, Greenfoot and MouseInfo)
 
-/*
+/**
  * 
  * The Wave Shot moves forawrd and gradually rises up. When it reaches topYVelocity then that's end of wave.
  * 
@@ -10,7 +10,10 @@ import greenfoot.*;  // (World, Actor, GreenfootImage, Greenfoot and MouseInfo)
  *              .......
  *        ......
  * .......
- */
+ * 
+ * @author: Prince Christian Basiga
+ **/
+
 public class WaveShot extends RangedAttack
 {
     

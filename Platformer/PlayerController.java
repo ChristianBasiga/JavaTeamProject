@@ -5,6 +5,8 @@ import greenfoot.*;  // (World, Actor, GreenfootImage, Greenfoot and MouseInfo)
  * I could change this so that player is really just a nested class to PlayerController
  * and access only allowed to PlayerController to change Player data
  * that will enforce this design.
+ * 
+ * @author Prince Christian Basiga 
  */
 public class PlayerController extends Observer
 {
@@ -39,11 +41,7 @@ public class PlayerController extends Observer
     private void initPlayerAttacks(){
         
         
-        
-        //It might better if just have AttackManager that pools all the attacks
-        //and will basically be exact same as ItemManager...Then should I make amnager class? or just put it in ItemManager, that
-        
-        //Could be something else, whatever.
+       
         defaultAtt = new StraightShot();
         waterAtt = new WaveShot();
         lightningAtt = new LightningShot();

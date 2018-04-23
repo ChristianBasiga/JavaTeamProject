@@ -1,8 +1,7 @@
 /**
- * Write a description of class Subject here.
+ * Classes that extend these are meant to be observed and have their observers react to change in state of the subject.
  * 
- * @author (your name) 
- * @version (a version number or a date)
+ * @author Prince Christian Basiga
  */
 import greenfoot.Actor;
 import java.util.*;

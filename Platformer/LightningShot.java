@@ -3,8 +3,7 @@ import greenfoot.*;  // (World, Actor, GreenfootImage, Greenfoot and MouseInfo)
 /**
  * Write a description of class LightningShot here.
  * This is ranged shot that changes y velocity direction on collision with platform
- * @author (your name) 
- * @version (a version number or a date)
+ * @author Prince Christian Basiga
  */
 public class LightningShot extends RangedAttack
 {

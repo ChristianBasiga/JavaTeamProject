@@ -1,8 +1,7 @@
 /**
- * Write a description of class PlayerState here.
+ * Extends State to have states specific to Player.
  * 
- * @author (your name) 
- * @version (a version number or a date)
+ * @author Prince Christian Basiga
  */
 public class PlayerState extends State 
 {

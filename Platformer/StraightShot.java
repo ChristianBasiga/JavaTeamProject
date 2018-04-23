@@ -1,17 +1,13 @@
 import greenfoot.*;  // (World, Actor, GreenfootImage, Greenfoot and MouseInfo)
 
 /**
- * Write a description of class StraightShot here.
+ * Self Explanatory, it's a projectile that goes straight.
  * 
- * @author (your name) 
- * @version (a version number or a date)
+ * @author Prince Christian Basiga
  */
 public class StraightShot extends RangedAttack
 {
-    //Could have direction of shot, but that's decided by player shooting, not itself
-    //so it should rotate it? or should I have attribute here.
-   
-    //
+  
     float secondsTillAccel;
     float secondsForAccel = 1.0f;
     

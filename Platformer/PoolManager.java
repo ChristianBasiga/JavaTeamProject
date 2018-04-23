@@ -1,8 +1,7 @@
 /**
- * Write a description of class PoolManager here.
+ * PoolManager has map of different pools, this mmanages creating the pools themselves and assigning callbacks so that pooled objects get sent back to their respective pool.
  * 
- * @author (your name) 
- * @version (a version number or a date)
+ * @author Prince Christian Basiga
  */
 
 import java.util.*;

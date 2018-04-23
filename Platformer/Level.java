@@ -11,7 +11,6 @@ public class Level extends World
     //No need for player variable as that instance is constatnly being switched out.
     GameManager gm;
     PlayerController pc;
-    Animator playerAnimator;
     ItemManager im;
 
     int[] playerSpawn;
@@ -39,11 +38,11 @@ public class Level extends World
         //Constructur of these handles observing the player.
         pc = new PlayerController(player);
         
-        playerAnimator = new Animator(player);     
+         
        
         playerSpawn = new int[]{getWidth() / 2,getHeight() / 2};
         addObject(player,playerSpawn[0],playerSpawn[1]);
-        addObject(playerAnimator,0,0);
+  
         addObject(gm,0,0);
         addObject(pc,0,0);
        
@@ -66,7 +65,7 @@ public class Level extends World
         
         //Create pools of enemies
         for(int i = 0; i < 3; i++){
-            Enemy e = new Enemy();
+            Enemy e = new Enemy(null);
             int n = e.getImage().getWidth();
             addObject(e, 20 + n*i, 200);
         }

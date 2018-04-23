@@ -1,10 +1,8 @@
 import greenfoot.*;  // (World, Actor, GreenfootImage, Greenfoot and MouseInfo)
 
 /**
- * Write a description of class PauseMenu here.
- * 
- * @author (your name) 
- * @version (a version number or a date)
+ * Pause Menu...
+ * @author Prince Christian Basiga
  */
 public class PauseMenu extends Actor
 {

@@ -1,10 +1,10 @@
 import greenfoot.*;  // (World, Actor, GreenfootImage, Greenfoot and MouseInfo)
 
 /**
- * Write a description of class RangedAttack here.
+ * RangedAttack is abstract attack that has all properties of ranged attack, velocity, acceleration, damage the attack will do and then isDone is for when attack is finished.
+ * This variable is to check when it should be sent back to the pool
  * 
- * @author (your name) 
- * @version (a version number or a date)
+ * @author Prince Christian Basiga
  */
 public abstract class RangedAttack extends Reusable
 {
@@ -13,10 +13,13 @@ public abstract class RangedAttack extends Reusable
     protected int topSpeed;
     protected int velocity;
     protected int acceleration;
-    protected int damage;
-    protected boolean isDone;
+    protected int damage; 
     protected int direction;
  
+    
+    //If the attack is finished
+    protected boolean isDone;
+   
     
    
     public <A> void setTarget(Class<A> cls ){
