@@ -1,5 +1,11 @@
+/**
+ * This class observes the player's state and transformation and reacts accordingly.
+ * Passes the right frames to be displayed
+ *
+ * @author(Melirose Liwag)
+ */
 import java.util.*;
-public class AnimationManager  
+public class AnimationManager extends Observer
 {
     //Main Character Normal
     String[] idleFrames = {"idle001.png", "idle002.png", "idle003.png", "idle004.png" , "idle005.png"
@@ -75,61 +81,59 @@ public class AnimationManager
     String enemyE = "enemy003.png";
     String[] enemyProj = {"enemy004.png", "enemy005.png", "enemy006.png", "enemy007.png", "enemy008.png"};    
 
+    //HashMaps For Transformations
+    HashMap<String, String[]> idleHashTrans = new HashMap<String, String[]>();
+    	idleHashTrans.put("Player", idleFrames);
+    	idleHashTrans.put("firePlayer", idleFramesF);
+    	idleHashTrans.put("lightningPlayer", idleFramesL);
+    	idleHashTrans.put("earthPlayer", idleFramesE);
+    HashMap<String, String[]> sideHashRTrans = new HashMap<String, String[]>();
+	sideHashRTrans.put("Player", sideFramesR);
+	sideHashRTrans.put("firePlayer", sideFramesRF);
+	sideHashRTrans.put("lightningPlayer", sideFramesRL);
+	sideHashRTrans.put("earthPlayer", sideFramesRE);
+    HashMap<String, String[]> sideHashLTrans = new HashMap<String, String[]>();
+	sideHashLTrans.put("Player", sideFramesL);
+	sideHashLTrans.put("firePlayer", sideFramesLF);
+	sideHashLTrans.put("lightningPlayer", sideFramesLL);
+	sideHashLTrans.put("earthPlayer", sideFramesLE);
+    HashMap<String, String[]> jumpHashTrans = new HashMap<String, String[]>();
+    	jumpHashTrans.put("Player", jumpFrames);
+    	jumpHashTrans.put("firePlayer", jumpFramesF);
+    	jumpHashTrans.put("lightningPlayer", jumpFramesL);
+    	jumpHashTrans.put("earthPlayer", jumpFramesE);
+    HashMap<String, String[]> deathHashTrans = new HashMap<String, String[]>();
+    	deathHashTrans.put("Player", deathFrames);
+    	deathHashTrans.put("firePlayer", deathFramesF);
+    	deathHashTrans.put("lightningPlayer", deathFramesL);
+    	deathHashTrans.put("earthPlayer", deathFramesE);
+    HashMap<String, String[]> absorbHashTrans = new HashMap<String, String[]>();
+    	absorbHashTrans.put("Player", absorbFrames);
+    	absorbHashTrans.put("firePlayer", absorbFramesF);
+    	absorbHashTrans.put("lightningPlayer", absorbFramesL);
+    	absorbHashTrans.put("earthPlayer", absorbFramesE);
+    HashMap<String, String[]> hitHashTrans = new HashMap<String, String[]>();
+    	hitHashTrans.put("Player", hitFrames);
+    	hitHashTrans.put("firePlayer", hitFramesF);
+    	hitHashTrans.put("lightningPlayer", hitFramesL);
+    	hitHashTrans.put("earthPlayer", hitFramesE);
     
-    public void getFrames() {
-    	
-    	//HashMaps For Transformations
-    	HashMap<String, String[]> idleHashTrans = new HashMap<String, String[]>();
-    		idleHashTrans.put("Player", idleFrames);
-    		idleHashTrans.put("firePlayer", idleFramesF);
-    		idleHashTrans.put("lightningPlayer", idleFramesL);
-    		idleHashTrans.put("earthPlayer", idleFramesE);
-    	HashMap<String, String[]> sideHashRTrans = new HashMap<String, String[]>();
-			sideHashRTrans.put("Player", sideFramesR);
-			sideHashRTrans.put("firePlayer", sideFramesRF);
-			sideHashRTrans.put("lightningPlayer", sideFramesRL);
-			sideHashRTrans.put("earthPlayer", sideFramesRE);
-		HashMap<String, String[]> sideHashLTrans = new HashMap<String, String[]>();
-			sideHashLTrans.put("Player", sideFramesL);
-			sideHashLTrans.put("firePlayer", sideFramesLF);
-			sideHashLTrans.put("lightningPlayer", sideFramesLL);
-			sideHashLTrans.put("earthPlayer", sideFramesLE);
-    	HashMap<String, String[]> jumpHashTrans = new HashMap<String, String[]>();
-    		jumpHashTrans.put("Player", jumpFrames);
-    		jumpHashTrans.put("firePlayer", jumpFramesF);
-    		jumpHashTrans.put("lightningPlayer", jumpFramesL);
-    		jumpHashTrans.put("earthPlayer", jumpFramesE);
-    	HashMap<String, String[]> deathHashTrans = new HashMap<String, String[]>();
-    		deathHashTrans.put("Player", deathFrames);
-    		deathHashTrans.put("firePlayer", deathFramesF);
-    		deathHashTrans.put("lightningPlayer", deathFramesL);
-    		deathHashTrans.put("earthPlayer", deathFramesE);
-    	HashMap<String, String[]> absorbHashTrans = new HashMap<String, String[]>();
-    		absorbHashTrans.put("Player", absorbFrames);
-    		absorbHashTrans.put("firePlayer", absorbFramesF);
-    		absorbHashTrans.put("lightningPlayer", absorbFramesL);
-    		absorbHashTrans.put("earthPlayer", absorbFramesE);
-    	HashMap<String, String[]> hitHashTrans = new HashMap<String, String[]>();
-    		hitHashTrans.put("Player", hitFrames);
-    		hitHashTrans.put("firePlayer", hitFramesF);
-    		hitHashTrans.put("lightningPlayer", hitFramesL);
-    		hitHashTrans.put("earthPlayer", hitFramesE);
-    
-    	//HashMaps for States
-    	Map<String, HashMap<String, String[]>> idleHashStates = new TreeMap<String, HashMap<String, String[]>>();
-    		idleHashStates.put("idle", idleHashTrans);
-    	Map<String, HashMap<String, String[]>> sideHashRStates = new HashMap<String, HashMap<String, String[]>>();
-    		sideHashRStates.put("sideR", sideHashRTrans);
-    	Map<String, HashMap<String, String[]>> sideHashLStates = new HashMap<String, HashMap<String, String[]>>();
-    		sideHashLStates.put("sideL", sideHashLTrans);
-    	Map<String, HashMap<String, String[]>> jumpHashStates = new HashMap<String, HashMap<String, String[]>>();
-    		jumpHashStates.put("jump", jumpHashTrans);
-    	Map<String, HashMap<String, String[]>> deathHashStates = new HashMap<String, HashMap<String, String[]>>();
-    		deathHashStates.put("death", deathHashTrans);
-    	Map<String, HashMap<String, String[]>> absorbHashStates = new HashMap<String, HashMap<String, String[]>>();
-    		absorbHashStates.put("absorb", absorbHashTrans);
-    	Map<String, HashMap<String, String[]>> hitHashStates = new HashMap<String, HashMap<String, String[]>>();
-    		hitHashStates.put("hit", hitHashTrans);
-    
+    //HashMaps for States
+    Map<String, HashMap<String, String[]>> animMap = new HashMap<String, HashMap<String, String[]>>();
+    	animMap.put("IDLE", idleHashTrans);
+    	animMap.put("MOVINGRIGHT", sideHashRTrans);
+    	animMap.put("MOVINGLEFT", sideHashLTrans);
+    	animMap.put("JUMPING", jumpHashTrans);
+    	animMap.put("DEAD", deathHashTrans);
+    	animMap.put("ABSORBING", absorbHashTrans);
+    	animMap.put("DAMAGED", hitHashTrans);
+	
+    public void react(){
+    	Player player = (Player) Subject;
+	String state = player.getCurrentState.toString();
+	String[] frames = animMap[state][player.getCurrentTransformation()];
+	
+	Animation animFrames = new Animation();
+	animFrames.setFrames(frames);
     }
 }
