@@ -6,7 +6,7 @@
 import greenfoot.*;
 import java.util.*;
 
-public class Animation extends Observer
+public class Animation extends Actor
 {
     private int timer = 10;
     private int num = 0;
@@ -14,14 +14,7 @@ public class Animation extends Observer
     private GreenfootImage[] AnimFrames = new GreenfootImage[11];
     private AnimationManager frames;
 
-    public Animation(String[] frames)
-    {
-       
-        for(int i = 0; i < AnimFrames.length; i++){
-            System.out.println("setting up frames");
-            AnimFrames[i] = new GreenfootImage(frames[i]);  
-        }
-        System.out.println("setting up frames");
+    public Animation(){
     }
 
     public void addedToWorld(World myWorld){
@@ -49,56 +42,9 @@ public class Animation extends Observer
         animate();
     }
     
-    public void run(){
-        if(subject.getCurrentState().equals(State.MOVINGRIGHT)){
-            for(int i = 0; i < frames.sideFramesR.length; i++){
-                AnimFrames[i] = new GreenfootImage(frames.sideFramesR[i]);
-            }
-                                
+    public void setFrames(String[] frames){
+        for(int i = 0; i < AnimFrames.length; i++){
+            AnimFrames[i] = new GreenfootImage(frames[i]);  
         }
-        else if(subject.getCurrentState().equals(State.MOVINGLEFT)){
-            for(int i = 0; i < frames.sideFramesL.length; i++){
-                AnimFrames[i] = new GreenfootImage(frames.sideFramesL[i]);
-            }  
-                
-        }    
-        else if (subject.getCurrentState().equals(State.JUMPING) && subject.getCurrentState().equals(State.MOVINGRIGHT)){
-            for(int i = 0; i < frames.jumpFramesR.length; i++){
-                AnimFrames[i] = new GreenfootImage(frames.jumpFramesR[i]);
-            }  
-        }  
-        else if (subject.getCurrentState().equals(State.JUMPING) && subject.getCurrentState().equals(State.MOVINGLEFT)){
-            for(int i = 0; i < frames.jumpFramesL.length; i++){
-                AnimFrames[i] = new GreenfootImage(frames.jumpFramesL[i]);
-            }  
-        }  
-         else if (subject.getCurrentState().equals(PlayerState.ABSORBING)){
-            for(int i = 0; i < frames.absorbFrames.length; i++){
-                AnimFrames[i] = new GreenfootImage(frames.absorbFrames[i]);
-            }
-                
-        }
-        else if (subject.getCurrentState().equals(State.DAMAGED)){
-            
-            for(int i = 0; i < frames.hitFrames.length; i++){
-                AnimFrames[i] = new GreenfootImage(frames.hitFrames[i]);
-            }
-               
-        }
-        
-        else if (subject.getCurrentState().equals(State.DEAD)){
-               
-            for(int i = 0; i < frames.deathFrames.length; i++){        
-                AnimFrames[i] = new GreenfootImage(frames.deathFrames[i]);    
-            }
-        }
-        else{
-            
-            for(int i = 0; i < AnimFrames.length; i++){
-                AnimFrames[i] = new GreenfootImage(frames.idleFrames[i]);
-            }
-                
-        }
-    }    
-    
+    }
 }
