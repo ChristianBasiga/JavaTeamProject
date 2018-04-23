@@ -1,12 +1,12 @@
 /**
- * Contains the frames of each character state
- * 
- * @author (Melirose Liwag) 
+ * This class observes the player's state and transformation and reacts accordingly.
+ * Passes the right frames to be displayed
+ *
+ * @author(Melirose Liwag)
  */
-import greenfoot.*;
-public class AnimationManager  extends Actor
+import java.util.*;
+public class AnimationManager extends Observer
 {
-    
     //Main Character Normal
     String[] idleFrames = {"idle001.png", "idle002.png", "idle003.png", "idle004.png" , "idle005.png"
     , "idle006.png", "idle007.png", "idle008.png", "idle009.png", "idle010.png", "idle011.png", "idle012.png"
@@ -17,10 +17,8 @@ public class AnimationManager  extends Actor
       String[] sideFramesL = {"sideL001.png", "sideL002.png", "sideL003.png", "sideL003.png",
     "sideL004.png","sideL005.png","sideL006.png","sideL007.png","sideL008.png","sideL009.png","sideL010.png"};
     
-    String[] jumpFramesR = {"jumpR001.png", "jumpR001.png", "jumpR002.png", "jumpR003.png", "jumpR004.png", "jumpR005.png"
-    , "jumpR006.png", "jumpR006.png"};
-      String[] jumpFramesL = {"jumpL001.png", "jumpL002.png", "jumpL003.png", "jumpL004.png", "jumpL005.png"
-    , "jumpL006.png"};
+    String[] jumpFrames = {"jump001.png", "jump001.png", "jump002.png", "jump003.png", "jump004.png", "jump005.png"
+    , "jump006.png", "jump006.png"};
     
     String[] deathFrames = {"death001.png", "death002.png", "death003.png", "death004.png", "death005.png"};
     String[] absorbFrames = {"absorb001.png", "absorb002.png", "absorb003.png", "absorb004.png"};
@@ -36,10 +34,8 @@ public class AnimationManager  extends Actor
     String[] sideFramesLF = {"sideLF001.png", "sideLF002.png", "sideLF003.png", "sideLF003.png",
     "sideLF004.png","sideLF005.png","sideLF006.png","sideLF007.png","sideLF008.png","sideLF009.png","sideLF010.png"};
     
-    String[] jumpFramesRF = {"jumpRF001.png", "jumpRF002.png", "jumpRF003.png", "jumpRF004.png", "jumpRF005.png"
-    , "jumpRF006.png"};
-    String[] jumpFramesLF = {"jumpLF001.png", "jumpLF002.png", "jumpLF003.png", "jumpLF004.png", "jumpLF005.png"
-    , "jumpLF006.png"};
+    String[] jumpFramesF = {"jumpF001.png", "jumpF002.png", "jumpF003.png", "jumpF004.png", "jumpF005.png"
+    , "jumpF006.png"};
     
     String[] deathFramesF = {"deathF001.png", "deathF002.png", "deathF003.png", "deathF004.png", "deathF005.png"};
     String[] absorbFramesF = {"absorbF001.png", "absorbF002.png", "absorbF003.png", "absorbF004.png"};
@@ -55,10 +51,8 @@ public class AnimationManager  extends Actor
     String[] sideFramesLL = {"sideLL001.png", "sideLL002.png", "sideLL003.png", "sideLL003.png",
     "sideLL004.png","sideLL005.png","sideLL006.png","sideLL007.png","sideLL008.png","sideLL009.png","sideLL010.png"};
     
-    String[] jumpFramesRL = {"jumpRL001.png", "jumpRL002.png", "jumpRL003.png", "jumpRL004.png", "jumpRL005.png"
-    , "jumpRL006.png"};
-    String[] jumpFramesLL = {"jumpLL001.png", "jumpLL002.png", "jumpLL003.png", "jumpLL004.png", "jumpLL005.png"
-    , "jumpLL006.png"};
+    String[] jumpFramesL = {"jumpL001.png", "jumpL002.png", "jumpL003.png", "jumpL004.png", "jumpL005.png"
+    , "jumpL006.png"};
     
     String[] deathFramesL = {"deathL001.png", "deathL002.png", "deathL003.png", "deathL004.png", "deathL005.png"};
     String[] absorbFramesL = {"absorbL001.png", "absorbL002.png", "absorbL003.png", "absorbL004.png"};
@@ -74,10 +68,8 @@ public class AnimationManager  extends Actor
     String[] sideFramesLE = {"sideLE001.png", "sideLE002.png", "sideLE003.png", "sideLE003.png",
     "sideLE004.png","sideLE005.png","sideLE006.png","sideLE007.png","sideLE008.png","sideLE009.png","sideLE010.png"};
     
-    String[] jumpFramesRE = {"jumpRE001.png", "jumpRE002.png", "jumpRE003.png", "jumpRE004.png", "jumpRE005.png"
-    , "jumpRE006.png"};
-    String[] jumpFramesLE = {"jumpLE001.png", "jumpLE002.png", "jumpLE003.png", "jumpLE004.png", "jumpLE005.png"
-    , "jumpLE006.png"};
+    String[] jumpFramesE = {"jumpE001.png", "jumpE002.png", "jumpE003.png", "jumpE004.png", "jumpE005.png"
+    , "jumpE006.png"};
     
     String[] deathFramesE = {"deathE001.png", "deathE002.png", "deathE003.png", "deathE004.png", "deathE005.png"};
     String[] absorbFramesE = {"absorbE001.png", "absorbE002.png", "absorbE003.png", "absorbE004.png"};
@@ -88,25 +80,93 @@ public class AnimationManager  extends Actor
     String enemyL = "enemy002.png";
     String enemyE = "enemy003.png";
     String[] enemyProj = {"enemy004.png", "enemy005.png", "enemy006.png", "enemy007.png", "enemy008.png"};    
-    
-    
-    Animation playerAnimation;
-    
-    
-    public AnimationManager(){
-        
-        playerAnimation = new Animation(idleFrames);
-       
-        
-    }
-    
-     public void addedToWorld(World myWorld){
-       
-         Player player = myWorld.getObjects(Player.class).get(0);
-         
-         playerAnimation.observe(player);
-         getWorld().addObject(playerAnimation, player.getX(), player.getY());
-     }
+
+    //HashMaps For Transformations
+    HashMap<String, String[]> idleHashTrans;
+    HashMap<String, String[]> sideHashRTrans;
+    HashMap<String, String[]> sideHashLTrans;
+    HashMap<String, String[]> jumpHashTrans;
+    HashMap<String, String[]> deathHashTrans;
+    HashMap<String, String[]> absorbHashTrans;
+    HashMap<String, String[]> hitHashTrans;
     
 
+    Map<String, HashMap<String, String[]>> animMap;
+   
+   public AnimationManager(){
+       
+        initIndividualStateMaps();
+        initAnimMap();
+        
+   }
+   
+   private void initIndividualStateMaps(){
+   
+       idleHashTrans = new HashMap<String, String[]>();
+       idleHashTrans.put("Player", idleFrames);
+       idleHashTrans.put("firePlayer", idleFramesF);
+       idleHashTrans.put("lightningPlayer", idleFramesL);
+       idleHashTrans.put("earthPlayer", idleFramesE);
+        
+       
+       sideHashRTrans = new HashMap<String, String[]>();
+       sideHashRTrans.put("Player", sideFramesR);
+       sideHashRTrans.put("firePlayer", sideFramesRF);
+       sideHashRTrans.put("lightningPlayer", sideFramesRL);
+       sideHashRTrans.put("earthPlayer", sideFramesRE);
+       
+       sideHashLTrans = new HashMap<String, String[]>();
+       sideHashLTrans.put("Player", sideFramesL);
+       sideHashLTrans.put("firePlayer", sideFramesLF);
+       sideHashLTrans.put("lightningPlayer", sideFramesLL);
+       sideHashLTrans.put("earthPlayer", sideFramesLE);
+       
+       
+        jumpHashTrans = new HashMap<String, String[]>();
+        jumpHashTrans.put("Player", jumpFrames);
+        jumpHashTrans.put("firePlayer", jumpFramesF);
+        jumpHashTrans.put("lightningPlayer", jumpFramesL);
+        jumpHashTrans.put("earthPlayer", jumpFramesE);
+       
+        deathHashTrans = new HashMap<String, String[]>();
+        deathHashTrans.put("Player", deathFrames);
+        deathHashTrans.put("firePlayer", deathFramesF);
+        deathHashTrans.put("lightningPlayer", deathFramesL);
+        deathHashTrans.put("earthPlayer", deathFramesE);
+       
+        absorbHashTrans = new HashMap<String, String[]>();
+        absorbHashTrans.put("Player", absorbFrames);
+        absorbHashTrans.put("firePlayer", absorbFramesF);
+        absorbHashTrans.put("lightningPlayer", absorbFramesL);
+        absorbHashTrans.put("earthPlayer", absorbFramesE);
+       
+       
+        hitHashTrans = new HashMap<String, String[]>();
+        hitHashTrans.put("Player", hitFrames);
+        hitHashTrans.put("firePlayer", hitFramesF);
+        hitHashTrans.put("lightningPlayer", hitFramesL);
+        hitHashTrans.put("earthPlayer", hitFramesE);   
+   }
+   
+   private void initAnimMap(){
+       
+        //HashMaps for States
+        animMap = new HashMap<String, HashMap<String, String[]>>();
+        animMap.put("IDLE", idleHashTrans);
+        animMap.put("MOVINGRIGHT", sideHashRTrans);
+        animMap.put("MOVINGLEFT", sideHashLTrans);
+        animMap.put("JUMPING", jumpHashTrans);
+        animMap.put("DEAD", deathHashTrans);
+        animMap.put("ABSORBING", absorbHashTrans);
+        animMap.put("DAMAGED", hitHashTrans);
+   }
+    
+    public void run(){
+        Player player = (Player) subject;
+    String state = player.getCurrentState().toString();
+    String[] frames = animMap.get(state).get(player.getCurrentTransformation());
+    
+    Animation animFrames = new Animation();
+    animFrames.setFrames(frames);
+    }
 }
