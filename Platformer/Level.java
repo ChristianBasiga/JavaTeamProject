@@ -28,6 +28,8 @@ public class Level extends World
         // Create a new world with 600x400 cells with a cell size of 1x1 pixels.
         super(600, 400, 1); 
         
+        Player player = new Player();
+        
         im = new ItemManager();
         gm = new GameManager();
         am = new AnimationManager();
@@ -35,15 +37,14 @@ public class Level extends World
       
         //I COULD make it so these guys react to player transforming but getting reference then doing that. Also gives more to react at that point.
         
-        Player player = new Player();
+
         am.observe(player);
         player.addObserver(am);
         
         gm.observe(player);
         player.addObserver(gm);        
 
-        im.observe(player);
-        player.addObserver(im);
+
         
         pc.observe(player);
         player.addObserver(pc);
@@ -55,6 +56,8 @@ public class Level extends World
         addObject(gm,0,0);
         addObject(pc,0,0);
        
+        addObject(im,0,0);
+        addObject(am,0,0);
         //Set up ground 
         setUpGround();
       

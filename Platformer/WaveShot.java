@@ -26,7 +26,7 @@ public class WaveShot extends RangedAttack
     
     
     
-    public WaveShot(){
+    public void addedToWorld(World world){
         
         yAcceleration = 1;
         acceleration = 2;

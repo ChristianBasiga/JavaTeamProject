@@ -19,10 +19,12 @@ public class FirePlayer extends Player
 
     }
     
+    
     public void act() 
     {
         // Add your action code here.
         super.act();
+        //Could add here checking for woddlers I'm strong against so if they collide with me, they die, though I also get hurt?
 
     }    
     

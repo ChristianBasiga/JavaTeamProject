@@ -11,7 +11,7 @@ public class StraightShot extends RangedAttack
     float secondsTillAccel;
     float secondsForAccel = 1.0f;
     
-    public StraightShot(){
+    public void addedToWorld(World world){
         
         secondsTillAccel = 0;  
     

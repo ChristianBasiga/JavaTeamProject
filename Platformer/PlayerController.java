@@ -1,5 +1,6 @@
 import greenfoot.*;  // (World, Actor, GreenfootImage, Greenfoot and MouseInfo)
-
+import java.util.Map;
+import java.util.HashMap;
 /**
  * Player controller maniplates the data in the player and handles input to the player.
  * I could change this so that player is really just a nested class to PlayerController
@@ -14,10 +15,10 @@ public class PlayerController extends Observer
     boolean takingInput = false;
     float absorbCD = 10.0f;
     float timeTillAbsorb = 0;
+   
     
-    Player player;
-    FirePlayer fp;
-    LightningPlayer lp;
+    Map<String,Player> playerMap;
+    Map<String,RangedAttack> playerAttacks;
     
     //Player attacks
     StraightShot defaultAtt;
@@ -35,6 +36,8 @@ public class PlayerController extends Observer
     public PlayerController(Player subject){
    
         playerAttackPools = new PoolManager();
+
+        
         this.observe(subject);
         priority = 1;
 
@@ -45,9 +48,10 @@ public class PlayerController extends Observer
     
     public void initPlayers(){
         
-        player = (Player)subject;
-        fp = new FirePlayer();
-        lp = new LightningPlayer();
+        playerMap = new HashMap<String,Player>();
+        playerMap.put("Player",(Player)subject);;
+        playerMap.put("firePlayer",new FirePlayer());
+        playerMap.put("lightningPlayer",new LightningPlayer());
         
     }
     
@@ -61,26 +65,23 @@ public class PlayerController extends Observer
     private void initPlayerAttacks(){
         
         
-       
-        defaultAtt = new StraightShot();
-        fireAtt = new WaveShot();
-        lightningAtt = new LightningShot();
+        playerAttacks = new HashMap<String,RangedAttack>();
         
+        StraightShot defaultAtt = new StraightShot();
+        WaveShot fireAtt = new WaveShot();
+        LightningShot lightningAtt = new LightningShot();
         
+        playerAttacks.put("Player",defaultAtt);
+        playerAttacks.put("firePlayer",fireAtt);
+        playerAttacks.put("lightningPlayer",lightningAtt);
         
-        playerAttackPools.addPool("defaultattack",defaultAtt,20);
-        playerAttackPools.addPool("fireattack",fireAtt,10);
-        playerAttackPools.addPool("lightningattack",lightningAtt,10);
-        //Set up other attacks.
+        playerAttackPools.addPool("Player",defaultAtt,20);
+        playerAttackPools.addPool("firePlayer",fireAtt,10);
+        playerAttackPools.addPool("lightningPlayer",lightningAtt,10);
+
         
     }
-   
-    public void observe(Subject subject){
-        
-        super.observe(subject);
-        player = (Player)subject;
-        takingInput = true;
-    }
+  
 
     @Override
     public void react() 
@@ -108,7 +109,7 @@ public class PlayerController extends Observer
                                         
                     //Changes transforms player to different instance          
                     
-                    Player newPlayer = playerFactory(player.transformingInto());
+                    Player newPlayer = playerMap.get(player.transformingInto());
                     
                     //Copies all all data.
                     newPlayer.setHealth(player.getHealth());
@@ -237,42 +238,27 @@ public class PlayerController extends Observer
 
                  }              
                  else if (Greenfoot.isKeyDown("f")){
-                        
-                        attack();
+                     
+                     RangedAttack attack = (RangedAttack)playerAttackPools.getReusable(player.toString());
+                     
+                     //If for some reason pool empty rn, then use original, prob should clone original instead.
+                     if (attack == null){              
+                         attack = playerAttacks.get(player.toString());
+                     }
+                                         
+                     player.attack(attack);
                  }
      
                 }
                         
    
     }
-     
     
-    private RangedAttack playerAttackFactory(String attackName){
-        
-        RangedAttack product = null;
-        
-        try{
-            if (attackName == "defaultattack"){
-                product =  (RangedAttack)defaultAtt.clone();
-            }
-            else if (attackName == "waterattack"){
-               product =  (RangedAttack)waterAtt.clone();
-            }
-        }
-        catch (Exception e){
-            //Log it.
-        }
-        
-        return product;
-    }
-    public Player playerFactory(String type){
-        
-        //Todo: Check for type and return corresponding Player
-        if (type == "fire"){
-            return fp;
-        }
-        return new Player();
-    }
+  
+   
+    
+  
+  
 
     
 }

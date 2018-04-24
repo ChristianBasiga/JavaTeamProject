@@ -18,7 +18,7 @@ public class LightningShot extends RangedAttack
     //Max in either direction, if not bounce before hit max, then also runs out
     int maxYVelocity;
     
-    public LightningShot(){
+    public void addedToWorld(World world){
         
         topSpeed = 5;
         acceleration = 1;
