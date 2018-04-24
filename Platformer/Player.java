@@ -7,7 +7,7 @@ import java.util.*;
  * @author Prince Christian Basiga
  * 
  */
-public class Player extends Subject implements ITakeDamage
+public class Player extends Subject
 {
 
     int health;
@@ -45,7 +45,13 @@ public class Player extends Subject implements ITakeDamage
     
    
   
-   public void damage(int dmg){
+   public void damage(int dmg, String type){
+       
+       //Still might just do composition instead of inheritence. Because at this point the inheritence is useless.
+       if (this.toString().contains(type)){
+           //then no damage.
+           return;
+        }
        health -= dmg;
    }
    
