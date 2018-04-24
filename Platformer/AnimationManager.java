@@ -5,6 +5,7 @@
  * @author(Melirose Liwag)
  */
 import java.util.*;
+import greenfoot.*;
 public class AnimationManager extends Observer
 {
     //Main Character Normal
@@ -95,10 +96,22 @@ public class AnimationManager extends Observer
         initIndividualStateMaps();
         initAnimMap();
         
-        playerAnim = new Animation((Player)subject);
-        playerAnim.getImage().setTransparency(1);
+
+
   
         
+   }
+   
+   @Override 
+   public void observe(Subject subject){
+       super.observe(subject);
+       playerAnim = new Animation((Player)this.subject);
+       playerAnim.getImage().setTransparency(1);
+
+   }
+   
+   public void addedToWorld(World world){
+       world.addObject(playerAnim,0,0);
    }
    
    private void initIndividualStateMaps(){
@@ -183,7 +196,7 @@ public class AnimationManager extends Observer
                 return;
             }
             
-            String[] frames = animMap.get(frameColl).get(player.toString());
+            String[] frames = frameColl.get(player.toString());
             playerAnim.setFrames(frames);
         }
     }

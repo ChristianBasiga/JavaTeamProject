@@ -56,7 +56,7 @@ public class GameManager extends Observer
             
             //Make their image into something transparent with same dimensions
             //so collision still works fine.
-            coll.getImage().setTransparency(1);
+          //  coll.getImage().setTransparency(1);
         }
     }
     

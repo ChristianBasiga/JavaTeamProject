@@ -18,29 +18,33 @@ public class Animation extends Actor
     public Animation(Actor animating){
         
         this.animating = animating;
+        System.out.println(animating.toString());
     }
     public void setAnimating(Actor animating){
                
         this.animating = animating;
     }
 
-    public void addedToWorld(World myWorld){
-        
-        frames = getWorld().getObjects(AnimationManager.class).get(1);
-        
-        animating.setImage(AnimFrames[0]);
-    }
+    
     
     public void animate(){
         
+
+      //  System.out.println("transparency is " + animating.getImage());
         if(timer == 10){
             timer = 0;
         }    
         if(timer == 0){
+            
+          
+          
            animating.setImage(AnimFrames[num]);
            num++;
-            if(num >= AnimFrames.length){
-                num = 0;
+            
+           if( num >= AnimFrames.length ||  (AnimFrames[num] == null)){
+            
+               num = 0;
+          
             }  
             
         }
@@ -53,9 +57,27 @@ public class Animation extends Actor
     }
     
     public void setFrames(String[] frames){
-        for(int i = 0; i < AnimFrames.length; i++){
-            AnimFrames[i] = new GreenfootImage(frames[i]);  
+        
+      
+        for (String frame : frames){
+            
+            System.out.println(frame);
         }
+        System.out.println("I am called");
+        for(int i = 0; i < AnimFrames.length; i++){
+            
+            if (i >= frames.length){
+                //Sets remaining null incase have left over frames.
+                AnimFrames[i] = null;
+            }
+            else
+                AnimFrames[i] = new GreenfootImage(frames[i]);  
+                
+            if (AnimFrames[i] == null){
+
+            }
+        }
+        num = 0;
     }
     
 }

@@ -1,5 +1,5 @@
 #Greenfoot properties
-#Tue Apr 24 01:09:33 PDT 2018
+#Tue Apr 24 05:48:29 PDT 2018
 target24.type=ClassTarget
 target16.name=Player
 dependency85.to=Animation
@@ -451,9 +451,9 @@ dependency1.to=Subject
 dependency83.type=UsesDependency
 target18.showInterface=false
 target21.type=ClassTarget
-mainWindow.y=-9
+mainWindow.y=9
 target13.name=Observer
-mainWindow.x=-9
+mainWindow.x=2
 target16.y=0
 target16.x=0
 dependency28.from=RangedAttack
@@ -501,7 +501,7 @@ target8.width=120
 dependency32.type=UsesDependency
 dependency84.type=UsesDependency
 target36.typeParameters=
-editor.fx.0.width=1358
+editor.fx.0.width=818
 class.Collider.superclass=greenfoot.Actor
 dependency83.to=ItemManager
 target22.type=ClassTarget
@@ -546,7 +546,7 @@ dependency19.to=EventNotifier
 dependency9.type=UsesDependency
 dependency72.to=Level
 editor.fx.0.y=94
-editor.fx.0.x=11
+editor.fx.0.x=551
 dependency8.to=PlayerState
 target26.showInterface=false
 target28.name=PlayerMeleeAttack
@@ -599,7 +599,7 @@ target13.typeParameters=
 target9.y=0
 target9.x=0
 dependency50.to=Subject
-class.Player.image=alligator.png
+class.Player.image=idle001.png
 target1.y=0
 dependency9.from=GameManager
 target1.x=0
