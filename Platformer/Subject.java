@@ -18,7 +18,7 @@ public class Subject extends Actor
         
     }
     
-    public void copyObservers(Subject subject){
+    public void transferObservers(Subject subject){
         
         for (Observer observer : observers){
             

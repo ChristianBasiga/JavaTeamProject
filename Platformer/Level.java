@@ -9,11 +9,11 @@ import java.util.Random;
 public class Level extends World
 {
     //No need for player variable as that instance is constatnly being switched out.
-    GameManager gm;
-    PlayerController pc;
-    ItemManager im;
+    public GameManager gm;
+    public PlayerController pc;
+    public ItemManager im;
 
-    AnimationManager am;
+    public AnimationManager am;
     
     int[] playerSpawn;
     
@@ -28,17 +28,25 @@ public class Level extends World
         // Create a new world with 600x400 cells with a cell size of 1x1 pixels.
         super(600, 400, 1); 
         
-          im = new ItemManager();
+        im = new ItemManager();
         gm = new GameManager();
         am = new AnimationManager();
+        pc = new PlayerController(player);
       
+        //I COULD make it so these guys react to player transforming but getting reference then doing that. Also gives more to react at that point.
+        
         Player player = new Player();
         am.observe(player);
+        player.addObserver(am);
+        
         gm.observe(player);
+        player.addObserver(gm);        
+
+        im.observe(player);
+        player.addObserver(im);
         
-        //Constructur of these handles observing the player.
-        pc = new PlayerController(player);
-        
+        pc.observe(player);
+        player.addObserver(pc);
          
        
         playerSpawn = new int[]{getWidth() / 2,getHeight() / 2};

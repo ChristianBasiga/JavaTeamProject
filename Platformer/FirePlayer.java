@@ -13,9 +13,10 @@ public class FirePlayer extends Player
      * the 'Act' or 'Run' button gets pressed in the environment.
      */
     
+    
     public FirePlayer(){
-       // changeState(State.DEFAULT,false);
-        currentTransformation = "fire";
+       super();
+
     }
     
     public void act() 
@@ -27,7 +28,14 @@ public class FirePlayer extends Player
     
 
     public void attack(){
-       System.out.println("fire attack"); 
+      
     }
     
+    
+    
+    @Override
+    public String toString(){
+        
+        return "firePlayer";
+    }
 }

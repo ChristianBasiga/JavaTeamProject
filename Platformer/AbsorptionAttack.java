@@ -23,8 +23,10 @@ public class AbsorptionAttack extends Actor
           
           //Then based on type of the Enemy, probably just attribute then change accordingly.
           Enemy enemyAbsorbing = (Enemy)getOneIntersectingObject(Enemy.class);
-           getWorld().removeObject(enemyAbsorbing);
+          getWorld().removeObject(enemyAbsorbing);
           getWorld().removeObject(this);
+          
+          
           //Change type name later on as needed
           if (enemyAbsorbing.getType() == "fire"){
               System.out.println("Absorbing fire enemy");

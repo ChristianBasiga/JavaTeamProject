@@ -21,7 +21,6 @@ public class GameManager extends Observer
     public GameManager() {
         
         playerHealth = new HealthBar();
-        threadName = "gm";
         priority = 2;    
         StraightShot enemyShot = new StraightShot();
         gameOver = new GameOver();
@@ -45,10 +44,6 @@ public class GameManager extends Observer
     }
     
     public void act(){
-        
-        //Yeah, I mean of course it works here but that shouldn't be neccessarry.
-         Player player = (Player)subject;
-       //  playerHealth.setHealth(player.getHealth());
               
     }
     
@@ -65,7 +60,8 @@ public class GameManager extends Observer
         }
     }
     
-    public void run() {
+    @Override
+    public void react() {
         
         //I could just set up UI here instead of UIManager
         //cause at this point GameManager wouldn't nothing else.
@@ -85,6 +81,15 @@ public class GameManager extends Observer
                playerHealth.setHealth(player.getHealth());
                
                
+           }
+           else if (player.getCurrentState() == PlayerState.TRANSFORMING){
+               Level level = (Level)getWorld();
+               
+               //Cause then player up there is the past state player that was transforming
+               //what I'm getting from pc. is new player the past state one transformed into.
+               Player newPlayer = level.pc.getCurrentPlayer();             
+               //Not using observe method but setting directly, because I know that all players have sure been initialized to already have us as observers.
+               this.subject = newPlayer;
            }
            else if (player.getCurrentState() == State.DEFAULT){
                getWorld().removeObject(pauseMenu);

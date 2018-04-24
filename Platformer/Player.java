@@ -9,7 +9,7 @@ import java.util.*;
  */
 public class Player extends Subject implements ITakeDamage
 {
-    String currentTransformation = "default";
+
     int health;
    
     //This is mainly to be set for damage so at half way point still invincibile but can move.
@@ -40,6 +40,8 @@ public class Player extends Subject implements ITakeDamage
     
     int momentum;
     
+    String toTransformTo;
+    
     
    
   
@@ -60,14 +62,10 @@ public class Player extends Subject implements ITakeDamage
         
         
         health = 15;
-   
-        currentTransformation = "default";
-        
-      
-
         jumpHeight = 15;
         verticalVelocity = jumpHeight;
         changeState(State.DEFAULT,false);
+        toTransformTo = null;
         
         initialInvincTime = 10.0f;
         collider = new Collider(this);
@@ -96,11 +94,7 @@ public class Player extends Subject implements ITakeDamage
    
   
     
-    
-    public String getCurrentTransformation(){
-        return currentTransformation;
-    }
-    
+  
   
    
     //What I need to do is have one set location happening, and just have movement so it's more synchronous
@@ -208,7 +202,7 @@ public class Player extends Subject implements ITakeDamage
     }
    
    public boolean isInvincible(){
-       return invincibilityTime > 0;
+       return invincibilityTime > 0 || indefinitelyInvincible;
     }
         
    public void becomeInvincible(float timePeriod){
@@ -373,18 +367,20 @@ public class Player extends Subject implements ITakeDamage
     
     public void transform(String transformation){
         
-        if (getCurrentState() == PlayerState.TRANSFORMING || currentTransformation == transformation){
+        if (getCurrentState() == PlayerState.TRANSFORMING || this.toString() == transformation){
             return;
         } 
-    
-        currentTransformation = transformation;
+  
         
-        //Okay so transforming is where messed up.
-        
-        //Can no longer take in input.
+        toTransformTo = transformation;
         changeState(PlayerState.TRANSFORMING, false);
 
         
+    }
+    
+    public String transformingInto(){
+        
+        return toTransformTo;
     }
     
     public void revert(){
@@ -394,10 +390,10 @@ public class Player extends Subject implements ITakeDamage
     public void attack(RangedAttack attack){
         
         //What will be overriden part is where it spawns from player and what player does as attacks
-        
+        attack.setDirection(directionFacing);
         prepareAttack(attack);
           //Where it spawns will also differ.
-        getWorld().addObject(attack,getX() + collider.getWidth() + (attackDistance * directionFacing),getY() - getImage().getHeight());
+     
         
     }
     
@@ -405,7 +401,7 @@ public class Player extends Subject implements ITakeDamage
     protected void prepareAttack(RangedAttack attack){
           
         
-        attack.setDirection(directionFacing);
+
         
      
         //This will be duplicate code though otherwise, but worry about that later, or actually do move this back there
@@ -413,7 +409,8 @@ public class Player extends Subject implements ITakeDamage
         
         //Instead of changing state, it will blendstate so blending so that it's state can be both attacking and running, but for now just changeState is fine.
         changeState(State.ATTACKING,false);
-        
+
+        getWorld().addObject(attack,getX() + collider.getWidth() + (attackDistance * directionFacing),getY() - getImage().getHeight());
     }
     
     public void absorb(){
@@ -441,5 +438,10 @@ public class Player extends Subject implements ITakeDamage
            //Picks up items, which will trigger events for item to take effect.
            item.pickUp(this);
        }
+    }
+    
+    @Override 
+    public String toString(){
+        return "Player";
     }
 }
