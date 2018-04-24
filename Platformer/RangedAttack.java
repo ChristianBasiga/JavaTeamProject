@@ -37,7 +37,7 @@ public abstract class RangedAttack extends Reusable
     {
 
           if (isTouching(Ground.class) || isAtEdge()){
-            doneUsing();
+            isDone = true;
         }
     }   
 
@@ -58,6 +58,7 @@ public abstract class RangedAttack extends Reusable
       
         
         if (isDone){
+            System.out.println("hello");
             doneUsing();
         }
     }

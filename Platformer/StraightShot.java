@@ -18,12 +18,17 @@ public class StraightShot extends RangedAttack
         velocity = 1;
         topSpeed = 10;
         acceleration = 1;
+        setTarget(Enemy.class);
     }
     
     public void act() 
     {
 
-        setLocation(getX() + velocity, getY());
+                super.act();
+                
+        
+       
+        setLocation(getX() + velocity , getY());
         
         if (secondsTillAccel > 0){
             secondsTillAccel -= 0.1f;
@@ -32,21 +37,24 @@ public class StraightShot extends RangedAttack
             continueAttack();
         }
         
+
+        
     } 
     
     @Override
     protected void continueAttack(){
   
-        velocity += acceleration;
+        velocity += acceleration * direction;
         
         
+                super.continueAttack();
         isDone = velocity >= topSpeed;
         
        
         
         secondsTillAccel = secondsForAccel;
         
-        super.continueAttack();
+
     }
     
     public Object clone() throws CloneNotSupportedException{

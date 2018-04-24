@@ -30,7 +30,7 @@ public class Player extends Subject
     int jumpHeight;
    
     
-    Collider collider;
+    public Collider collider;
     
     float attackCD = 5.0f;
     float timeTillAttack = 0;
@@ -53,6 +53,7 @@ public class Player extends Subject
            return;
         }
        health -= dmg;
+       
    }
    
    public void setHealth(int health){
@@ -75,7 +76,14 @@ public class Player extends Subject
         
         initialInvincTime = 10.0f;
         collider = new Collider(this);
+        
+        collider.setHeight(getImage().getHeight() + 50);
+        collider.setWidth(getImage().getWidth() - 10);
        
+    }
+    
+    public void setVerticalVelocity(int velocity){
+        this.verticalVelocity = velocity;
     }
     public void setSpeed(int speed){
         this.speed = speed;
@@ -106,7 +114,7 @@ public class Player extends Subject
     //What I need to do is have one set location happening, and just have movement so it's more synchronous
     public void act() 
     {
-        
+
         if (!indefinitelyInvincible && health > 0){
       
             manageInvincibility(); 
@@ -114,8 +122,16 @@ public class Player extends Subject
             checkWalls();
             findItem();
         
+        
         }
-               
+        
+        
+        if (Greenfoot.isKeyDown("y")){
+            
+             //Cause intersecting with ground, but this has to be true, and lower than it's top still. Literally just needed to this to realize
+             //Okay origin si top left, ut height is still full of it, no fucking shit, it's not like radius. Me making that assumption has wasted alot of time.
+                                getWorld().addObject(new Ground(),getX(),collider.getY() + collider.getHeight());
+                 }
     }    
     
     private void manageInvincibility(){
@@ -179,30 +195,45 @@ public class Player extends Subject
     
     private void managePlayerYPosition(){
         
+                            //System.out.println(getCurrentState());
+        if (!collider.isTouchingObject(Ground.class) ){
+                changeState(State.FALLING,false);
+        }
          
         if (getCurrentState().equals(State.JUMPING) || getCurrentState().equals(State.FALLING)){
 
+            //Okay, so total Y increments by 1 everytime jump.
             setLocation(getX() + momentum , getY() + verticalVelocity);
 
-            
-            if (verticalVelocity <= jumpHeight){
+       
+            checkFloorAndCieling();
+        
+            //So for jumping up to jump height from current, it's good.
+            //but from current to lower than jump height, then bad.
+            if (verticalVelocity < jumpHeight){
              
            
                 verticalVelocity += acceleration;
                 if (verticalVelocity == 0){   
                     changeState(State.FALLING,false);
-           
+                    verticalVelocity += 1;
                 }    
             }
-            else if (!(collider.isTouchingObject(Ground.class))){//HERE IT WASSSS. Makes sense fall at slow from high jump height, makes perfect sense
+            else if (!getCurrentState().equals(State.JUMPING)  && !(collider.isTouchingObject(Ground.class))){//HERE IT WASSSS. Makes sense fall at slow from high jump height, makes perfect sense
             
+                //It's this part.
+                //It's the drop
+                //So it's if I go through it.
+
                 verticalVelocity -= 1;
             }
+
         }
+        
             
 
         
-       checkFloorAndCieling();
+
                         
         
     }
@@ -261,9 +292,6 @@ public class Player extends Subject
 
                 List<Ground> grounds = collider.getCollidingObjects(Ground.class);  
                 
-                momentum = 0;
-                
-                
                 if (grounds.size() == 0){
                     
                     
@@ -277,14 +305,19 @@ public class Player extends Subject
                     //Making sure within bounds of the ground touching
                     if (collider.getX() >= ground.getX() || collider.getX() + (collider.getWidth() + (collider.getWidth() / 2)) <= ground.getX() + ground.getImage().getWidth()){
 
+
                         if (getCurrentState().equals(State.FALLING)){
 
-                            //This should happen when jump against wall, but not standing atop it.
-                            //This could be made better, it's dipping past floor a little bit prob due to velocity
-                            if (collider.getY() + collider.getHeight() + collider.getHeight() / 2 >=  ground.getY()){
+
+                            
+                            //If touching ground on feet
+                            if (collider.getY() + collider.getHeight() >= ground.getY()){
                           
+                                //setLocation(getX(), getY() - (verticalVelocity - acceleration));
                                 verticalVelocity = 0;
                               
+
+                                System.out.println("I need sleep");
                                 momentum = 0;
                                 changeState(State.DEFAULT,false);
                                 break;
@@ -293,11 +326,20 @@ public class Player extends Subject
                         }    
                         //For if jumps into bottom edge of ground or cieling.
                         else if (getCurrentState().equals(State.JUMPING)){
-                                  
-                                if (collider.getY() - collider.getHeight() / 2  - verticalVelocity <= ground.getY() + ground.getImage().getHeight() ){
-                                
-                                   
-                                    verticalVelocity = 10;
+
+                                                                      
+
+                           
+                             // setLocation(getX(),ground.getY() + ground.getImage().getHeight());
+                              
+                              if (collider.getY() >= ground.getY()){
+
+                        
+                                    
+                                    
+                                    
+                                    setLocation(getX(),getY() + Math.abs(verticalVelocity * 2) + 2 );
+                             
                                     momentum = 0;
                                     changeState(State.DEFAULT,false);
                                     break;
@@ -308,35 +350,64 @@ public class Player extends Subject
    
                 }
             }
-            else{
-                changeState(State.FALLING,false);
-            }
+            
            
     }
     
     public void checkWalls(){
     
-       
+    //    System.out.println("Y pos is " + getY());
+       int pullBack = 0;
       
-        int pullBack = 0;
-        //Jittery v.s going through walls while jumping choose former.
-        if (getCurrentState().equals(State.MOVINGLEFT) && getOneObjectAtOffset(-(collider.getWidth()/ 2  + speed),-collider.getHeight() / 2,Ground.class) != null){
-                pullBack = speed * 2; 
-        }
-                    //Right side of platform
-        else if (getCurrentState().equals(State.MOVINGRIGHT) && getOneObjectAtOffset((collider.getWidth() / 2 + speed),-collider.getHeight() / 2,Ground.class) != null){
-               pullBack = -speed * 2;
-        }
-       
-        //It does work sometimes, main problem is the differing sizes.
-        /*if ((getCurrentState().equals(State.JUMPING) || getCurrentState().equals(State.FALLING))){
+       if (getCurrentState().equals(State.MOVINGRIGHT) || getCurrentState().equals(State.MOVINGLEFT)){
+       if (collider.isTouchingObject(Ground.class)){
+           
+           //Instead of way did hit floor and cieling.
+           //I could try diff way where I just try to go through all possible Y offsets, but depending on scale that could be a huge N
+           //that v.s just ast most 2 walls?
+           
+           List<Ground> walls =  getIntersectingObjects(Ground.class);
+           
+          
+
             
-            System.out.println("pull back " + pullBack);
-            pullBack *= 2;
-                        System.out.println("pull back after" + pullBack);
-        }*/
-        
-        setLocation(getX() + pullBack, getY());
+           for (Ground ground : walls){
+               
+               
+               //In this check similiar to within bounds of x except just for y.
+              
+               if (collider.getY()  - collider.getHeight() <= ground.getY() -  ground.getImage().getHeight() && collider.getY() + (collider.getHeight()) >= ground.getY() + ground.getImage().getHeight()){
+                   
+                          if (ground.getX() <= getX()){
+                              
+                              pullBack = speed;                  
+
+                          }
+                          else if (getX() <= ground.getX()){
+                              
+                              pullBack = -speed;
+
+                          }
+                          
+                          setLocation(getX() + pullBack, getY());
+
+                           if (pullBack != 0){
+
+                                    while (intersects(ground)){
+                                        
+                                           setLocation(getX() + pullBack, getY());
+                                    }
+                           
+                            break;
+                        }
+               }
+             
+           }
+           
+       }
+    }
+
+      
         
  
     }
@@ -395,6 +466,8 @@ public class Player extends Subject
     
     public void attack(RangedAttack attack){
         
+        
+        if (!canAttack()) return;
         //What will be overriden part is where it spawns from player and what player does as attacks
         attack.setDirection(directionFacing);
         prepareAttack(attack);
@@ -407,6 +480,7 @@ public class Player extends Subject
     protected void prepareAttack(RangedAttack attack){
           
         
+
 
         
      

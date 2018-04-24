@@ -31,7 +31,7 @@ public class WaveShot extends RangedAttack
         yAcceleration = 1;
         acceleration = 2;
         topSpeed = 5;
-        
+        setTarget(Enemy.class);
     }
     
     

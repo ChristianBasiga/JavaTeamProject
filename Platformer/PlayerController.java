@@ -91,6 +91,7 @@ public class PlayerController extends Observer
         
             //local player meaning current player;
             Player player = (Player)subject;
+            
 
             if (player.getCurrentState() == State.DAMAGED || player.getCurrentState() == State.DEAD ||
                 player.getCurrentState() == PlayerState.TRANSFORMING || player.getCurrentState() == PlayerState.PAUSED){
@@ -124,8 +125,11 @@ public class PlayerController extends Observer
 
                 }
             }
+           
+            
             else{
                 takingInput = true;
+
             }
           
     }    
@@ -217,7 +221,17 @@ public class PlayerController extends Observer
                 if (Greenfoot.isKeyDown("w")){
                         player.jump();                       
                  }     
-                   
+                   else if (Greenfoot.isKeyDown("f")){
+
+                     RangedAttack attack = (RangedAttack)playerAttackPools.getReusable(player.toString());
+                     
+                     //If for some reason pool empty rn, then use original, prob should clone original instead.
+                     if (attack == null){              
+                         attack = playerAttacks.get(player.toString());
+                     }
+                                         
+                     player.attack(attack);
+                 }
             }
             
             else{
@@ -236,7 +250,7 @@ public class PlayerController extends Observer
 
                  }              
                  else if (Greenfoot.isKeyDown("f")){
-                     
+                             System.out.println("Attacking");
                      RangedAttack attack = (RangedAttack)playerAttackPools.getReusable(player.toString());
                      
                      //If for some reason pool empty rn, then use original, prob should clone original instead.

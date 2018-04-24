@@ -59,11 +59,7 @@ public class Animation extends Actor
     public void setFrames(String[] frames){
         
       
-        for (String frame : frames){
-            
-            System.out.println(frame);
-        }
-        System.out.println("I am called");
+
         for(int i = 0; i < AnimFrames.length; i++){
             
             if (i >= frames.length){

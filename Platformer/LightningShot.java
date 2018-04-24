@@ -23,6 +23,7 @@ public class LightningShot extends RangedAttack
         topSpeed = 5;
         acceleration = 1;
         maxYVelocity = 10;
+        setTarget(Enemy.class);
         
     }
     
