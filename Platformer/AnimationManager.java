@@ -95,7 +95,7 @@ public class AnimationManager extends Observer
        
         initIndividualStateMaps();
         initAnimMap();
-        
+        priority = 102;
 
 
   
@@ -180,19 +180,34 @@ public class AnimationManager extends Observer
        
                              
         Player player = (Player) subject;
-        State state = player.getCurrentState();
-        
+           State state = subject.getCurrentState();
+         System.out.println("Animation Manager reacting: to " +  player.toString());
         if (state == PlayerState.TRANSFORMING){
            
+            /*
+            System.out.println("Always here");
             Level level = (Level)getWorld();
-            subject = level.pc.getCurrentPlayer();
-            playerAnim.setAnimating(subject);
+            Player newPlayer = level.pc.getCurrentPlayer();
+            
+            playerAnim.setAnimating(newPlayer);
+            this.observe(newPlayer);
+            newPlayer.addObserver(this);
+
+            //Then added to world firePlayer becomes state of default, and then this should happen aagain
+            level.addObject(newPlayer,player.getX(),player.getY());
+            level.removeObject(player);
+         //   newPlayer.changeState(State.DEFAULT,false);*/
         }
         else{
-        
+            //This is for when default is ran
+           // System.out.print(subject.toString());
             //Because not all states have animation tied to them.
+
             HashMap<String, String[]> frameColl = animMap.get(state.toString());
-            if (frameColl == null){ 
+            if (frameColl == null || frameColl.size() == 0){ 
+                //So basically not correct
+                System.out.println("No frames for this");
+                            System.out.println("State to switch anims to is " + state.toString());
                 return;
             }
             

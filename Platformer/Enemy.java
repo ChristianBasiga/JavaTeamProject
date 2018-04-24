@@ -20,6 +20,8 @@ public class Enemy extends Subject
     public Enemy(String type){
         damage = 10;
         this.type = type;
+        
+        setImage(new GreenfootImage(type+"Enemy.png"));
     }
     
     

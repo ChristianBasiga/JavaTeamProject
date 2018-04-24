@@ -37,10 +37,13 @@ public class Animation extends Actor
         if(timer == 0){
             
           
-          
+            if (AnimFrames[num] != null){
            animating.setImage(AnimFrames[num]);
+           //So it's fire player but still playing absorb
+           System.out.println("Animating is " + animating.toString());
+           System.out.println("Current image is " + animating.getImage().toString());
            num++;
-            
+        }
            if( num >= AnimFrames.length ||  (AnimFrames[num] == null)){
             
                num = 0;
@@ -59,7 +62,12 @@ public class Animation extends Actor
     public void setFrames(String[] frames){
         
       
-
+        for (String frame : frames){
+            
+            //So... it has correct frames in here
+            System.out.println(frame);
+        }
+        
         for(int i = 0; i < AnimFrames.length; i++){
             
             if (i >= frames.length){

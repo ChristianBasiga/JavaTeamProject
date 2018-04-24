@@ -63,7 +63,9 @@ public abstract class Observer extends Actor implements  Comparable<Observer>
     
     //To make sure certain observers react first.
     public int compareTo(Observer other){
-        return other.priority - this.getPriority();
+        if (this.priority > other.priority) return 1;
+        else return -1;
+       
     }
    
 }

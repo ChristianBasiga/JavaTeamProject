@@ -8,7 +8,7 @@ import java.util.Random;
  */
 public class Level extends World
 {
-    //No need for player variable as that instance is constatnly being switched out.
+
     public GameManager gm;
     public PlayerController pc;
     public ItemManager im;
@@ -26,7 +26,7 @@ public class Level extends World
     public Level()
     {    
         // Create a new world with 600x400 cells with a cell size of 1x1 pixels.
-        super(600, 400, 1); 
+        super(800, 900, 1); 
         
         Player player = new Player();
         
@@ -51,6 +51,12 @@ public class Level extends World
          
        
         playerSpawn = new int[]{getWidth() / 2,getHeight() / 2};
+        
+        //For demo
+        addObject(new Enemy("lightning"),playerSpawn[0] + 200,getHeight() - 100);
+         addObject(new Enemy("lightning"),playerSpawn[0] + 230,getHeight() - 100);
+        addObject(new Enemy("fire"),playerSpawn[0] - 150,getHeight() - 100);
+        addObject(new Enemy("earth"),playerSpawn[0] - 300,getHeight() - 300);
         addObject(player,playerSpawn[0],playerSpawn[1]);
   
         addObject(gm,0,0);
@@ -86,7 +92,7 @@ public class Level extends World
         //Create pools of enemies
         //This sin't creating a pool.
         for(int i = 0; i < 3; i++){
-            Enemy e = new Enemy(null);
+            Enemy e = new Enemy("fire");
             int n = e.getImage().getWidth();
             addObject(e, 20 + n*i, 200);
         }
@@ -102,24 +108,24 @@ public class Level extends World
         for(int i = 0; i < 7; i++){
             Ground g = new Ground();
             int n = g.getImage().getWidth();
-            System.out.println("Ground width: "+n);
-            addObject(g, n*i, 400); //floor
+           // System.out.println("Ground width: "+n);
+            addObject(g, n*i, getHeight()); //floor
         }
         
         //spawns platform1
         for(int i = 0; i < 3; i++){
             Ground g = new Ground();
             int n = g.getImage().getWidth()/2;
-            System.out.println("Ground width: "+n);
-            addObject(g, n*i, 330); //floor
+         //   System.out.println("Ground width: "+n);
+            addObject(g, n*i, getHeight() - 70); //floor
         }
         
         //spawns platform2
-        for(int i = 0; i < 3; i++){
+        for(int i = 0; i < 1; i++){
             Ground g = new Ground();
             int n = g.getImage().getWidth();
-            System.out.println("Ground width: "+n);
-            addObject(g, 500 + n*i, 330); //floor
+            System.out.println("Ground width: " + n);
+            addObject(g, getWidth() - 100 + n*i, getHeight()-70-g.getImage().getHeight()); //floor
         }
     }
     

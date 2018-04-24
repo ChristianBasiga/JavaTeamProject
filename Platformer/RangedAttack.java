@@ -45,11 +45,11 @@ public abstract class RangedAttack extends Reusable
     protected  void continueAttack(){
         
         //This will be called by derived classes after they do their own pattern, not done by their criteria, might be done by hitting target.
-        ITakeDamage obj = (ITakeDamage)getOneIntersectingObject(target);
+        Actor obj = getOneIntersectingObject(target);
         
         if (obj != null){
             
-            obj.damage(damage);
+            getWorld().removeObject(obj);
             isDone = true;
            
            

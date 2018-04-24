@@ -39,7 +39,7 @@ public class PlayerController extends Observer
 
         
         this.observe(subject);
-        priority = 1;
+        priority = 100;
 
        
         initPlayers();
@@ -51,6 +51,7 @@ public class PlayerController extends Observer
         playerMap = new HashMap<String,Player>();
         playerMap.put("Player",(Player)subject);;
         playerMap.put("firePlayer",new FirePlayer());
+        
         playerMap.put("lightningPlayer",new LightningPlayer());
         
     }
@@ -70,6 +71,7 @@ public class PlayerController extends Observer
         StraightShot defaultAtt = new StraightShot();
         WaveShot fireAtt = new WaveShot();
         LightningShot lightningAtt = new LightningShot();
+        
         
         playerAttacks.put("Player",defaultAtt);
         playerAttacks.put("firePlayer",fireAtt);
@@ -91,7 +93,7 @@ public class PlayerController extends Observer
         
             //local player meaning current player;
             Player player = (Player)subject;
-            
+            System.out.println("Player controller reacting: " +  player.getCurrentState());
 
             if (player.getCurrentState() == State.DAMAGED || player.getCurrentState() == State.DEAD ||
                 player.getCurrentState() == PlayerState.TRANSFORMING || player.getCurrentState() == PlayerState.PAUSED){
@@ -104,24 +106,20 @@ public class PlayerController extends Observer
                     player.becomeInvincible(-1);
                 }
 
-
+                    System.out.println("Player transforming into " + player.transformingInto());
                 
-                if (subject.getCurrentState() == PlayerState.TRANSFORMING){
+                if (player.getCurrentState() == PlayerState.TRANSFORMING){
                                         
                     //Changes transforms player to different instance          
                     
-                    Player newPlayer = playerMap.get(player.transformingInto());
+                    //I was too stubborn to make inheritence work, no real need for
+                    //this anyway, gotta learn to walk away.
+
+                   // Player newPlayer = playerMap.get(player.transformingInto());
+                   // player.setImage(newPlayer.getImage());
                     
-                    //Copies all all data.
-                    newPlayer.setHealth(player.getHealth());
-                   
-                    //Each observer should handle reacting to the subject themselves, they'll observer new player later.
-                    //they will be called after this returns, instead of (2N) its (N) because I will visit rest of observers later.
-                    //player.transferObservers(newPlayer);   
-                    getWorld().addObject(newPlayer,player.getX(), player.getY());                 
-                    getWorld().removeObject(player);                    
-                    
-                    subject = newPlayer;
+
+
 
                 }
             }
@@ -185,8 +183,8 @@ public class PlayerController extends Observer
     
    
     private void checkActions(Player player){
-        
-        if (!player.getCurrentState().equals(State.JUMPING) && !player.getCurrentState().equals(State.FALLING)){
+
+        if (player.getCurrentState() != null && !player.getCurrentState().equals(State.JUMPING) && !player.getCurrentState().equals(State.FALLING)){
                     
               if (Greenfoot.isKeyDown("a")){
                     
@@ -210,7 +208,7 @@ public class PlayerController extends Observer
                     player.findItem();
                     
                 }
-                else if (player.getCurrentState() != PlayerState.DEFAULT){
+                else if (player.getCurrentState() != State.DEFAULT){
                     
                         //If it was absorbing, then start ticking the cooldown
                         if (player.getCurrentState() == PlayerState.ABSORBING){
@@ -218,8 +216,9 @@ public class PlayerController extends Observer
                         }
                   }
                   
-                if (Greenfoot.isKeyDown("w")){
-                        player.jump();                       
+                 if (Greenfoot.isKeyDown("w")){
+                        player.jump();  
+                        
                  }     
                    else if (Greenfoot.isKeyDown("f")){
 
@@ -232,45 +231,38 @@ public class PlayerController extends Observer
                                          
                      player.attack(attack);
                  }
-            }
-            
-            else{
-                        
                  //Transformations.
-                 if (Greenfoot.isKeyDown("e")){            
+                else if (Greenfoot.isKeyDown("e")){            
                    
                         if (player.getCurrentState() != PlayerState.ABSORBING && player.getCurrentState() != PlayerState.TRANSFORMING && timeTillAbsorb <= 0){
              
+                            System.out.println("Absorbing");
                             player.absorb();    
                         }
                    
-                 }                   
-                 else if (Greenfoot.isKeyDown("r")){
+                 } 
+              
+                else if (Greenfoot.isKeyDown("r")){
                         player.revert();
 
-                 }              
-                 else if (Greenfoot.isKeyDown("f")){
-                             System.out.println("Attacking");
-                     RangedAttack attack = (RangedAttack)playerAttackPools.getReusable(player.toString());
-                     
-                     //If for some reason pool empty rn, then use original, prob should clone original instead.
-                     if (attack == null){              
-                         attack = playerAttacks.get(player.toString());
-                     }
-                                         
-                     player.attack(attack);
-                 }
-     
-                }
-                        
-   
-    }
-    
-  
+                }        
+            }
+            
+            if (player.getCurrentState() == PlayerState.ABSORBING && !Greenfoot.isKeyDown("e")){
+        
+        
+                     player.stopAbsorbing();
+
+            }
+
+        
    
     
   
+   }
+   
   
+
 
     
 }

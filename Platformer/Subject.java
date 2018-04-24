@@ -10,7 +10,7 @@ public class Subject extends Actor
     
     Queue<Observer> observers;
     //Private so that derived classes do not change directly and have to use changeState
-    private State currentState;
+    protected State currentState;
     
     public Subject(){
         
@@ -23,6 +23,7 @@ public class Subject extends Actor
         for (Observer observer : observers){
             
             observer.observe(subject);
+
         }
     }
     
@@ -46,8 +47,9 @@ public class Subject extends Actor
     //create priority queue.
     public void changeState(State state, boolean blend){
         
-        if (currentState != null && currentState.equals(state)) {
-         //   System.out.println("Already in this state");
+
+        if (currentState != null && currentState == state) {
+
             return;
         }
 
@@ -58,6 +60,7 @@ public class Subject extends Actor
             currentState = blended;
         }
         else{
+            System.out.println("state passed in is " + state);
             currentState = state;
         }
       

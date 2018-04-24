@@ -15,8 +15,32 @@ public class FirePlayer extends Player
     
     
     public FirePlayer(){
-       super();
 
+             //Set ti before observers are there to react.
+             changeState(State.DEFAULT,false);
+    }
+    
+    public void start(){
+
+    }
+    
+    @Override
+    public void changeState(State state, boolean blend){
+        
+        
+      //  System.out.printf("Current state of %s is %s. Changin into state %s\n", toString(),getCurrentState(),state.toString());
+        
+        super.changeState(state,blend);
+    }
+    
+    @Override
+    protected void addedToWorld(World world){
+    
+       collider.getImage().setTransparency(1);
+       
+
+       //Cause i want to make sure they're all observing him still
+       //I could do how I did before and transfer observers, just to get it done.
     }
     
     
@@ -26,9 +50,10 @@ public class FirePlayer extends Player
         // Add your action code here.
         super.act();
         //Could add here checking for woddlers I'm strong against so if they collide with me, they die, though I also get hurt?
+      //  System.out.println("fire");
         
-       
         checkIfTouchingWeakness();
+             changeState(State.DEFAULT,false);
 
     }   
     
@@ -37,7 +62,8 @@ public class FirePlayer extends Player
         
         Enemy enemy = (Enemy)getOneIntersectingObject(Enemy.class);
         
-        if (this.toString().contains(enemy.getType())){
+        
+        if (enemy != null && this.toString().contains(enemy.getType())){
             getWorld().removeObject(enemy);
         }
     }

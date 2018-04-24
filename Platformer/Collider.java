@@ -18,10 +18,16 @@ public class Collider extends Actor
     public Collider(Actor actor){
         
         detectingFor = actor;
+        
+    }
+    public void setActor(Actor actor){
+        
+        detectingFor = actor;
     }
     
     public void act() 
     {
+        if (detectingFor.getWorld() != null)
         setLocation(detectingFor.getX(),detectingFor.getY());
     }   
     
@@ -62,6 +68,10 @@ public class Collider extends Actor
     
     public <T> List<T> getCollidingObjects(java.lang.Class<T> cls){
         return getIntersectingObjects(cls);
+    }
+    
+    public boolean intersectsColl(Actor actor){
+        return intersects(actor);
     }
 
 }

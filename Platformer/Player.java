@@ -10,10 +10,10 @@ import java.util.*;
 public class Player extends Subject
 {
 
-    int health;
+    int health = 15;
    
     //This is mainly to be set for damage so at half way point still invincibile but can move.
-    float initialInvincTime;
+    float initialInvincTime = 15.0f;
     float invincibilityTime;
     boolean indefinitelyInvincible;
     
@@ -21,18 +21,20 @@ public class Player extends Subject
     int directionFacing = 1;
     
     int attackDistance = 5;
+
     int absorptionDistance = 20;
   
     
     //Basically fall speed.
-    int verticalVelocity;
+
     int acceleration = 1;
-    int jumpHeight;
-   
+    int jumpHeight = 15;
+    int verticalVelocity = jumpHeight;
+  
     
     public Collider collider;
     
-    float attackCD = 5.0f;
+    float attackCD = 2.0f;
     float timeTillAttack = 0;
     
     int maxSpeed = 4;
@@ -42,7 +44,9 @@ public class Player extends Subject
     
     String toTransformTo;
     
-    
+    int absorptionRadius;;
+
+    int absorptionForce = 5;
    
   
    public void damage(int dmg, String type){
@@ -67,18 +71,11 @@ public class Player extends Subject
     
     public Player(){   
         
-        
-        health = 15;
-        jumpHeight = 15;
-        verticalVelocity = jumpHeight;
-        changeState(State.DEFAULT,false);
-        toTransformTo = null;
-        
-        initialInvincTime = 10.0f;
         collider = new Collider(this);
         
         collider.setHeight(getImage().getHeight() + 50);
         collider.setWidth(getImage().getWidth() - 10);
+                absorptionRadius = collider.getWidth() * 2;
        
     }
     
@@ -94,10 +91,7 @@ public class Player extends Subject
         if (collider.getWorld() == null)
         {
                 getWorld().addObject(collider,getX(),getY());
-        
-        //These 2 lines are for testing, as box will be invisible later.
-                getWorld().removeObject(this);
-                collider.getWorld().addObject(this,collider.getX(),collider.getY());
+       
         
                 changeState(State.FALLING, false);
         
@@ -115,24 +109,82 @@ public class Player extends Subject
     public void act() 
     {
 
-        if (!indefinitelyInvincible && health > 0){
+        if (!indefinitelyInvincible && health > 0 && getWorld() != null && getCurrentState() != null){
       
-            manageInvincibility(); 
-            managePlayerYPosition();
-            checkWalls();
-            findItem();
-        
+            
+
+             
+            if (getCurrentState() == PlayerState.ABSORBING){
+                
+                absorptionContinue();
+                verticalVelocity = 0;
+               
+            }else{
+            
+                manageInvincibility(); 
+            
+                managePlayerYPosition();
+            
+                checkWalls();
+            
+                findItem();
+            }
         
         }
+        else  if (health == 0){
+                changeState(State.DEAD,false);
+            }
         
-        
-        if (Greenfoot.isKeyDown("y")){
-            
-             //Cause intersecting with ground, but this has to be true, and lower than it's top still. Literally just needed to this to realize
-             //Okay origin si top left, ut height is still full of it, no fucking shit, it's not like radius. Me making that assumption has wasted alot of time.
-                                getWorld().addObject(new Ground(),getX(),collider.getY() + collider.getHeight());
-                 }
+      
     }    
+    
+    public void stopAbsorbing(){
+        
+
+
+            changeState(State.DEFAULT,false);
+            
+        
+        
+    }
+    
+    private void absorptionContinue(){
+        
+         //Done every frame while absorbing
+         List<Enemy> woddlersInRange = getObjectsInRange(absorptionRadius ,Enemy.class);
+
+                if (woddlersInRange != null){
+                    
+                    //They will be dragged towards player
+                    
+                    int absorbRange = 10;
+
+                    for (Enemy woddler : woddlersInRange){
+                        
+
+                        woddler.turnTowards(getX(),getY());
+                        woddler.move(absorptionForce);
+
+                        absorbRange = woddler.getImage().getWidth();
+                      
+                    }
+                   woddlersInRange = getObjectsInRange(absorbRange,Enemy.class);
+                   
+                   if (woddlersInRange != null & woddlersInRange.size() > 0){
+                    
+
+                       toTransformTo = woddlersInRange.get(0).getType() + "Player";
+
+                       getWorld().removeObject(woddlersInRange.get(0));
+                       //didn't change to this state?
+
+                       changeState(PlayerState.TRANSFORMING,false);
+                       changeState(State.DEFAULT,false);
+                       
+                   }
+                }
+        
+    }
     
     private void manageInvincibility(){
         
@@ -143,7 +195,13 @@ public class Player extends Subject
             if (!isInvincible()){
                 
                
-                Enemy enemy = (Enemy)getOneIntersectingObject(Enemy.class); 
+                List<Enemy> enemies = collider.getCollidingObjects(Enemy.class);
+                Enemy enemy = null;
+                
+                if (enemies != null){
+                    enemy = enemies.get(0);
+                }
+                
                 if (enemy != null){
                      
                     System.out.println("here");
@@ -160,15 +218,12 @@ public class Player extends Subject
         //So they can move while still invincible, otherwise fucked, if enemy stays on player.
         if (invincibilityTime <= initialInvincTime - 0.5f && getCurrentState() == State.DAMAGED){
             
-            if (health == 0){
-                changeState(State.DEAD,false);
-            }
-            else{
-                
+           
+           
                 if (!indefinitelyInvincible){
                     changeState(State.DEFAULT,false);
                 }
-            }
+            
         }
      
         
@@ -490,12 +545,13 @@ public class Player extends Subject
         //Instead of changing state, it will blendstate so blending so that it's state can be both attacking and running, but for now just changeState is fine.
         changeState(State.ATTACKING,false);
 
-        getWorld().addObject(attack,getX() + collider.getWidth() + (attackDistance * directionFacing),getY() - getImage().getHeight());
+        getWorld().addObject(attack,getX() + collider.getWidth() + (attackDistance * directionFacing),getY());
     }
     
     public void absorb(){
           changeState(PlayerState.ABSORBING,false);          
-          getWorld().addObject(new AbsorptionAttack(this), getX() + (80 * directionFacing),getY());
+         
+          
     }
     
     public boolean canAttack(){
@@ -522,6 +578,6 @@ public class Player extends Subject
     
     @Override 
     public String toString(){
-        return "Player";
+        return (toTransformTo != null)? toTransformTo : "Player";
     }
 }
