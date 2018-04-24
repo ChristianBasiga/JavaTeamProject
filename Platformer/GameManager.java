@@ -56,13 +56,12 @@ public class GameManager extends Observer
         
          //Makes all colliders invisible.
         List<Collider> colliders = getWorld().getObjects(Collider.class);
-        GreenfootImage transparentImage = new GreenfootImage("transparent");
+     
         for (Collider coll : colliders){
             
             //Make their image into something transparent with same dimensions
             //so collision still works fine.
-            transparentImage.scale(coll.getWidth(),coll.getHeight());
-            coll.setImage(transparentImage);
+            coll.getImage().setTransparency(1);
         }
     }
     

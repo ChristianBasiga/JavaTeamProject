@@ -13,12 +13,12 @@ public class Level extends World
     PlayerController pc;
     ItemManager im;
 
+    AnimationManager am;
+    
     int[] playerSpawn;
     
 
-    public void started(){
-       
-    }
+  
     /**
      * Constructor for objects of class Level.
      * 
@@ -30,9 +30,10 @@ public class Level extends World
         
           im = new ItemManager();
         gm = new GameManager();
+        am = new AnimationManager();
       
         Player player = new Player();
-        
+        am.observe(player);
         gm.observe(player);
         
         //Constructur of these handles observing the player.
@@ -52,6 +53,14 @@ public class Level extends World
         //set up enemies
         setUpEnemies();
     }
+    public void started(){
+        
+        gm.getImage().setTransparency(1);
+        pc.getImage().setTransparency(1);
+        im.getImage().setTransparency(1);
+        am.getImage().setTransparency(1);
+        gm.startGame();
+    }
     
     public void act(){
         
@@ -64,6 +73,7 @@ public class Level extends World
     private void setUpEnemies(){
         
         //Create pools of enemies
+        //This sin't creating a pool.
         for(int i = 0; i < 3; i++){
             Enemy e = new Enemy(null);
             int n = e.getImage().getWidth();

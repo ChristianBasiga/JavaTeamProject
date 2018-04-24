@@ -99,6 +99,7 @@ public class AnimationManager extends Observer
         initAnimMap();
         
         playerAnim = new Animation((Player)subject);
+        playerAnim.getImage().setTransparency(1);
   
         
    }
