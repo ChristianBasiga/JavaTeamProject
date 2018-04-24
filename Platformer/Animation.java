@@ -19,6 +19,10 @@ public class Animation extends Actor
         
         this.animating = animating;
     }
+    public void setAnimating(Actor animating){
+               
+        this.animating = animating;
+    }
 
     public void addedToWorld(World myWorld){
         
@@ -28,6 +32,7 @@ public class Animation extends Actor
     }
     
     public void animate(){
+        
         if(timer == 10){
             timer = 0;
         }    
@@ -52,4 +57,5 @@ public class Animation extends Actor
             AnimFrames[i] = new GreenfootImage(frames[i]);  
         }
     }
+    
 }

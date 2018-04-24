@@ -1,10 +1,13 @@
 import greenfoot.*;  // (World, Actor, GreenfootImage, Greenfoot and MouseInfo)
-
+import java.util.Map;
+import java.util.HashMap;
 /**
  * Player controller maniplates the data in the player and handles input to the player.
  * I could change this so that player is really just a nested class to PlayerController
  * and access only allowed to PlayerController to change Player data
  * that will enforce this design.
+ * 
+ * @author Prince Christian Basiga 
  */
 public class PlayerController extends Observer
 {
@@ -12,89 +15,113 @@ public class PlayerController extends Observer
     boolean takingInput = false;
     float absorbCD = 10.0f;
     float timeTillAbsorb = 0;
-    Player player;
+   
+    
+    Map<String,Player> playerMap;
+    Map<String,RangedAttack> playerAttacks;
     
     //Player attacks
     StraightShot defaultAtt;
-    WaveShot waterAtt;
+    WaveShot fireAtt;
     LightningShot lightningAtt;
     
     //Pool for player attacks could be here.
     
     PoolManager playerAttackPools;
 
+    //So that pause menu doesn't flicker.
+    float slightPauseDelay = 1.0f;
+    float timeLeftForUnpause = 0;
+    
     public PlayerController(Player subject){
    
         playerAttackPools = new PoolManager();
+
+        
         this.observe(subject);
         priority = 1;
-        threadName = "pc";
+
        
+        initPlayers();
         initPlayerAttacks();
+    }
+    
+    public void initPlayers(){
+        
+        playerMap = new HashMap<String,Player>();
+        playerMap.put("Player",(Player)subject);;
+        playerMap.put("firePlayer",new FirePlayer());
+        playerMap.put("lightningPlayer",new LightningPlayer());
+        
+    }
+    
+    //This will have highest priority to make sure the rest of them will be observing the correct player.
+    public Player getCurrentPlayer(){
+        
+        return (Player)subject;
+        
     }
     
     private void initPlayerAttacks(){
         
         
+        playerAttacks = new HashMap<String,RangedAttack>();
         
-        //It might better if just have AttackManager that pools all the attacks
-        //and will basically be exact same as ItemManager...Then should I make amnager class? or just put it in ItemManager, that
+        StraightShot defaultAtt = new StraightShot();
+        WaveShot fireAtt = new WaveShot();
+        LightningShot lightningAtt = new LightningShot();
         
-        //Could be something else, whatever.
-        defaultAtt = new StraightShot();
-        waterAtt = new WaveShot();
-        lightningAtt = new LightningShot();
+        playerAttacks.put("Player",defaultAtt);
+        playerAttacks.put("firePlayer",fireAtt);
+        playerAttacks.put("lightningPlayer",lightningAtt);
         
-        
-        
-        playerAttackPools.addPool("defaultattack",defaultAtt,20);
-        playerAttackPools.addPool("waterattack",waterAtt,10);
-        playerAttackPools.addPool("lightningattack",lightningAtt,10);
-        //Set up other attacks.
-        
-    }
-   
-    public void observe(Subject subject){
-        
-        super.observe(subject);
-        player = (Player)subject;
-        takingInput = true;
-    }
+        playerAttackPools.addPool("Player",defaultAtt,20);
+        playerAttackPools.addPool("firePlayer",fireAtt,10);
+        playerAttackPools.addPool("lightningPlayer",lightningAtt,10);
 
-    public void run() 
+        
+    }
+  
+
+    @Override
+    public void react() 
     {
 
         //Reaction code to changes in state to subject go here
+        
+            //local player meaning current player;
+            Player player = (Player)subject;
 
-            if (player.getCurrentState() == State.DAMAGED || 
+            if (player.getCurrentState() == State.DAMAGED || player.getCurrentState() == State.DEAD ||
                 player.getCurrentState() == PlayerState.TRANSFORMING || player.getCurrentState() == PlayerState.PAUSED){
                 
-                //Stop taking input for movement, attacking, while transformation is happening, ie: animation still playing.
+                //Stop taking input for movement, attacking, while transformation is happening, etc.
                 takingInput = false;
-              
+                
                 //Indefinitely invincible if paused
                 if (player.getCurrentState() == PlayerState.PAUSED){
                     player.becomeInvincible(-1);
                 }
-                //also shouldn't be taking damage anymore as player so become invincible
+
+
                 
                 if (subject.getCurrentState() == PlayerState.TRANSFORMING){
                                         
-                    System.out.println("Transforming");
-
-                    //Changes transforms player to different instance
-
-                    Player prevPlayer = player;
-                    Player newPlayer = PlayerFactory.produce(prevPlayer.getCurrentTransformation());
+                    //Changes transforms player to different instance          
                     
-                    newPlayer.setHealth(prevPlayer.getHealth());
+                    Player newPlayer = playerMap.get(player.transformingInto());
+                    
+                    //Copies all all data.
+                    newPlayer.setHealth(player.getHealth());
                    
-                    prevPlayer.copyObservers(newPlayer);   
+                    //Each observer should handle reacting to the subject themselves, they'll observer new player later.
+                    //they will be called after this returns, instead of (2N) its (N) because I will visit rest of observers later.
+                    //player.transferObservers(newPlayer);   
+                    getWorld().addObject(newPlayer,player.getX(), player.getY());                 
+                    getWorld().removeObject(player);                    
                     
-                    getWorld().addObject(newPlayer,prevPlayer.getX(), prevPlayer.getY());                 
-                    getWorld().removeObject(prevPlayer);                    
-                    
-                    System.out.println(player);
+                    subject = newPlayer;
+
                 }
             }
             else{
@@ -104,26 +131,46 @@ public class PlayerController extends Observer
     }    
     
     public void act(){
+        
+
+          //local player meaning current player;
+            Player player = (Player)subject;
 
           //has to be before as this may change takingInput's value.
           if (Greenfoot.isKeyDown("escape")){
                 
-                if (player.getCurrentState() == PlayerState.PAUSED){
+                if (timeLeftForUnpause <= 0){
+                
+                    if (player.getCurrentState() == PlayerState.PAUSED){
+     
                     
-                    player.changeState(State.DEFAULT,false);
+                        player.becomeInvincible(0);
+                    
+                        timeLeftForUnpause = slightPauseDelay;
+                        player.changeState(State.DEFAULT,false);
+                        return;
+                   }
+                    else{
+                    
+                        player.changeState(PlayerState.PAUSED,false);
+                    
+                        timeLeftForUnpause = slightPauseDelay;
+                    
+                        return;
+                   }
                 }
                 else{
-                    player.changeState(PlayerState.PAUSED,false);
+                        
+                    timeLeftForUnpause -= 0.1f;
                 }
+                
+               
                
           }
+          
             
-          if (takingInput){
-
-
-                checkMovement();
-                checkActions();
-                
+          if (takingInput){  
+              checkActions(player);            
           }
 
         if (timeTillAbsorb > 0){
@@ -131,14 +178,9 @@ public class PlayerController extends Observer
         }
     }
     
-    private void checkMovement(){
-        
-                    
-        
-               
-    }
+    
    
-    private void checkActions(){
+    private void checkActions(Player player){
         
         if (!player.getCurrentState().equals(State.JUMPING) && !player.getCurrentState().equals(State.FALLING)){
                     
@@ -154,84 +196,67 @@ public class PlayerController extends Observer
                     player.move(1);
 
                 }
-                else{
+                else if (!player.isInvincible()){
                     
-                    player.setSpeed(0);
+                    player.changeState(State.DEFAULT,false);
                 }
-                 if (Greenfoot.isKeyDown("w")){
+                //Picking up items 
+                if (Greenfoot.isKeyDown("q")){
+                       
+                    player.findItem();
+                    
+                }
+                else if (player.getCurrentState() != PlayerState.DEFAULT){
+                    
+                        //If it was absorbing, then start ticking the cooldown
+                        if (player.getCurrentState() == PlayerState.ABSORBING){
+                            timeTillAbsorb = absorbCD;      
+                        }
+                  }
+                  
+                if (Greenfoot.isKeyDown("w")){
+                        player.jump();                       
+                 }     
                    
-                        player.jump();
-                    }               
-                    //Transformations.
-                    else if (Greenfoot.isKeyDown("e")){            
+            }
+            
+            else{
+                        
+                 //Transformations.
+                 if (Greenfoot.isKeyDown("e")){            
                    
                         if (player.getCurrentState() != PlayerState.ABSORBING && player.getCurrentState() != PlayerState.TRANSFORMING && timeTillAbsorb <= 0){
              
                             player.absorb();    
                         }
                    
-                    }                   
-                    else if (Greenfoot.isKeyDown("r")){
+                 }                   
+                 else if (Greenfoot.isKeyDown("r")){
                         player.revert();
 
-                    }              
-                    //Attacking
-                    else if (Greenfoot.isKeyDown("f") && player.canAttack()){
+                 }              
+                 else if (Greenfoot.isKeyDown("f")){
+                     
+                     RangedAttack attack = (RangedAttack)playerAttackPools.getReusable(player.toString());
+                     
+                     //If for some reason pool empty rn, then use original, prob should clone original instead.
+                     if (attack == null){              
+                         attack = playerAttacks.get(player.toString());
+                     }
+                                         
+                     player.attack(attack);
+                 }
+     
+                }
                         
-                        checkAttack();
-                    }
-                    
-                    //Picking up items
-                    else if (Greenfoot.isKeyDown("q")){
-                        player.findItem();
-                    }
-                
-                    else if (player.getCurrentState() != PlayerState.DEFAULT){
-                    
-                        //If it was absorbing, then start ticking the cooldown
-                        if (player.getCurrentState() == PlayerState.ABSORBING){
-                            timeTillAbsorb = absorbCD;      
-                        }
-                    
-                    
-
-                   }
-       }
-        
+   
     }
     
-    private void checkAttack(){
-        
-         // RangedAttack playerAttack = (RangedAttack)playerAttackPools.getReusable(player.getCurrentTransformation() + "attack");
-          RangedAttack playerAttack = (RangedAttack)playerAttackPools.getReusable("lightningattack");
-          if (playerAttack == null){
-              //Log the error, but user need not know about this issue so still attack like normal
-              playerAttack = playerAttackFactory(player.getCurrentTransformation() + "attack");
-          }
-         
-          playerAttack.setTarget(Enemy.class);
-          player.attack(playerAttack);  
-    }
+  
+   
     
-    
-    private RangedAttack playerAttackFactory(String attackName){
-        
-        RangedAttack product = null;
-        
-        try{
-            if (attackName == "defaultattack"){
-                product =  (RangedAttack)defaultAtt.clone();
-            }
-            else if (attackName == "waterattack"){
-               product =  (RangedAttack)waterAtt.clone();
-            }
-        }
-        catch (Exception e){
-            //Log it.
-        }
-        
-        return product;
-    }
+  
+  
 
     
 }

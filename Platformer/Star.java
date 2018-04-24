@@ -1,10 +1,9 @@
 import greenfoot.*;  // (World, Actor, GreenfootImage, Greenfoot and MouseInfo)
 
 /**
- * Write a description of class Star here.
+ * Star makes the player invincible for certain amount of time when picked up.
  * 
- * @author (your name) 
- * @version (a version number or a date)
+ * @author Prince Christian Basiga
  */
 public class Star extends Item
 {

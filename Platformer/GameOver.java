@@ -1,10 +1,9 @@
 import greenfoot.*;  // (World, Actor, GreenfootImage, Greenfoot and MouseInfo)
 
 /**
- * Write a description of class GameOver here.
+ * Game Over Screen.
  * 
- * @author (your name) 
- * @version (a version number or a date)
+ * @author Prince Christian Basiga
  */
 public class GameOver extends Actor
 {
@@ -12,8 +11,21 @@ public class GameOver extends Actor
      * Act - do whatever the GameOver wants to do. This method is called whenever
      * the 'Act' or 'Run' button gets pressed in the environment.
      */
-    public void act() 
-    {
-        // Add your action code here.
-    }    
+    
+     
+    public GameOver(){
+        
+       
+        
+         GreenfootImage image = new GreenfootImage("Game Over", 200, greenfoot.Color.RED, greenfoot.Color.GRAY);
+         setImage(image);
+    }
+    
+    public void addedToWorld(World myWorld){
+        
+        getImage().scale(myWorld.getWidth() / 2, myWorld.getHeight() / 3);
+        
+    }
+    
+   
 }

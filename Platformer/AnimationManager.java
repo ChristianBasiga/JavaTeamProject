@@ -96,6 +96,7 @@ public class AnimationManager extends Observer
         initAnimMap();
         
         playerAnim = new Animation((Player)subject);
+        playerAnim.getImage().setTransparency(1);
   
         
    }
@@ -161,10 +162,29 @@ public class AnimationManager extends Observer
         animMap.put("DAMAGED", hitHashTrans);
    }
     
-    public void run(){
+    @Override
+    public void react(){
+       
+                             
         Player player = (Player) subject;
-        String state = player.getCurrentState().toString();
-        String[] frames = animMap.get(state).get(player.getCurrentTransformation());
-        playerAnim.setFrames(frames);
+        State state = player.getCurrentState();
+        
+        if (state == PlayerState.TRANSFORMING){
+           
+            Level level = (Level)getWorld();
+            subject = level.pc.getCurrentPlayer();
+            playerAnim.setAnimating(subject);
+        }
+        else{
+        
+            //Because not all states have animation tied to them.
+            HashMap<String, String[]> frameColl = animMap.get(state.toString());
+            if (frameColl == null){ 
+                return;
+            }
+            
+            String[] frames = animMap.get(frameColl).get(player.toString());
+            playerAnim.setFrames(frames);
+        }
     }
 }

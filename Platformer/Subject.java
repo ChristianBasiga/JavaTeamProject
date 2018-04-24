@@ -1,8 +1,7 @@
 /**
- * Write a description of class Subject here.
+ * Classes that extend these are meant to be observed and have their observers react to change in state of the subject.
  * 
- * @author (your name) 
- * @version (a version number or a date)
+ * @author Prince Christian Basiga
  */
 import greenfoot.Actor;
 import java.util.*;
@@ -19,7 +18,7 @@ public class Subject extends Actor
         
     }
     
-    public void copyObservers(Subject subject){
+    public void transferObservers(Subject subject){
         
         for (Observer observer : observers){
             
@@ -53,7 +52,10 @@ public class Subject extends Actor
         }
 
         if (blend){
-            currentState.blendState(state);
+            State blended = currentState.getBlendedState(state);
+            if (blended == null) return;
+            
+            currentState = blended;
         }
         else{
             currentState = state;

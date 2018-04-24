@@ -1,8 +1,7 @@
 /**
- * Write a description of class IEvent here.
+ * Just acts like a callback.
  * 
- * @author (your name) 
- * @version (a version number or a date)
+ * @author Prince Christian Basiga
  */
 public interface IEvent 
 {

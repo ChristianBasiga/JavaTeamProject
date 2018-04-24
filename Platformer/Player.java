@@ -1,14 +1,15 @@
 import greenfoot.*;  // (World, Actor, GreenfootImage, Greenfoot and MouseInfo)
 import java.util.*;
 /**
- * Write a description of class Player here.
+ *
+ * This class holds all the data about the player and handles changes to its states.
  * 
- * @author (your name) 
- * @version (a version number or a date)
+ * @author Prince Christian Basiga
+ * 
  */
-public class Player extends Subject implements ITakeDamage
+public class Player extends Subject
 {
-    String currentTransformation = "default";
+
     int health;
    
     //This is mainly to be set for damage so at half way point still invincibile but can move.
@@ -34,48 +35,61 @@ public class Player extends Subject implements ITakeDamage
     float attackCD = 5.0f;
     float timeTillAttack = 0;
     
-    int maxSpeed = 5;
+    int maxSpeed = 4;
     int speed = 0;
     
     int momentum;
     
+    String toTransformTo;
+    
     
    
   
-   public void damage(int dmg){
+   public void damage(int dmg, String type){
+       
+       //Still might just do composition instead of inheritence. Because at this point the inheritence is useless.
+       if (this.toString().contains(type)){
+           //then no damage.
+           return;
+        }
        health -= dmg;
    }
+   
+   public void setHealth(int health){
+        this.health = health;
+    }
     
+    public int getHealth(){
+        return health;
+    }
 
     
     public Player(){   
         
         
         health = 15;
-    //    changeState(State.DEFAULT,false);
-        currentTransformation = "default";
-        
-      
-
         jumpHeight = 15;
         verticalVelocity = jumpHeight;
         changeState(State.DEFAULT,false);
+        toTransformTo = null;
         
+        initialInvincTime = 10.0f;
         collider = new Collider(this);
        
     }
     public void setSpeed(int speed){
         this.speed = speed;
+       
     }
     protected void addedToWorld(World world){
         
         if (collider.getWorld() == null)
         {
-            getWorld().addObject(collider,getX(),getY());
+                getWorld().addObject(collider,getX(),getY());
         
         //These 2 lines are for testing, as box will be invisible later.
-        getWorld().removeObject(this);
-        collider.getWorld().addObject(this,collider.getX(),collider.getY());
+                getWorld().removeObject(this);
+                collider.getWorld().addObject(this,collider.getX(),collider.getY());
         
                 changeState(State.FALLING, false);
         
@@ -86,26 +100,21 @@ public class Player extends Subject implements ITakeDamage
    
   
     
-    
-    public String getCurrentTransformation(){
-        return currentTransformation;
-    }
-    
+  
   
    
     //What I need to do is have one set location happening, and just have movement so it's more synchronous
     public void act() 
     {
         
+        if (!indefinitelyInvincible && health > 0){
+      
+            manageInvincibility(); 
+            managePlayerYPosition();
+            checkWalls();
+            findItem();
         
-
-        
-
-
-      // System.out.println("Current state: " + getCurrentState());
-        manageInvincibility(); 
-        managePlayerYPosition();
-        findItem();
+        }
                
     }    
     
@@ -116,16 +125,34 @@ public class Player extends Subject implements ITakeDamage
             
             
             if (!isInvincible()){
-                changeState(State.DAMAGED,false);
+                
+               
                 Enemy enemy = (Enemy)getOneIntersectingObject(Enemy.class); 
+                if (enemy != null){
+                     
+                    System.out.println("here");
                 health -= enemy.getDamage();
-                invincibilityTime = 20.0f;
+                if (health <= 0){
+                    health = 0;
+                }
+                changeState(State.DAMAGED,false);
+                invincibilityTime = initialInvincTime;
+             }
             }
         }
         
         //So they can move while still invincible, otherwise fucked, if enemy stays on player.
-        if (invincibilityTime <= initialInvincTime && getCurrentState() == State.DAMAGED){
-            changeState(State.DEFAULT,false);
+        if (invincibilityTime <= initialInvincTime - 0.5f && getCurrentState() == State.DAMAGED){
+            
+            if (health == 0){
+                changeState(State.DEAD,false);
+            }
+            else{
+                
+                if (!indefinitelyInvincible){
+                    changeState(State.DEFAULT,false);
+                }
+            }
         }
      
         
@@ -152,67 +179,55 @@ public class Player extends Subject implements ITakeDamage
     
     private void managePlayerYPosition(){
         
-
-  
-        //Either when done jumping, aka when verticalVelocity is jumpHeight again.
-        //Otherwise when done falling, aka hit ground, and then this will change
-       
          
         if (getCurrentState().equals(State.JUMPING) || getCurrentState().equals(State.FALLING)){
 
-            
-            
             setLocation(getX() + momentum , getY() + verticalVelocity);
-            checkFloorAndCieling();
 
+            
+            if (verticalVelocity <= jumpHeight){
+             
+           
+                verticalVelocity += acceleration;
+                if (verticalVelocity == 0){   
+                    changeState(State.FALLING,false);
+           
+                }    
+            }
+            else if (!(collider.isTouchingObject(Ground.class))){//HERE IT WASSSS. Makes sense fall at slow from high jump height, makes perfect sense
+            
+                verticalVelocity -= 1;
+            }
         }
+            
+
+        
+       checkFloorAndCieling();
                         
         
-        
-        if ((getCurrentState().equals(State.JUMPING) || getCurrentState().equals(State.FALLING)) && verticalVelocity <= jumpHeight){
-            
-           verticalVelocity += acceleration;
-              //         System.out.println("here");
-           //Then this is critical point and switches directions
-           if (verticalVelocity == 0){
-               changeState(State.FALLING,false);
-           }
-        }
-        //If not hit gorund yet, but no longer moving, reset velociy to keep moving
-        else if (!getCurrentState().equals(State.JUMPING) && !(collider.isTouchingObject(Ground.class))){
-            
-            verticalVelocity = 0;
-            changeState(State.FALLING,false);
-        }
-        
-       
-            
-            
-   
-        }
+    }
    
    public boolean isInvincible(){
-       return invincibilityTime > 0;
+       return invincibilityTime > 0 || indefinitelyInvincible;
     }
         
    public void becomeInvincible(float timePeriod){
        
-        if (timePeriod <= 0){
+        if (timePeriod < 0){
           indefinitelyInvincible = true;
           return;
        }
+       else if (timePeriod == 0){
+           indefinitelyInvincible = false;
+           return;
+        }
        
        invincibilityTime = timePeriod;
        initialInvincTime = timePeriod;
       
    }
     
-   public void move(int direction){
-        
-        boolean blendMovement = false;
-        //Cause otherwise don't want animation to play for moving left or right if falling.
-        blendMovement = (getCurrentState().equals(State.FALLING) || getCurrentState().equals(State.JUMPING));
-          
+   public void move(int direction){  
             
         switch (direction){
                case -1:
@@ -223,7 +238,7 @@ public class Player extends Subject implements ITakeDamage
                    break;
         }
             
-           
+        
         
         
        changeDirection(direction);
@@ -232,21 +247,17 @@ public class Player extends Subject implements ITakeDamage
        if (speed > 0 && speed < maxSpeed){
             speed += acceleration;
         }
-       else{
+       else if (speed == 0){
            speed = 1;
        }
-       
-       
+                 
        setLocation(getX() + speed * directionFacing,getY());
-       
-       checkWalls(); 
-     //  super.move(direction * speed);
     }
     
     public void checkFloorAndCieling(){
         
 
-         if (collider.isTouchingObject(Ground.class) || collider.getY() + 1 == getWorld().getHeight() ){
+         if (collider.isTouchingObject(Ground.class) ){
 
                 List<Ground> grounds = collider.getCollidingObjects(Ground.class);  
                 
@@ -257,20 +268,18 @@ public class Player extends Subject implements ITakeDamage
                     
                     
                     changeState(State.DEFAULT,false);
+                   
                     return;
                 }
-                
-              
-             
+                           
                 for (Ground ground : grounds){      
    
                     //Making sure within bounds of the ground touching
                     if (collider.getX() >= ground.getX() || collider.getX() + (collider.getWidth() + (collider.getWidth() / 2)) <= ground.getX() + ground.getImage().getWidth()){
-                        
-
 
                         if (getCurrentState().equals(State.FALLING)){
 
+                            //This should happen when jump against wall, but not standing atop it.
                             //This could be made better, it's dipping past floor a little bit prob due to velocity
                             if (collider.getY() + collider.getHeight() + collider.getHeight() / 2 >=  ground.getY()){
                           
@@ -299,41 +308,55 @@ public class Player extends Subject implements ITakeDamage
    
                 }
             }
+            else{
+                changeState(State.FALLING,false);
+            }
            
     }
     
     public void checkWalls(){
-      
-      
-     
     
-        //This won't work, I do actually need to do it manually
-        if (getCurrentState().equals(State.MOVINGLEFT) && getOneObjectAtOffset(-(collider.getWidth()/ 2 ),0,Ground.class) != null){
-
-           
-            setLocation(getX() + speed , getY());
-
+       
+      
+        int pullBack = 0;
+        //Jittery v.s going through walls while jumping choose former.
+        if (getCurrentState().equals(State.MOVINGLEFT) && getOneObjectAtOffset(-(collider.getWidth()/ 2  + speed),-collider.getHeight() / 2,Ground.class) != null){
+                pullBack = speed * 2; 
         }
                     //Right side of platform
-        else if (getCurrentState().equals(State.MOVINGRIGHT) && getOneObjectAtOffset((collider.getWidth() / 2),0,Ground.class) != null){
-            setLocation(getX() - speed , getY());
-
+        else if (getCurrentState().equals(State.MOVINGRIGHT) && getOneObjectAtOffset((collider.getWidth() / 2 + speed),-collider.getHeight() / 2,Ground.class) != null){
+               pullBack = -speed * 2;
         }
+       
+        //It does work sometimes, main problem is the differing sizes.
+        /*if ((getCurrentState().equals(State.JUMPING) || getCurrentState().equals(State.FALLING))){
+            
+            System.out.println("pull back " + pullBack);
+            pullBack *= 2;
+                        System.out.println("pull back after" + pullBack);
+        }*/
+        
+        setLocation(getX() + pullBack, getY());
+        
  
     }
     
     public void jump(){
         
-        if (collider.isTouchingObject(Ground.class) || collider.getY() + 1 >= getWorld().getHeight()){
+        if (collider.isTouchingObject(Ground.class) ){
             
-         
-            changeState(State.JUMPING,false);
-            System.out.println("Speed now is" + speed);
-            momentum = directionFacing * speed;;
-            
-            
+            boolean blend = getCurrentState() == State.MOVINGRIGHT || getCurrentState() == State.MOVINGLEFT;
+        
+            //okay, does blend now but now falls when moves??
+            changeState(State.JUMPING,blend);
+           
+            if (blend){
+                momentum = directionFacing * speed;
+            }
+
             verticalVelocity = -jumpHeight;
-            
+                      
+             
         }
     }
     
@@ -346,28 +369,24 @@ public class Player extends Subject implements ITakeDamage
         
     }
     
-    public void setHealth(int health){
-        this.health = health;
-    }
     
-    public int getHealth(){
-        return health;
-    }
     
     public void transform(String transformation){
         
-        if (getCurrentState() == PlayerState.TRANSFORMING || currentTransformation == transformation){
+        if (getCurrentState() == PlayerState.TRANSFORMING || this.toString() == transformation){
             return;
         } 
-    
-        currentTransformation = transformation;
+  
         
-        //Okay so transforming is where messed up.
-        
-        //Can no longer take in input.
+        toTransformTo = transformation;
         changeState(PlayerState.TRANSFORMING, false);
 
         
+    }
+    
+    public String transformingInto(){
+        
+        return toTransformTo;
     }
     
     public void revert(){
@@ -377,10 +396,10 @@ public class Player extends Subject implements ITakeDamage
     public void attack(RangedAttack attack){
         
         //What will be overriden part is where it spawns from player and what player does as attacks
-        
+        attack.setDirection(directionFacing);
         prepareAttack(attack);
           //Where it spawns will also differ.
-        getWorld().addObject(attack,getX() + collider.getWidth() + (attackDistance * directionFacing),getY() - getImage().getHeight());
+     
         
     }
     
@@ -388,7 +407,7 @@ public class Player extends Subject implements ITakeDamage
     protected void prepareAttack(RangedAttack attack){
           
         
-        attack.setDirection(directionFacing);
+
         
      
         //This will be duplicate code though otherwise, but worry about that later, or actually do move this back there
@@ -396,7 +415,8 @@ public class Player extends Subject implements ITakeDamage
         
         //Instead of changing state, it will blendstate so blending so that it's state can be both attacking and running, but for now just changeState is fine.
         changeState(State.ATTACKING,false);
-        
+
+        getWorld().addObject(attack,getX() + collider.getWidth() + (attackDistance * directionFacing),getY() - getImage().getHeight());
     }
     
     public void absorb(){
@@ -424,5 +444,10 @@ public class Player extends Subject implements ITakeDamage
            //Picks up items, which will trigger events for item to take effect.
            item.pickUp(this);
        }
+    }
+    
+    @Override 
+    public String toString(){
+        return "Player";
     }
 }

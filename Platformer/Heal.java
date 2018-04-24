@@ -1,18 +1,13 @@
 import greenfoot.*;  // (World, Actor, GreenfootImage, Greenfoot and MouseInfo)
 
 /**
- * Write a description of class Heal here.
+ * Player's health goes back up if touches this item.
  * 
- * @author (your name) 
- * @version (a version numbetr or a date)
+ * @author Prince Christian Basiga
  */
 public class Heal extends Item
 {
-    /**
-     * Act - do whatever the Heal wants to do. This method is called whenever
-     * the 'Act' or 'Run' button gets pressed in the environment.
-     */
-    
+   
     int healAmount;
     
     public Heal(){

@@ -1,17 +1,13 @@
 import greenfoot.*;  // (World, Actor, GreenfootImage, Greenfoot and MouseInfo)
 
 /**
- * Write a description of class AbsorptionAttack here.
+ * This is the absorption attack of the player. If absorbable enemies touch this object, then the player will transform.
  * 
- * @author (your name) 
- * @version (a version number or a date)
+ * @author Prince Christian Basiga
  */
 public class AbsorptionAttack extends Actor
 {
-    /**
-     * Act - do whatever the AbsorptionAttack wants to do. This method is called whenever
-     * the 'Act' or 'Run' button gets pressed in the environment.
-     */
+    
     
     //To transform player
     Player emitter;
@@ -27,8 +23,10 @@ public class AbsorptionAttack extends Actor
           
           //Then based on type of the Enemy, probably just attribute then change accordingly.
           Enemy enemyAbsorbing = (Enemy)getOneIntersectingObject(Enemy.class);
-           getWorld().removeObject(enemyAbsorbing);
+          getWorld().removeObject(enemyAbsorbing);
           getWorld().removeObject(this);
+          
+          
           //Change type name later on as needed
           if (enemyAbsorbing.getType() == "fire"){
               System.out.println("Absorbing fire enemy");

@@ -1,8 +1,7 @@
  /**
- * Write a description of class State here.
+ * State class basically acts like an enum, except I wanted to add behaviour such as blending states.
  * 
- * @author (your name) 
- * @version (a version number or a date)
+ * @author Prince Christian Basiga
  */
 //Just to be used for shared type but otherwse simulates enum
 //There will be PlayerState, and EnemyState but base will contain the shared states
@@ -19,6 +18,7 @@ public class State
   
     //Cannot be final since then cannot do bitwise.
     private int id;
+    private int originalID;
     private String name;
     
     public State(){
@@ -33,7 +33,7 @@ public class State
         //attacking and moving for example, then I want to make it bitwise instead
         //String and id then
         this.name = name;
-        this.id = id;
+        this.id = originalID = id;
     }
     
     public void turnOffState(State other){
@@ -55,22 +55,30 @@ public class State
         this.name = newName;
       }
     }
-    //might just say fuck it on bitwise, just move while jumping but don't set the state.
-    public void blendState(State other){
-        
-        if (other.equals(this)) return;
-        id |= other.id;
-        
-        if (name.equals("")){
-            name = other.name;
-        }
-        else{
-            
-         
-          if (!name.contains(other.name))
-            name += ", " + other.name;
-        }
+    public void resetState(){
+        id = originalID;
     }
+    public void setState(State other){
+    
+        
+        id = other.id;
+    }
+    //Better way is to have this return the blended state, this way won't effect the originals
+    public State getBlendedState(State rhs){
+        
+        if (this.id == rhs.id) return null;
+        
+        int newID = 0;
+        newID |= this.id;
+        newID |= rhs.id;
+        
+        State blend = new State(newID, toString() + "," + rhs.toString());
+        
+        return blend;
+       
+    }
+    
+  
     
     public boolean equals(State other){
         
