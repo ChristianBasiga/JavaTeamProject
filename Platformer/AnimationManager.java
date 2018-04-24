@@ -180,7 +180,13 @@ public class AnimationManager extends Observer
         }
         else{
         
-            String[] frames = animMap.get(state.toString()).get(player.toString());
+            //Because not all states have animation tied to them.
+            HashMap<String, String[]> frameColl = animMap.get(state.toString());
+            if (frameColl == null){ 
+                return;
+            }
+            
+            String[] frames = animMap.get(frameColl).get(player.toString());
             playerAnim.setFrames(frames);
         }
     }

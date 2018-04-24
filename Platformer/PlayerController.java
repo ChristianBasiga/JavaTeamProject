@@ -213,17 +213,15 @@ public class PlayerController extends Observer
                             timeTillAbsorb = absorbCD;      
                         }
                   }
-               
+                  
+                if (Greenfoot.isKeyDown("w")){
+                        player.jump();                       
+                 }     
                    
             }
             
             else{
-                 
-                if (Greenfoot.isKeyDown("w")){
-                   
-                        player.jump();
-                       
-                 }              
+                        
                  //Transformations.
                  if (Greenfoot.isKeyDown("e")){            
                    
